@@ -11,6 +11,7 @@
 #include <climits>
 #include <sstream>
 #include <new>
+#include "pstreams/pstream.h"
 using namespace std;
 
 
@@ -43,7 +44,7 @@ int rand_me_plz (int rand_from, int rand_to) {
   return(roll());  
 }
 
-vector<string> get_flags(char* cmd) {
+vector<string> get_flags_man(char* cmd) {
   string cmd_name(cmd);
   string filename;
   int man_num;
@@ -65,7 +66,7 @@ vector<string> get_flags(char* cmd) {
        if (regex_match(gzline, opt_part_1, start_of_opt_1)) {  // ring 'er out
         string opt_1 = opt_part_1[4];
         string opt_release = (RemoveChars(opt_part_1[4], "\\"));  // remove the fucking backslashes plz
-        opt_vec.push_back(opt_release);
+	opt_vec.push_back(opt_release);
       }
       if (regex_match(gzline, opt_part_2, start_of_opt_2)) {
         string opt_2 = opt_part_2[1];
@@ -73,7 +74,7 @@ vector<string> get_flags(char* cmd) {
       }
       if (regex_match(gzline, opt_part_3, start_of_opt_3)) {
         string opt_3 = opt_part_3[1];
-        opt_vec.push_back(opt_3);  
+        opt_vec.push_back(opt_3);
       }
     }
   }
@@ -81,6 +82,27 @@ vector<string> get_flags(char* cmd) {
   opt_vec.erase(unique(opt_vec.begin(), opt_vec.end()), opt_vec.end());
   return(opt_vec);
 }
+
+vector<string> get_flags_template(string filename) {
+  int man_num;
+  vector<string> opt_vec;
+  string line;
+  ifstream template_file (filename);
+  if (template_file.is_open())
+  {
+    while ( getline (template_file,line) )
+    {
+      opt_vec.push_back(line);
+    }
+    template_file.close();
+  }
+  else { 
+    cerr << "Could not open file..." << endl;
+    exit (1);
+  }
+return(opt_vec);  
+}
+
 
 string make_garbage(int trash, int buf, string user_junk) {
   int trash_num;
@@ -123,17 +145,19 @@ string make_garbage(int trash, int buf, string user_junk) {
   return(junk);  
 }
 
-string execer(char* sys_c) {
-  FILE* pipe = popen(sys_c, "r");  // open a pipe
-  if (!pipe) return "ERROR";
-  char buffer[128];
-  string result = "";
-  while(!feof(pipe)) {
-    if(fgets(buffer, 128, pipe) != NULL) result += buffer;  // put whatever comes out in buffer
+
+
+
+
+
+
+string execer(string the_path_str) {
+  redi::ipstream proc(the_path_str, redi::pstreams::pstderr);
+  string line;
+  while (getline(proc.err(), line)) {
+    return (line);
   }
-  pclose(pipe);
-  return (result); // return it
-}
+} 
 
 void write_junk_file (int junk_num, int buf, string user_junk) {
   ofstream junk_file;
@@ -145,57 +169,70 @@ void write_junk_file (int junk_num, int buf, string user_junk) {
 
 
 int main (int argc, char* argv[]) {
-  if ((argc < 4 ) || (argc > 5)) {
+  if ((argc < 5 ) || (argc > 6)) {
     cerr << "Useage:" << endl;
     cerr << argv[0] << " [command name] [command path] [buffer size] abcd" << endl;
     cerr << argv[0] << " deluser /bin/deluser 2048 abcd" << endl;
     exit (1);
   }
-  char* the_cmd = argv[1];
-  char* the_path = argv[2];
-  string cmd_str(argv[1]);
-  string path_str(argv[2]);
-  int buf_size = atoi(argv[3]);
+  char* the_man = argv[2];
+//  char* the_path = argv[3];
+  string template_str(argv[2]);
+  string template_type_str(argv[1]);
+  string path_str(argv[3]);
+  int buf_size = atoi(argv[4]);
   int segged = 0;
-  vector<string> opts = get_flags(the_cmd);
+  vector<string> opts;
+  if (template_type_str == "-m") {
+    opts = get_flags_man(the_man);
+  }
+  else if (template_type_str == "-t") {
+    opts = get_flags_template(template_str);
+  }
+  else {
+    cerr << "Please specify:" << endl << "  -m for a manpage followed by the command name" 
+    << endl << "  -t followed by a template filename." << endl;
+    exit (1);
+  }
+
 //  vector<string> junk_opts;
   string user_j;
 //  string sys_str;
-  if (argc == 5) {
-    string user_j(argv[4]);
+  if (argc == 6) {
+    string user_j(argv[5]);
   }
-  if (argc == 4) {
+  if (argc == 5) {
     string user_j = "";
   }
-  
 
   while (segged != 1) {
 
     vector<string> junk_opts;
-    for( int cmd_flag_l=0; cmd_flag_l < opts.size(); cmd_flag_l++) {  // loop around the options
+    for( int cmd_flag_l = 0; cmd_flag_l < opts.size(); cmd_flag_l++) {  // loop around the options
       if (rand_me_plz(0,1) == 1) {   // roll tha die
 	junk_opts.push_back(opts.at(cmd_flag_l));  // put the random arg in the vector
       }
     }
-    string sys_str = cmd_str + " ";
+    string sys_str = path_str + " ";
     for( vector<string>::const_iterator junk_opt = junk_opts.begin(); junk_opt != junk_opts.end(); ++junk_opt) { // loop through the vector of junk opts
       sys_str = sys_str + *junk_opt + " " + make_garbage(rand_me_plz(0,4), buf_size, user_j) + " ";  // add options and garbage
     }
     junk_opts.clear();
     junk_opts.shrink_to_fit();
-    sys_str = path_str + " " + sys_str + " 2>&1";  // make with path and garbage interactive
+    sys_str = sys_str + " 2>&1";  // make with path and garbage interactive
     char* sys_chr = strdup(sys_str.c_str());  // duplicate point to the string of chars
-    istringstream is_it_segfault(execer(sys_chr)); // run it and grab stdout and stderr
+    istringstream is_it_segfault(execer(sys_str)); // run it and grab stdout and stderr
     free(sys_chr);  // free up memory from sys_chr so we don't OOM later
     string sf_line;
     while (getline(is_it_segfault, sf_line)) {
-      regex sf_reg ("Segmentation fault"); // regex for the sf
+      regex sf_reg (".*Segmentation fault.*"); // regex for the sf
       smatch sf;
-      if (regex_match( sf_line, sf, sf_reg)) {  // match segfault
+      if (regex_match(sf_line, sf, sf_reg)) {  // match segfault
 	cout << "Segfaulted with: " << sys_str << endl; 
 	segged = 1;
+	exit (0);
       }
     }
   }
-  return 0;  
+  return (0);  
 }
