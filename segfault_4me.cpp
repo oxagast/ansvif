@@ -33,7 +33,7 @@ string RemoveChars(const string& source, const string& chars) {
      result+=source[i];
    }
  }
-return result;
+return (result);
 }
 
 int rand_me_plz (int rand_from, int rand_to) {
@@ -100,7 +100,7 @@ vector<string> get_flags_template(string filename) {
     cerr << "Could not open file..." << endl;
     exit (1);
   }
-return(opt_vec);  
+  return(opt_vec);  
 }
 
 
@@ -146,18 +146,19 @@ string make_garbage(int trash, int buf, string user_junk) {
 }
 
 
-
-
-
-
-
-string execer(string the_path_str) {
-  redi::ipstream proc(the_path_str, redi::pstreams::pstderr);
-  string line;
-  while (getline(proc.err(), line)) {
-    return (line);
+string execer(string the_cmd_str) {
+  vector<std::string> errors;
+  redi::ipstream in(the_cmd_str + " >&2", redi::pstreambuf::pstderr);
+  string errmsg;
+  while (std::getline(in, errmsg)) {
+    errors.push_back(errmsg);
   }
-} 
+  if (errors.size() > 0) {
+  return (errors[errors.size() - 1]);
+  }
+  else return "NOSEG";
+}
+
 
 void write_junk_file (int junk_num, int buf, string user_junk) {
   ofstream junk_file;
@@ -165,7 +166,6 @@ void write_junk_file (int junk_num, int buf, string user_junk) {
   junk_file << make_garbage(junk_num, buf, user_junk);
   junk_file.close();
 }
-
 
 
 int main (int argc, char* argv[]) {
@@ -176,7 +176,6 @@ int main (int argc, char* argv[]) {
     exit (1);
   }
   char* the_man = argv[2];
-//  char* the_path = argv[3];
   string template_str(argv[2]);
   string template_type_str(argv[1]);
   string path_str(argv[3]);
@@ -195,9 +194,7 @@ int main (int argc, char* argv[]) {
     exit (1);
   }
 
-//  vector<string> junk_opts;
   string user_j;
-//  string sys_str;
   if (argc == 6) {
     string user_j(argv[5]);
   }
@@ -219,13 +216,11 @@ int main (int argc, char* argv[]) {
     }
     junk_opts.clear();
     junk_opts.shrink_to_fit();
-    sys_str = sys_str + " 2>&1";  // make with path and garbage interactive
-    char* sys_chr = strdup(sys_str.c_str());  // duplicate point to the string of chars
     istringstream is_it_segfault(execer(sys_str)); // run it and grab stdout and stderr
-    free(sys_chr);  // free up memory from sys_chr so we don't OOM later
+
     string sf_line;
     while (getline(is_it_segfault, sf_line)) {
-      regex sf_reg (".*Segmentation fault.*"); // regex for the sf
+      regex sf_reg ("(.*Segmentation fault.*|.*core dump.*)"); // regex for the sf
       smatch sf;
       if (regex_match(sf_line, sf, sf_reg)) {  // match segfault
 	cout << "Segfaulted with: " << sys_str << endl; 

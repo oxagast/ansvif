@@ -13,6 +13,9 @@
   
  int main(int argc, char *argv[]) 
  { 
+     if ((argc > 2) && (argc < 4)) {
      func(argv); 
      return 0; 
+}
+ else return 1;
  }
