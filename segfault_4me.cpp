@@ -22,7 +22,7 @@ gcc segfault_4me.cpp -lstdc++ -lz -std=gnu++11 -L./gzstream -lgzstream -o segfau
 */
 
 
-string RemoveChars(const string& source, const string& chars) {
+string remove_chars(const string& source, const string& chars) {
  string result="";
  for (unsigned int i=0; i<source.length(); i++) {
    bool foundany=false;
@@ -36,6 +36,8 @@ string RemoveChars(const string& source, const string& chars) {
 return (result);
 }
 
+
+
 int rand_me_plz (int rand_from, int rand_to) {
   random_device rd;
   default_random_engine generator(rd());   // seed random
@@ -43,6 +45,22 @@ int rand_me_plz (int rand_from, int rand_to) {
   auto roll = bind ( distribution, generator );  // bind it so we can do it multiple times
   return(roll());  
 }
+
+char fortune_cookie () {
+    string rand_char;
+    string byte;
+    char chr;
+      const char* hexdigit = "0123456789abcdef";
+      for(int hex_out_curl=0; hex_out_curl< 2; hex_out_curl+=2) {
+        char hexxy_1 = hexdigit[rand_me_plz(0,16) % 16];  // get 1 part of hex digit
+        char hexxy_2 = hexdigit[rand_me_plz(0,16) % 16];  // get 2 part of hex digit
+        rand_char = to_string(hexxy_1) + to_string(hexxy_2);  // put them together
+        byte = rand_char.substr(hex_out_curl,2);  // pull out one hex
+        chr = (char) (int)strtol(byte.c_str(), NULL, 16);  // get the char
+        }
+    return(chr);
+}
+
 
 vector<string> get_flags_man(char* cmd) {
   string cmd_name(cmd);
@@ -65,7 +83,7 @@ vector<string> get_flags_man(char* cmd) {
     while(getline(in, gzline)){
        if (regex_match(gzline, opt_part_1, start_of_opt_1)) {  // ring 'er out
         string opt_1 = opt_part_1[4];
-        string opt_release = (RemoveChars(opt_part_1[4], "\\"));  // remove the fucking backslashes plz
+        string opt_release = (remove_chars(opt_part_1[4], "\\"));  // remove the fucking backslashes plz
 	opt_vec.push_back(opt_release);
       }
       if (regex_match(gzline, opt_part_2, start_of_opt_2)) {
@@ -119,22 +137,14 @@ string make_garbage(int trash, int buf, string user_junk) {
     }
   }
   if (trash == 2) {
+      char fortune = fortune_cookie(); // ditto for random
     for (trash_num = 0; trash_num < buf; trash_num++) {
-      junk = user_junk; // ditto for null
+      junk = junk += fortune;
     }
   }
   if (trash == 3) {
-    string rand_char;
-    for (trash_num = 0; trash_num < 256; trash_num++) {
-      const char* hexdigit = "0123456789abcdef";
-      for(int hex_out_curl=0; hex_out_curl< 2; hex_out_curl+=2) {
-        char hexxy_1 = hexdigit[rand_me_plz(0,16) % 16];  // get 1 part of hex digit
-        char hexxy_2 = hexdigit[rand_me_plz(0,16) % 16];  // get 2 part of hex digit
-        rand_char = to_string(hexxy_1) + to_string(hexxy_2);  // put them together
-        string byte = rand_char.substr(hex_out_curl,2);  // pull out one hex
-        char chr = (char) (int)strtol(byte.c_str(), NULL, 16);  // get the char
-        junk.push_back(chr);  // put it into junk
-      }
+    for (trash_num = 0; trash_num < buf; trash_num++) {
+      junk = junk += fortune_cookie();
     }
   }
   if (trash == 4) {
@@ -142,12 +152,12 @@ string make_garbage(int trash, int buf, string user_junk) {
       junk = user_junk;
     }
   }
-  return(junk);  
+  return(junk);
 }
 
 
 string execer(string the_cmd_str) {
-  vector<std::string> errors;
+  vector<string> errors;
   redi::ipstream in(the_cmd_str + " >&2", redi::pstreambuf::pstderr);
   string errmsg;
   while (std::getline(in, errmsg)) {
