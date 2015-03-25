@@ -12,6 +12,8 @@
 #include <sstream>
 #include <new>
 #include "pstreams/pstream.h"
+#include <cstring>
+
 using namespace std;
 
 
@@ -122,11 +124,17 @@ vector<string> get_flags_template(string filename) {
 }
 
 
-string make_garbage(int trash, int buf, string user_junk) {
+string make_garbage(int trash, int buf) {
   int trash_num;
   string junk = "";
   string hex_stuff;
-  if (trash == 0) {
+  string user_junk;
+  buf = buf-1;
+  if (isatty(STDIN_FILENO)) {
+    user_junk = "";
+  }
+  else getline(cin, user_junk);
+  if (trash == 0) {                                            // kosher
     for (trash_num = 0; trash_num < buf; trash_num++) {
       junk = "A" + junk; // put lots of As
     }
@@ -147,10 +155,71 @@ string make_garbage(int trash, int buf, string user_junk) {
       junk = junk += fortune_cookie();
     }
   }
-  if (trash == 4) {
+  if (trash == 4) {                                            // front
     for (trash_num = 0; trash_num < buf; trash_num++) {
-      junk = user_junk;
+      junk = "A" + junk; // put lots of As
     }
+    junk = user_junk + junk;
+    if (buf-user_junk.length() < junk.size()) junk = junk.substr(0,buf);
+    else return ("OOR");
+  }
+  if (trash == 5) {
+    for (trash_num = 0; trash_num < buf; trash_num++) {
+      junk = "9" + junk; // yadda yadda
+    }
+    junk = user_junk + junk;
+    if (buf-user_junk.length() < junk.size()) junk = junk.substr(0,buf);
+    else return ("OOR");
+  }
+  if (trash == 6) {
+      char fortune = fortune_cookie(); // ditto for random
+    for (trash_num = 0; trash_num < buf; trash_num++) {
+      junk = junk += fortune;
+    }
+    junk = user_junk + junk;
+    if (buf-user_junk.length() < junk.size()) junk = junk.substr(0,buf);
+    else return ("OOR");
+  }
+  if (trash == 7) {
+    for (trash_num = 0; trash_num < buf; trash_num++) {
+      junk = junk += fortune_cookie();
+    }
+    junk = user_junk + junk;
+    if (buf-user_junk.length() < junk.size()) junk = junk.substr(0,buf);
+    else return ("OOR");
+  }
+  if (trash == 8) {
+    for (trash_num = 0; trash_num < buf; trash_num++) {  // back
+      junk = "A" + junk; // put lots of As
+    }
+    junk = junk + user_junk;
+    if (buf-user_junk.length() < junk.size()) junk = junk.substr(junk.length()-buf);
+    else return ("OOR");
+  }
+  if (trash == 9) {
+    for (trash_num = 0; trash_num < buf; trash_num++) {
+      junk = "9" + junk; // yadda yadda
+    }
+    junk = junk + user_junk;
+    if (buf-user_junk.length() < junk.size()) junk = junk.substr(junk.length()-buf);
+    else return ("OOR");
+  }
+  if (trash == 10) {
+      char fortune = fortune_cookie(); // ditto for random
+    for (trash_num = 0; trash_num < buf; trash_num++) {
+      junk = junk += fortune;
+    }
+    junk = junk + user_junk;
+    if (buf-user_junk.length() < junk.size()) junk = junk.substr(junk.length()-buf);
+    else return ("OOR");
+  }
+  if (trash == 11) {
+    for (trash_num = 0; trash_num < buf; trash_num++) {
+      junk = junk += fortune_cookie();
+    }
+    junk = junk + user_junk;
+    if (buf-user_junk.length() < junk.size()) junk = junk.substr(junk.length()-buf);
+    else return ("OOR");
   }
   return(junk);
 }
@@ -158,17 +227,20 @@ string make_garbage(int trash, int buf, string user_junk) {
 
 string execer(string the_cmd_str) {
   vector<string> errors;
-  redi::ipstream in(the_cmd_str + " >&2", redi::pstreambuf::pstderr);
-  string errmsg;
+  redi::ipstream in(the_cmd_str + " >&2", redi::pstreambuf::pstderr); // gotta put them to stderr
+  string errmsg;                                                      // some os thing
   while (std::getline(in, errmsg)) {
     errors.push_back(errmsg);
   }
   if (errors.size() > 0) {
   return (errors[errors.size() - 1]);
   }
-  else return "NOSEG";
+  else return "NOSEG";                                                // damn it...
 }
 
+
+/*
+// not yet used...
 
 void write_junk_file (int junk_num, int buf, string user_junk) {
   ofstream junk_file;
@@ -176,13 +248,13 @@ void write_junk_file (int junk_num, int buf, string user_junk) {
   junk_file << make_garbage(junk_num, buf, user_junk);
   junk_file.close();
 }
-
+*/
 
 int main (int argc, char* argv[]) {
-  if ((argc < 5 ) || (argc > 6)) {
+  if ((argc < 4 ) || (argc > 5)) {
     cerr << "Useage:" << endl;
-    cerr << argv[0] << " [command name] [command path] [buffer size] abcd" << endl;
-    cerr << argv[0] << " deluser /bin/deluser 2048 abcd" << endl;
+    cerr << argv[0] << " [command name] [command path] [buffer size]" << endl;
+    cerr << argv[0] << " deluser /bin/deluser 2048" << endl;
     exit (1);
   }
   char* the_man = argv[2];
@@ -204,6 +276,8 @@ int main (int argc, char* argv[]) {
     exit (1);
   }
 
+/*
++++ Deprecated in favor of stdin
   string user_j;
   if (argc == 6) {
     string user_j(argv[5]);
@@ -211,6 +285,10 @@ int main (int argc, char* argv[]) {
   if (argc == 5) {
     string user_j = "";
   }
+
+*/
+
+
 
   while (segged != 1) {
 
@@ -222,7 +300,10 @@ int main (int argc, char* argv[]) {
     }
     string sys_str = path_str + " ";
     for( vector<string>::const_iterator junk_opt = junk_opts.begin(); junk_opt != junk_opts.end(); ++junk_opt) { // loop through the vector of junk opts
-      sys_str = sys_str + *junk_opt + " " + make_garbage(rand_me_plz(0,4), buf_size, user_j) + " ";  // add options and garbage
+      string oscar = make_garbage(rand_me_plz(0,11),buf_size);
+      if (oscar != "OOR") {
+        sys_str = sys_str + *junk_opt + " " + oscar + " ";  // add options and garbage
+      }
     }
     junk_opts.clear();
     junk_opts.shrink_to_fit();
