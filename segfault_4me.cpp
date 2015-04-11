@@ -131,95 +131,185 @@ std::string make_garbage(int trash, int buf) {
   buf = buf-1;
   if (isatty(STDIN_FILENO)) {
     user_junk = "";
-  }
-  else std::getline(std::cin, user_junk);
-  if (trash == 0) {                                            // kosher
-    for (trash_num = 0; trash_num < buf; trash_num++) {
-      junk = "A" + junk; // put lots of As
+    if (trash == 0) {                                            // kosher
+      for (trash_num = 0; trash_num < buf; trash_num++) {
+        junk = "A" + junk; // put lots of As
+      }
     }
-  }
-  if (trash == 1) {
-    for (trash_num = 0; trash_num < buf; trash_num++) {
-      junk = "9" + junk; // yadda yadda
+    if (trash == 1) {
+      for (trash_num = 0; trash_num < buf; trash_num++) {
+        junk = "9" + junk; // yadda yadda
+      }
     }
-  }
-  if (trash == 2) {
+    if (trash == 2) {
       char fortune = fortune_cookie(); // ditto for random
-    for (trash_num = 0; trash_num < buf; trash_num++) {
-      junk = junk += fortune;
+      for (trash_num = 0; trash_num < buf; trash_num++) {
+        junk = junk += fortune;
+      }
     }
-  }
-  if (trash == 3) {
-    for (trash_num = 0; trash_num < buf; trash_num++) {
-      junk = junk += fortune_cookie();
+    if (trash == 3) {
+      for (trash_num = 0; trash_num < buf; trash_num++) {
+        junk = junk += fortune_cookie();
+      }
     }
-  }
-  if (trash == 4) {                                            // front
-    for (trash_num = 0; trash_num < buf; trash_num++) {
-      junk = "A" + junk; // put lots of As
+    if (trash == 4) {                                            // front
+      for (trash_num = 0; trash_num < buf; trash_num++) {
+        junk = "A" + junk; // put lots of As
+      }
+      junk = user_junk + junk;
+      if (buf-user_junk.length() < junk.size()) junk = junk.substr(0,buf);
+      else return ("OOR");
     }
-    junk = user_junk + junk;
-    if (buf-user_junk.length() < junk.size()) junk = junk.substr(0,buf);
-    else return ("OOR");
-  }
-  if (trash == 5) {
-    for (trash_num = 0; trash_num < buf; trash_num++) {
-      junk = "9" + junk; // yadda yadda
+    if (trash == 5) {
+      for (trash_num = 0; trash_num < buf; trash_num++) {
+        junk = "9" + junk; // yadda yadda
+      }
+      junk = user_junk + junk;
+      if (buf-user_junk.length() < junk.size()) junk = junk.substr(0,buf);
+      else return ("OOR");
     }
-    junk = user_junk + junk;
-    if (buf-user_junk.length() < junk.size()) junk = junk.substr(0,buf);
-    else return ("OOR");
-  }
-  if (trash == 6) {
+    if (trash == 6) {
       char fortune = fortune_cookie(); // ditto for random
-    for (trash_num = 0; trash_num < buf; trash_num++) {
-      junk = junk += fortune;
+      for (trash_num = 0; trash_num < buf; trash_num++) {
+        junk = junk += fortune;
+      }
+      junk = user_junk + junk;
+      if (buf-user_junk.length() < junk.size()) junk = junk.substr(0,buf);
+      else return ("OOR");
     }
-    junk = user_junk + junk;
-    if (buf-user_junk.length() < junk.size()) junk = junk.substr(0,buf);
-    else return ("OOR");
-  }
-  if (trash == 7) {
-    for (trash_num = 0; trash_num < buf; trash_num++) {
-      junk = junk += fortune_cookie();
+    if (trash == 7) {
+      for (trash_num = 0; trash_num < buf; trash_num++) {
+        junk = junk += fortune_cookie();
+      }
+      junk = user_junk + junk;
+      if (buf-user_junk.length() < junk.size()) junk = junk.substr(0,buf);
+      else return ("OOR");
     }
-    junk = user_junk + junk;
-    if (buf-user_junk.length() < junk.size()) junk = junk.substr(0,buf);
-    else return ("OOR");
-  }
-  if (trash == 8) {
-    for (trash_num = 0; trash_num < buf; trash_num++) {  // back
-      junk = "A" + junk; // put lots of As
+    if (trash == 8) {
+      for (trash_num = 0; trash_num < buf; trash_num++) {  // back
+        junk = "A" + junk; // put lots of As
+      }
+      junk = junk + user_junk;
+      if (buf-user_junk.length() < junk.size()) junk = junk.substr(junk.length()-buf);
+      else return ("OOR");
     }
-    junk = junk + user_junk;
-    if (buf-user_junk.length() < junk.size()) junk = junk.substr(junk.length()-buf);
-    else return ("OOR");
-  }
-  if (trash == 9) {
-    for (trash_num = 0; trash_num < buf; trash_num++) {
-      junk = "9" + junk; // yadda yadda
+    if (trash == 9) {
+      for (trash_num = 0; trash_num < buf; trash_num++) {
+        junk = "9" + junk; // yadda yadda
+      }
+      junk = junk + user_junk;
+      if (buf-user_junk.length() < junk.size()) junk = junk.substr(junk.length()-buf);
+      else return ("OOR");
     }
-    junk = junk + user_junk;
-    if (buf-user_junk.length() < junk.size()) junk = junk.substr(junk.length()-buf);
-    else return ("OOR");
-  }
-  if (trash == 10) {
+    if (trash == 10) {
       char fortune = fortune_cookie(); // ditto for random
-    for (trash_num = 0; trash_num < buf; trash_num++) {
-      junk = junk += fortune;
+      for (trash_num = 0; trash_num < buf; trash_num++) {
+        junk = junk += fortune;
+      }
+      junk = junk + user_junk;
+      if (buf-user_junk.length() < junk.size()) junk = junk.substr(junk.length()-buf);
+      else return ("OOR");
     }
-    junk = junk + user_junk;
-    if (buf-user_junk.length() < junk.size()) junk = junk.substr(junk.length()-buf);
-    else return ("OOR");
-  }
-  if (trash == 11) {
-    for (trash_num = 0; trash_num < buf; trash_num++) {
-      junk = junk += fortune_cookie();
+    if (trash == 11) {
+      for (trash_num = 0; trash_num < buf; trash_num++) {
+        junk = junk += fortune_cookie();
+      }
+      junk = junk + user_junk;
+      if (buf-user_junk.length() < junk.size()) junk = junk.substr(junk.length()-buf);
+      else return ("OOR");
     }
-    junk = junk + user_junk;
-    if (buf-user_junk.length() < junk.size()) junk = junk.substr(junk.length()-buf);
-    else return ("OOR");
   }
+  else {
+    getline(std::cin, user_junk);
+      if (trash == 0) {                                            // kosher
+        for (trash_num = 0; trash_num < buf; trash_num++) {
+          junk = "A" + junk; // put lots of As
+        }
+      }
+      if (trash == 1) {
+        for (trash_num = 0; trash_num < buf; trash_num++) {
+          junk = "9" + junk; // yadda yadda
+        }
+      }
+      if (trash == 2) {
+        char fortune = fortune_cookie(); // ditto for random
+        for (trash_num = 0; trash_num < buf; trash_num++) {
+          junk = junk += fortune;
+        }
+      }
+      if (trash == 3) {
+        for (trash_num = 0; trash_num < buf; trash_num++) {
+          junk = junk += fortune_cookie();
+        }
+      }
+      if (trash == 4) {                                            // front
+        for (trash_num = 0; trash_num < buf; trash_num++) {
+          junk = "A" + junk; // put lots of As
+        }
+        junk = user_junk + junk;
+        if (buf-user_junk.length() < junk.size()) junk = junk.substr(0,buf);
+        else return ("OOR");
+      }
+      if (trash == 5) {
+        for (trash_num = 0; trash_num < buf; trash_num++) {
+          junk = "9" + junk; // yadda yadda
+        }
+        junk = user_junk + junk;
+        if (buf-user_junk.length() < junk.size()) junk = junk.substr(0,buf);
+        else return ("OOR");
+      }
+      if (trash == 6) {
+        char fortune = fortune_cookie(); // ditto for random
+        for (trash_num = 0; trash_num < buf; trash_num++) {
+          junk = junk += fortune;
+        }
+        junk = user_junk + junk;
+        if (buf-user_junk.length() < junk.size()) junk = junk.substr(0,buf);
+        else return ("OOR");
+      }
+      if (trash == 7) {
+        for (trash_num = 0; trash_num < buf; trash_num++) {
+          junk = junk += fortune_cookie();
+        }
+        junk = user_junk + junk;
+        if (buf-user_junk.length() < junk.size()) junk = junk.substr(0,buf);
+        else return ("OOR");
+      }
+      if (trash == 8) {
+        for (trash_num = 0; trash_num < buf; trash_num++) {  // back
+          junk = "A" + junk; // put lots of As
+        }
+        junk = junk + user_junk;
+        if (buf-user_junk.length() < junk.size()) junk = junk.substr(junk.length()-buf);
+        else return ("OOR");
+      }
+      if (trash == 9) {
+        for (trash_num = 0; trash_num < buf; trash_num++) {
+          junk = "9" + junk; // yadda yadda
+        }
+        junk = junk + user_junk;
+        if (buf-user_junk.length() < junk.size()) junk = junk.substr(junk.length()-buf);
+        else return ("OOR");
+      }
+      if (trash == 10) {
+        char fortune = fortune_cookie(); // ditto for random
+        for (trash_num = 0; trash_num < buf; trash_num++) {
+          junk = junk += fortune;
+        }
+        junk = junk + user_junk;
+        if (buf-user_junk.length() < junk.size()) junk = junk.substr(junk.length()-buf);
+        else return ("OOR");
+      }
+      if (trash == 11) {
+        for (trash_num = 0; trash_num < buf; trash_num++) {
+          junk = junk += fortune_cookie();
+        }
+        junk = junk + user_junk;
+        if (buf-user_junk.length() < junk.size()) junk = junk.substr(junk.length()-buf);
+        else return ("OOR");
+      }
+    }
+  
   return(junk);
 }
 
@@ -282,6 +372,7 @@ void write_junk_file (int junk_num, int buf, string user_junk) {
   junk_file.close();
 }
 */
+
 
 int main (int argc, char* argv[]) {
   if ((argc < 4 ) || (argc > 5)) {
