@@ -254,15 +254,27 @@ std::string execer(std::string the_cmd_str) {
 }
 
 
-int match_seg(int buf_size, std::vector<std::string> opts, std::string path_str) {
+int match_seg(int buf_size, std::vector<std::string> opts, std::vector<std::string> spec_env, std::string path_str) {
   bool segged = false;
   if (file_exists(path_str) == true) {
     while (segged != true) {
-      
+      std::vector<std::string> junk_opts_env;
       std::vector<std::string> junk_opts;
       for( int cmd_flag_l = 0; cmd_flag_l < opts.size(); cmd_flag_l++) {  // loop around the options
         if (rand_me_plz(0,1) == 1) {   // roll tha die
           junk_opts.push_back(opts.at(cmd_flag_l));  // put the random arg in the vector
+        }
+      }
+      for( int cmd_flag_l = 0; cmd_flag_l < spec_env.size(); cmd_flag_l++) {  // loop around the options
+        if (rand_me_plz(0,1) == 1) {   // roll tha die
+          junk_opts_env.push_back(spec_env.at(cmd_flag_l));  // put the random arg in the vector
+        }
+      }
+      std::string env_str;
+      for( std::vector<std::string>::const_iterator junk_opt_env = junk_opts_env.begin(); junk_opt_env != junk_opts_env.end(); ++junk_opt_env) { // loop through the vector of junk envs
+        std::string oscar_env = make_garbage(rand_me_plz(0,11),buf_size);
+        if (oscar_env != "OOR") {
+          env_str = env_str + *junk_opt_env + oscar_env + " ";
         }
       }
       std::string sys_str = path_str + " ";
@@ -272,10 +284,10 @@ int match_seg(int buf_size, std::vector<std::string> opts, std::string path_str)
           sys_str = sys_str + *junk_opt + " " + oscar + " ";  // add options and garbage
         }
       }
+      sys_str = env_str + " " + sys_str;
       junk_opts.clear();
       junk_opts.shrink_to_fit();
       std::istringstream is_it_segfault(execer(sys_str)); // run it and grab stdout and stderr
-      
       std::string sf_line;
       while (std::getline(is_it_segfault, sf_line)) {
         std::regex sf_reg ("(.*Segmentation fault.*|.*core dump.*)"); // regex for the sf
@@ -296,37 +308,53 @@ int match_seg(int buf_size, std::vector<std::string> opts, std::string path_str)
 }
 
 
+
 int main (int argc, char* argv[]) {
-  int buf_size;
+  std::string buf_size;
   char* man_chr;
   std::vector<std::string> opts;
   std::string path_str;
+  std::vector<std::string> spec_env;
   int opt;
-  while ((opt = getopt(argc, argv, "m:t:c:b:")) != -1) {
+  while ((opt = getopt(argc, argv, "m:t:e:c:b:")) != -1) {
     switch (opt) {
       case 'm':
-        
         opts = get_flags_man(optarg);
         break;
       case 't':
         opts = get_flags_template(optarg);
         break;
       case 'c':
-        
         path_str = optarg;
         break;
       case 'b':
-        buf_size = std::atoi(optarg);
-        break;     
-        
+        buf_size = optarg;
+        break;
+      case 'e':
+        spec_env = get_flags_template(optarg);
+        break;
       default:
         std::cout
         << "Usage:" << std::endl
-        << " " << argv[0] << "-t|m template_or_manpage -c commandpath -b bufsize" << std::endl
+        << " " << argv[0] << "-t|m template_or_manpage -e env_var_file -c commandpath -b bufsize" << std::endl
         << " " << argv[0] << "-t template -c ./faulty -b 2048" << std::endl;
         exit(1);
     }  
   }
-  match_seg(buf_size, opts, path_str);
-  return (0); 
+  std::istringstream b_size(buf_size);
+  int is_int;
+  if (!(b_size >> is_int)) {
+    std::cerr << "Buffer size must be an integer..." << std::endl;
+    exit(1);
+  }
+  char buf_char_maybe;
+  if (b_size >> buf_char_maybe) {
+    std::cerr << "Buffer size must be an integer..." << std::endl;
+    exit(1);
+  }
+  else {
+    int buf_size_int = std::stoi(buf_size);
+    match_seg(buf_size_int, opts, spec_env, path_str);
+    return (0);
+  }
 }

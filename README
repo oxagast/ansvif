@@ -17,11 +17,18 @@ Using the example code:
 
 
 Useage:
-  ./segfault_4me -[tm] [template manpage] /path/to/executable buffersize
+  ./segfault_4me -[tm] [template manpage] -c /path/to/executable -b buffersize
 
   Examples:
-  $ echo "Marshall" | ./segfault_4me -t template ./faulty 64
-  $ ./segfault_4me -m mount /usr/sbin/mount 2048
+  $ echo "Marshall" | ./segfault_4me -t template -c ./faulty -b 64
+  $ ./segfault_4me -m mount -c /usr/sbin/mount -e mount_envs -b 2048
+
+
+Files:
+  -t This fileshould hold line by line command arguments as shown in the example file.
+  -e This file should hold line by line environment variables as shown in the example
+     file.  You can usually get these by doing something like:
+     $ strings /bin/mount | perl -ne 'print if /[A-Z]=$/ > mount_envs
 
 Recommendations:
   DO NOT RUN THIS CODE AS ROOT!
@@ -29,6 +36,8 @@ Recommendations:
   or atleast a machine that you don't care about.
   Other than that, just play around and have fun!
 
+
 Notes:
   As for now, this code is mostly still in an experimental state, and may not work
   correctly.
+
