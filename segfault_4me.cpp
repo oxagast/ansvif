@@ -19,12 +19,30 @@
 
 /*
  * Marshall Whittaker / oxagast
- * gcc segfault_4me.cpp -lstdc++ -lz -std=gnu++11 -L./gzstream -lgzstream -o segfault_4me
- * ./segfault_4me commandname commandpath buffersize
  */
 
 std::atomic<bool> ready (false);
 std::atomic_flag wins = ATOMIC_FLAG_INIT;
+
+void help_me(std::string mr_me) {
+  std::cout
+  << "Useage:" << std::endl
+  << " " << mr_me << " -t template -c ./faulty -b 2048" << std::endl
+  << "Options:" << std::endl
+  << " -t [file]    This file should hold line by line command arguments" << std::endl
+  << "              as shown in the example file." << std::endl
+  << " -e [file]    This file should hold line by line environment variables" << std::endl
+  << "              as shown in the example file.  You can" << std::endl
+  << "              usually get these by doing something like:" << std::endl
+  << "              $ strings /bin/mount | perl -ne 'print if /[A-Z]=$/ > mount_envs" << std::endl
+  << " -c [path]    Specifies the command path." << std::endl
+  << " -p [integer] Specifies the manpage location (as an integer, usually 1 or 8)." << std::endl
+  << " -m [command] Specifies the commands manpage." << std::endl
+  << " -f [integer] Number of threads to use.  Default is 2." << std::endl
+  << " -b [integer] Specifies the buffer size to fuzz with." << std::endl
+  << "              256-2048 Is usually sufficient."  << std::endl;
+  exit(0);
+}
 
 std::string remove_chars(const std::string& source, const std::string& chars) {
   std::string result="";
@@ -335,7 +353,7 @@ int main (int argc, char* argv[]) {
   bool template_opt = false;
   bool man_opt = false;
   int num_threads = 2;
-  while ((opt = getopt(argc, argv, "m:p:t:e:c:f:b:")) != -1) {
+  while ((opt = getopt(argc, argv, "m:p:t:e:c:f:b:h")) != -1) {
     switch (opt) {
       case 't':
         template_opt = true;
@@ -359,6 +377,9 @@ int main (int argc, char* argv[]) {
         break;
       case 'f':
         num_threads = std::atoi(optarg);
+        break;
+      case 'h':
+        help_me(argv[0]);
         break;
       default:
         std::cout

@@ -25,7 +25,7 @@ Useage:
 
 
 Options:
-  -t This fileshould hold line by line command arguments as shown in the example file.
+  -t This file should hold line by line command arguments as shown in the example file.
   -e This file should hold line by line environment variables as shown in the example
      file.  You can usually get these by doing something like:
      $ strings /bin/mount | perl -ne 'print if /[A-Z]=$/ > mount_envs
@@ -34,6 +34,7 @@ Options:
   -m Specifies the commands manpage.
   -f Number of threads to use.  Default is 2.
   -b Specifies the buffer size to fuzz with.  256-2048 Is usually sufficient.
+  -h Shows the help page.
 
 Recommendations:
   DO NOT RUN THIS CODE AS ROOT!
