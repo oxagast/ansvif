@@ -21,14 +21,19 @@ Useage:
 
   Examples:
   $ echo "Marshall" | ./segfault_4me -t template -c ./faulty -b 64
-  $ ./segfault_4me -m mount -c /usr/sbin/mount -e mount_envs -b 2048
+  $ ./segfault_4me -m mount -c /usr/sbin/mount -e env_template -f 8 -b 2048
 
 
-Files:
+Options:
   -t This fileshould hold line by line command arguments as shown in the example file.
   -e This file should hold line by line environment variables as shown in the example
      file.  You can usually get these by doing something like:
      $ strings /bin/mount | perl -ne 'print if /[A-Z]=$/ > mount_envs
+  -c Specifies the command path.
+  -p Specifies the manpage location (as an integer, usually 1 or 8)
+  -m Specifies the commands manpage.
+  -f Number of threads to use.  Default is 2.
+  -b Specifies the buffer size to fuzz with.  256-2048 Is usually sufficient.
 
 Recommendations:
   DO NOT RUN THIS CODE AS ROOT!

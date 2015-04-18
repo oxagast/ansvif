@@ -1,7 +1,7 @@
 # the compiler to use
 CC=gcc
 # options to pass to compiler
-CFLAGS=-lstdc++ -lgzstream -lz -std=gnu++11
+CFLAGS=-lstdc++ -lgzstream -lz -std=gnu++11 -lpthread -O3
 LDFLAGS=-L./gzstream
 all: segfault_4me
 

@@ -14,6 +14,8 @@
 #include "pstreams/pstream.h"
 #include <cstring>
 #include <sys/stat.h>
+#include <thread>
+#include <atomic>
 
 /*
  * Marshall Whittaker / oxagast
@@ -21,6 +23,8 @@
  * ./segfault_4me commandname commandpath buffersize
  */
 
+std::atomic<bool> ready (false);
+std::atomic_flag wins = ATOMIC_FLAG_INIT;
 
 std::string remove_chars(const std::string& source, const std::string& chars) {
   std::string result="";
@@ -68,11 +72,11 @@ char fortune_cookie () {
 }
 
 
-std::vector<std::string> get_flags_man(char* cmd) {
+std::vector<std::string> get_flags_man(char* cmd, std::string man_loc) {
   std::string cmd_name(cmd);
   std::string filename;
   std::vector<std::string> opt_vec;
-  filename = "/usr/share/man/man8/" + cmd_name + ".8.gz"; // put the filename back together
+  filename = "/usr/share/man/man" + man_loc + "/" + cmd_name + "." + man_loc + ".gz"; // put the filename back together
   if (file_exists(filename) == true) {
     char* chr_fn = strdup(filename.c_str()); // change the filename to a char pointer
     igzstream in(chr_fn);  //  gunzip baby
@@ -107,7 +111,7 @@ std::vector<std::string> get_flags_man(char* cmd) {
   opt_vec.erase(unique(opt_vec.begin(), opt_vec.end()), opt_vec.end());
   return(opt_vec);
 }
- 
+
 
 std::vector<std::string> get_flags_template(std::string filename) {
   int man_num;
@@ -295,7 +299,6 @@ int match_seg(int buf_size, std::vector<std::string> opts, std::vector<std::stri
         if (regex_match(sf_line, sf, sf_reg)) {  // match segfault
           std::cout << "Segfaulted with: " << sys_str << std::endl; 
           segged = true;
-          exit (0);
         }
       }
     }
@@ -308,6 +311,16 @@ int match_seg(int buf_size, std::vector<std::string> opts, std::vector<std::stri
 }
 
 
+void thread_me (int id, int buf_size_int, std::vector<std::string> opts, std::vector<std::string> spec_env, std::string path_str) {
+  while(!ready) {
+    std::this_thread::yield();
+  }      // wait for sig
+  match_seg(buf_size_int, opts, spec_env, path_str);  // start in parallel
+  if (!wins.test_and_set()) {
+    exit(0);  // exit all threads cleanly on a segfault
+  }
+}
+
 
 int main (int argc, char* argv[]) {
   std::string buf_size;
@@ -316,13 +329,17 @@ int main (int argc, char* argv[]) {
   std::string path_str;
   std::vector<std::string> spec_env;
   int opt;
-  while ((opt = getopt(argc, argv, "m:t:e:c:b:")) != -1) {
+  std::string man_loc = "8";
+  std::string mp;
+  std::string template_file;
+  bool template_opt = false;
+  bool man_opt = false;
+  int num_threads = 2;
+  while ((opt = getopt(argc, argv, "m:p:t:e:c:f:b:")) != -1) {
     switch (opt) {
-      case 'm':
-        opts = get_flags_man(optarg);
-        break;
       case 't':
-        opts = get_flags_template(optarg);
+        template_opt = true;
+        template_file = optarg;
         break;
       case 'c':
         path_str = optarg;
@@ -333,13 +350,37 @@ int main (int argc, char* argv[]) {
       case 'e':
         spec_env = get_flags_template(optarg);
         break;
+      case 'p':
+        man_loc = optarg;
+        break;
+      case 'm':
+        man_opt = true;
+        man_chr = optarg;
+        break;
+      case 'f':
+        num_threads = std::atoi(optarg);
+        break;
       default:
         std::cout
         << "Usage:" << std::endl
-        << " " << argv[0] << "-t|m template_or_manpage -e env_var_file -c commandpath -b bufsize" << std::endl
-        << " " << argv[0] << "-t template -c ./faulty -b 2048" << std::endl;
+        << " " << argv[0] << " -t|m template_or_manpage -e env_var_file -c commandpath -b bufsize" << std::endl
+        << " " << argv[0] << " -t template -c ./faulty -b 2048" << std::endl;
         exit(1);
     }  
+  }
+  if ((man_opt == true) && (template_opt == false)) {
+    opts = get_flags_man(man_chr, man_loc);
+  }
+  else if ((man_opt == false) && (template_opt == true)) {
+    opts = get_flags_template(template_file);
+  }
+  else if ((man_opt == true) && (template_opt == true)) {
+    std::cerr << "The -t and -m options cannot be specified simultaniously..." << std::endl;
+    exit(1);
+  }
+  else {
+    std::cerr << "You must specify -t or -m..." << std::endl;
+    exit(1);
   }
   std::istringstream b_size(buf_size);
   int is_int;
@@ -354,7 +395,10 @@ int main (int argc, char* argv[]) {
   }
   else {
     int buf_size_int = std::stoi(buf_size);
-    match_seg(buf_size_int, opts, spec_env, path_str);
+    std::vector<std::thread> threads;
+    for (int cur_thread=1; cur_thread <= num_threads; ++cur_thread) threads.push_back(std::thread(thread_me,cur_thread, buf_size_int, opts, spec_env, path_str));  // Thrift Shop
+    ready = true;  // bout to go get me some threads
+    for (auto& all_thread : threads) all_thread.join();  // is that your grandma's coat?
     return (0);
   }
 }
