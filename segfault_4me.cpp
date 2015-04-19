@@ -16,6 +16,8 @@
 #include <sys/stat.h>
 #include <thread>
 #include <atomic>
+#include <stdlib.h>
+#include <iomanip>
 
 /*
  * Marshall Whittaker / oxagast
@@ -75,16 +77,11 @@ int rand_me_plz (int rand_from, int rand_to) {
 
 
 char fortune_cookie () {
-  std::string rand_char;
-  std::string byte;
   char chr;
-  const char* hexdigit = "0123456789abcdef";  // hex character makeup
-  for(int hex_out_curl=0; hex_out_curl< 2; hex_out_curl+=2) {
-    char hexxy_1 = hexdigit[rand_me_plz(0,16) % 16];  // get 1 part of hex digit
-    char hexxy_2 = hexdigit[rand_me_plz(0,16) % 16];  // get 2 part of hex digit
-    rand_char = std::to_string(hexxy_1) + std::to_string(hexxy_2);  // put them together
-    byte = rand_char.substr(hex_out_curl,2);  // pull out one hex
-    chr = (char) (int)strtol(byte.c_str(), NULL, 16);  // get the char
+  const char *hex_digits = "0123456789ABCDEF";
+  int i;
+  for( i = 0 ; i < 1; i++ ) {
+    chr = hex_digits[ ( rand_me_plz(0, 255) ) ];
   }
   return(chr);
 }
@@ -166,9 +163,8 @@ std::string trash_generator(int trash, int buf, std::string user_junk) {
     }
   }
   if (trash == 2) {
-    char fortune = fortune_cookie(); // ditto for random
     for (trash_num = 0; trash_num < buf; trash_num++) {
-      junk = junk += fortune;
+      junk = junk += fortune_cookie();
     }
   }
   if (trash == 3) {
@@ -193,9 +189,8 @@ std::string trash_generator(int trash, int buf, std::string user_junk) {
     else return ("OOR");
   }
   if (trash == 6) {
-    char fortune = fortune_cookie(); // ditto for random
     for (trash_num = 0; trash_num < buf; trash_num++) {
-      junk = junk += fortune;
+      junk = junk += fortune_cookie();
     }
     junk = user_junk + junk;
     if (buf-user_junk.length() < junk.size()) junk = junk.substr(0,buf);
@@ -226,9 +221,8 @@ std::string trash_generator(int trash, int buf, std::string user_junk) {
     else return ("OOR");
   }
   if (trash == 10) {
-    char fortune = fortune_cookie(); // ditto for random
     for (trash_num = 0; trash_num < buf; trash_num++) {
-      junk = junk += fortune;
+      junk = junk += fortune_cookie();
     }
     junk = junk + user_junk;
     if (buf-user_junk.length() < junk.size()) junk = junk.substr(junk.length()-buf);
@@ -275,12 +269,20 @@ std::string execer(std::string the_cmd_str) {
   else return ("NOSEG");                                                // damn it...
 }
 
-
+std::string binstr_to_hex(std::string bin_str) {
+  std::stringstream hex_out;
+  hex_out << std::setw(2) << std::hex << std::uppercase;
+  std::copy(bin_str.begin(), bin_str.end(), std::ostream_iterator<unsigned int>(hex_out, "\\"));
+  std::string hexxy = "\\" + hex_out.str();
+  return (hexxy);
+}
+    
 int match_seg(int buf_size, std::vector<std::string> opts, std::vector<std::string> spec_env, std::string path_str) {
   bool segged = false;
   if (file_exists(path_str) == true) {
     while (segged != true) {
       std::vector<std::string> junk_opts_env;
+      std::string hex_str;
       std::vector<std::string> junk_opts;
       for( int cmd_flag_l = 0; cmd_flag_l < opts.size(); cmd_flag_l++) {  // loop around the options
         if (rand_me_plz(0,1) == 1) {   // roll tha die
@@ -304,6 +306,8 @@ int match_seg(int buf_size, std::vector<std::string> opts, std::vector<std::stri
         std::string oscar = make_garbage(rand_me_plz(0,11),buf_size);
         if (oscar != "OOR") {
           sys_str = sys_str + *junk_opt + " " + oscar + " ";  // add options and garbage
+          hex_str = binstr_to_hex(oscar);
+          
         }
       }
       sys_str = env_str + " " + sys_str;
