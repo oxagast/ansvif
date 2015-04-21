@@ -34,6 +34,7 @@ Options:
   -m Specifies the commands manpage.
   -f Number of threads to use.  Default is 2.
   -b Specifies the buffer size to fuzz with.  256-2048 Is usually sufficient.
+  -r Uses only random garbage data.  (note: this is buggy)
   -h Shows the help page.
 
 Recommendations:
@@ -46,6 +47,3 @@ Recommendations:
 Notes:
   As for now, this code is mostly still in an experimental state, and may not work
   correctly.
-  As of fixing the random hex code block, you must now cd to a temporary directory
-  so that the temporary dir will fill up with junk files (because of > and >> opers
-  in most shells)

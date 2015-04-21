@@ -18,12 +18,18 @@
 #include <atomic>
 #include <stdlib.h>
 #include <iomanip>
+#include <condition_variable>
+#include <chrono>
+#include <future>
 
 /*
  * Marshall Whittaker / oxagast
  */
 
 std::atomic<bool> ready (false);
+std::condition_variable cv;
+std::mutex cv_m;
+std::atomic<int> timer_a = ATOMIC_VAR_INIT(0);
 std::atomic_flag wins = ATOMIC_FLAG_INIT;
 
 void help_me(std::string mr_me) {
@@ -167,14 +173,17 @@ std::string trash_generator(int trash, int buf, std::string user_junk) {
       junk = junk += fortune_cookie();
     }
   }
-  if (trash == 3) {
-    for (trash_num = 0; trash_num < buf; trash_num++) {
-      junk = junk += fortune_cookie();
-    }
-  }
-  if (trash == 4) {                                            // front
+  if (trash == 3) {                                            // front
     for (trash_num = 0; trash_num < buf; trash_num++) {
       junk = "A" + junk; // put lots of As
+    }
+    junk = user_junk + junk;
+    if (buf-user_junk.length() < junk.size()) junk = junk.substr(0,buf);
+    else return ("OOR");
+  }
+  if (trash == 4) {
+    for (trash_num = 0; trash_num < buf; trash_num++) {
+      junk = "9" + junk; // yadda yadda
     }
     junk = user_junk + junk;
     if (buf-user_junk.length() < junk.size()) junk = junk.substr(0,buf);
@@ -182,29 +191,13 @@ std::string trash_generator(int trash, int buf, std::string user_junk) {
   }
   if (trash == 5) {
     for (trash_num = 0; trash_num < buf; trash_num++) {
-      junk = "9" + junk; // yadda yadda
+      junk = junk += fortune_cookie();
     }
     junk = user_junk + junk;
     if (buf-user_junk.length() < junk.size()) junk = junk.substr(0,buf);
     else return ("OOR");
   }
   if (trash == 6) {
-    for (trash_num = 0; trash_num < buf; trash_num++) {
-      junk = junk += fortune_cookie();
-    }
-    junk = user_junk + junk;
-    if (buf-user_junk.length() < junk.size()) junk = junk.substr(0,buf);
-    else return ("OOR");
-  }
-  if (trash == 7) {
-    for (trash_num = 0; trash_num < buf; trash_num++) {
-      junk = junk += fortune_cookie();
-    }
-    junk = user_junk + junk;
-    if (buf-user_junk.length() < junk.size()) junk = junk.substr(0,buf);
-    else return ("OOR");
-  }
-  if (trash == 8) {
     for (trash_num = 0; trash_num < buf; trash_num++) {  // back
       junk = "A" + junk; // put lots of As
     }
@@ -212,7 +205,7 @@ std::string trash_generator(int trash, int buf, std::string user_junk) {
     if (buf-user_junk.length() < junk.size()) junk = junk.substr(junk.length()-buf);
     else return ("OOR");
   }
-  if (trash == 9) {
+  if (trash == 7) {
     for (trash_num = 0; trash_num < buf; trash_num++) {
       junk = "9" + junk; // yadda yadda
     }
@@ -220,7 +213,7 @@ std::string trash_generator(int trash, int buf, std::string user_junk) {
     if (buf-user_junk.length() < junk.size()) junk = junk.substr(junk.length()-buf);
     else return ("OOR");
   }
-  if (trash == 10) {
+  if (trash == 8) {
     for (trash_num = 0; trash_num < buf; trash_num++) {
       junk = junk += fortune_cookie();
     }
@@ -228,14 +221,7 @@ std::string trash_generator(int trash, int buf, std::string user_junk) {
     if (buf-user_junk.length() < junk.size()) junk = junk.substr(junk.length()-buf);
     else return ("OOR");
   }
-  if (trash == 11) {
-    for (trash_num = 0; trash_num < buf; trash_num++) {
-      junk = junk += fortune_cookie();
-    }
-    junk = junk + user_junk;
-    if (buf-user_junk.length() < junk.size()) junk = junk.substr(junk.length()-buf);
-    else return ("OOR");
-  }
+  
   return(junk);
 }
 
@@ -276,11 +262,20 @@ std::string binstr_to_hex(std::string bin_str) {
   std::string hexxy = "\\" + hex_out.str();
   return (hexxy);
 }
-    
-int match_seg(int buf_size, std::vector<std::string> opts, std::vector<std::string> spec_env, std::string path_str) {
+
+bool match_seg(int buf_size, std::vector<std::string> opts, std::vector<std::string> spec_env, std::string path_str, std::string strip_shell, bool rand_all) {
   bool segged = false;
   if (file_exists(path_str) == true) {
-    while (segged != true) {
+    while (segged == false) {
+      int rand_spec_one, rand_spec_two;
+      if (rand_all == true) {
+        rand_spec_one = 2;
+        rand_spec_two = 2;
+      }
+      else {
+        rand_spec_one = 0;
+        rand_spec_two = 8;
+      }
       std::vector<std::string> junk_opts_env;
       std::string hex_str;
       std::vector<std::string> junk_opts;
@@ -296,18 +291,17 @@ int match_seg(int buf_size, std::vector<std::string> opts, std::vector<std::stri
       }
       std::string env_str;
       for( std::vector<std::string>::const_iterator junk_opt_env = junk_opts_env.begin(); junk_opt_env != junk_opts_env.end(); ++junk_opt_env) { // loop through the vector of junk envs
-        std::string oscar_env = make_garbage(rand_me_plz(0,11),buf_size);
+        std::string oscar_env = remove_chars(make_garbage(rand_me_plz(rand_spec_one,rand_spec_two),buf_size), strip_shell);
         if (oscar_env != "OOR") {
           env_str = env_str + *junk_opt_env + oscar_env + " ";
         }
       }
       std::string sys_str = path_str + " ";
       for( std::vector<std::string>::const_iterator junk_opt = junk_opts.begin(); junk_opt != junk_opts.end(); ++junk_opt) { // loop through the vector of junk opts
-        std::string oscar = make_garbage(rand_me_plz(0,11),buf_size);
+        std::string oscar = remove_chars(make_garbage(rand_me_plz(rand_spec_one,rand_spec_two),buf_size), strip_shell);
         if (oscar != "OOR") {
           sys_str = sys_str + *junk_opt + " " + oscar + " ";  // add options and garbage
           hex_str = binstr_to_hex(oscar);
-          
         }
       }
       sys_str = env_str + " " + sys_str;
@@ -319,12 +313,11 @@ int match_seg(int buf_size, std::vector<std::string> opts, std::vector<std::stri
         std::regex sf_reg ("(.*Segmentation fault.*|.*core dump.*)"); // regex for the sf
         std::smatch sf;
         if (regex_match(sf_line, sf, sf_reg)) {  // match segfault
-          std::cout << "Segfaulted with: " << sys_str << std::endl; 
-          segged = true;
+          std::cout << "Segfaulted with: " << sys_str << std::endl;
+          return(true);
         }
       }
     }
-    return(0);
   }
   else {
     std::cerr << "Command not found at path..." << std::endl;
@@ -333,14 +326,24 @@ int match_seg(int buf_size, std::vector<std::string> opts, std::vector<std::stri
 }
 
 
-void thread_me (int id, int buf_size_int, std::vector<std::string> opts, std::vector<std::string> spec_env, std::string path_str) {
+
+int thread_me(int id, int buf_size_int, std::vector<std::string> opts, std::vector<std::string> spec_env, std::string path_str, std::string strip_shell, bool rand_all) {
   while(!ready) {
     std::this_thread::yield();
   }      // wait for sig
-  match_seg(buf_size_int, opts, spec_env, path_str);  // start in parallel
+  match_seg(buf_size_int, opts, spec_env, path_str, strip_shell, rand_all);
+  return(0);
   if (!wins.test_and_set()) {
     exit(0);  // exit all threads cleanly on a segfault
   }
+}
+
+int coat (int id, int buf_size_int, std::vector<std::string> opts, std::vector<std::string> spec_env, std::string path_str, std::string strip_shell, bool rand_all) {
+  std::future<int> fut = std::async (thread_me, id, buf_size_int, opts, spec_env, path_str, strip_shell, rand_all);
+  std::chrono::milliseconds span (100);
+  while (fut.wait_for(span)==std::future_status::timeout) std::cout << '.';
+  fut.get();
+  exit(0);
 }
 
 
@@ -354,10 +357,12 @@ int main (int argc, char* argv[]) {
   std::string man_loc = "8";
   std::string mp;
   std::string template_file;
+  std::string strip_shell = "<>\n |&\[]\()\{}:";
   bool template_opt = false;
   bool man_opt = false;
+  bool rand_all = false;
   int num_threads = 2;
-  while ((opt = getopt(argc, argv, "m:p:t:e:c:f:b:h")) != -1) {
+  while ((opt = getopt(argc, argv, "m:p:t:e:c:f:b:hr")) != -1) {
     switch (opt) {
       case 't':
         template_opt = true;
@@ -384,6 +389,9 @@ int main (int argc, char* argv[]) {
         break;
       case 'h':
         help_me(argv[0]);
+        break;
+      case 'r':
+        rand_all = true;
         break;
       default:
         std::cout
@@ -421,9 +429,15 @@ int main (int argc, char* argv[]) {
   else {
     int buf_size_int = std::stoi(buf_size);
     std::vector<std::thread> threads;
-    for (int cur_thread=1; cur_thread <= num_threads; ++cur_thread) threads.push_back(std::thread(thread_me,cur_thread, buf_size_int, opts, spec_env, path_str));  // Thrift Shop
+    for (int cur_thread=1; cur_thread <= num_threads; ++cur_thread) threads.push_back(std::thread(coat, cur_thread, buf_size_int, opts, spec_env, path_str, strip_shell, rand_all));  // Thrift Shop
     ready = true;  // bout to go get me some threads
     for (auto& all_thread : threads) all_thread.join();  // is that your grandma's coat?
-    return (0);
+    exit(0);
   }
 }
+
+
+
+
+  
+
