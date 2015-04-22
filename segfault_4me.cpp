@@ -48,9 +48,13 @@ void help_me(std::string mr_me) {
   << " -m [command] Specifies the commands manpage." << std::endl
   << " -f [integer] Number of threads to use.  Default is 2." << std::endl
   << " -b [integer] Specifies the buffer size to fuzz with." << std::endl
-  << "              256-2048 Is usually sufficient."  << std::endl;
+  << "              256-2048 Is usually sufficient."  << std::endl
+  << " -r           Use only random data." << std::endl
+  << " -z           Randomize buffer size from 1 to specified by the -b option." << std::endl
+  << " -o [file]    Log to this file." << std::endl;
   exit(0);
 }
+
 
 std::string remove_chars(const std::string& source, const std::string& chars) {
   std::string result="";
@@ -154,6 +158,7 @@ std::vector<std::string> get_flags_template(std::string filename) {
   return(opt_vec);  
 }
 
+
 std::string trash_generator(int trash, int buf, std::string user_junk) {
   std::string junk = "";
   std::string hex_stuff;
@@ -242,6 +247,7 @@ std::string make_garbage(int trash, int buf) {
   return(all_junk);
 }
 
+
 std::string execer(std::string the_cmd_str) {
   std::vector<std::string> errors;
   redi::ipstream in(the_cmd_str + " >&2", redi::pstreambuf::pstderr); // gotta put them to stderr
@@ -255,6 +261,7 @@ std::string execer(std::string the_cmd_str) {
   else return ("NOSEG");                                                // damn it...
 }
 
+
 std::string binstr_to_hex(std::string bin_str) {
   std::stringstream hex_out;
   hex_out << std::setw(2) << std::hex << std::uppercase;
@@ -263,7 +270,16 @@ std::string binstr_to_hex(std::string bin_str) {
   return (hexxy);
 }
 
-bool match_seg(int buf_size, std::vector<std::string> opts, std::vector<std::string> spec_env, std::string path_str, std::string strip_shell, bool rand_all) {
+
+void write_seg(std::string filename, std::string seg_line) {
+  std::ofstream w_f;
+  w_f.open (filename);
+  w_f << seg_line << std::endl;
+  w_f.close();
+}
+
+
+bool match_seg(int buf_size, std::vector<std::string> opts, std::vector<std::string> spec_env, std::string path_str, std::string strip_shell, bool rand_all, bool write_to_file, std::string write_file_n, bool rand_buf) {
   bool segged = false;
   if (file_exists(path_str) == true) {
     while (segged == false) {
@@ -277,43 +293,65 @@ bool match_seg(int buf_size, std::vector<std::string> opts, std::vector<std::str
         rand_spec_two = 8;
       }
       std::vector<std::string> junk_opts_env;
-      std::string hex_str;
       std::vector<std::string> junk_opts;
-      for( int cmd_flag_l = 0; cmd_flag_l < opts.size(); cmd_flag_l++) {  // loop around the options
+      std::string env_str;
+      std::string sys_str;
+      for(int cmd_flag_l = 0; cmd_flag_l < opts.size(); cmd_flag_l++) {  // loop around the options
         if (rand_me_plz(0,1) == 1) {   // roll tha die
           junk_opts.push_back(opts.at(cmd_flag_l));  // put the random arg in the vector
         }
       }
-      for( int cmd_flag_l = 0; cmd_flag_l < spec_env.size(); cmd_flag_l++) {  // loop around the options
+      for(int cmd_flag_a = 0; cmd_flag_a < spec_env.size(); cmd_flag_a++) {  // loop around the options
         if (rand_me_plz(0,1) == 1) {   // roll tha die
-          junk_opts_env.push_back(spec_env.at(cmd_flag_l));  // put the random arg in the vector
+          junk_opts_env.push_back(spec_env.at(cmd_flag_a));  // put the random arg in the vector
         }
       }
-      std::string env_str;
-      for( std::vector<std::string>::const_iterator junk_opt_env = junk_opts_env.begin(); junk_opt_env != junk_opts_env.end(); ++junk_opt_env) { // loop through the vector of junk envs
-        std::string oscar_env = remove_chars(make_garbage(rand_me_plz(rand_spec_one,rand_spec_two),buf_size), strip_shell);
-        if (oscar_env != "OOR") {
-          env_str = env_str + *junk_opt_env + oscar_env + " ";
+      if (rand_buf == true) {
+        for( std::vector<std::string>::const_iterator junk_opt_env = junk_opts_env.begin(); junk_opt_env != junk_opts_env.end(); ++junk_opt_env) { // loop through the vector of junk envs
+          std::string oscar_env = remove_chars(make_garbage(rand_me_plz(rand_spec_one,rand_spec_two),rand_me_plz(1,buf_size)), strip_shell);
+          if (oscar_env != "OOR") {
+            env_str = env_str + *junk_opt_env + oscar_env + " ";
+          }
+        }
+        
+        for( std::vector<std::string>::const_iterator junk_opt = junk_opts.begin(); junk_opt != junk_opts.end(); ++junk_opt) { // loop through the vector of junk opts
+          std::string oscar = remove_chars(make_garbage(rand_me_plz(rand_spec_one,rand_spec_two),rand_me_plz(1,buf_size)), strip_shell);
+          if (oscar != "OOR") {
+            sys_str = sys_str + *junk_opt + " " + oscar + " ";  // add options and garbage
+          }
         }
       }
-      std::string sys_str = path_str + " ";
-      for( std::vector<std::string>::const_iterator junk_opt = junk_opts.begin(); junk_opt != junk_opts.end(); ++junk_opt) { // loop through the vector of junk opts
-        std::string oscar = remove_chars(make_garbage(rand_me_plz(rand_spec_one,rand_spec_two),buf_size), strip_shell);
-        if (oscar != "OOR") {
-          sys_str = sys_str + *junk_opt + " " + oscar + " ";  // add options and garbage
-          hex_str = binstr_to_hex(oscar);
+      else if (rand_buf == false) {
+        
+        for( std::vector<std::string>::const_iterator junk_opt_env = junk_opts_env.begin(); junk_opt_env != junk_opts_env.end(); ++junk_opt_env) { // loop through the vector of junk envs
+          std::string oscar_env = remove_chars(make_garbage(rand_me_plz(rand_spec_one,rand_spec_two),buf_size), strip_shell);
+          if (oscar_env != "OOR") {
+            env_str = env_str + *junk_opt_env + oscar_env + " ";
+          }
+        }
+        for( std::vector<std::string>::const_iterator junk_opt = junk_opts.begin(); junk_opt != junk_opts.end(); ++junk_opt) { // loop through the vector of junk opts
+          std::string oscar = remove_chars(make_garbage(rand_me_plz(rand_spec_one,rand_spec_two),buf_size), strip_shell);
+          if (oscar != "OOR") {
+            sys_str = sys_str + *junk_opt + " " + oscar + " ";  // add options and garbage
+          }
         }
       }
-      sys_str = env_str + " " + sys_str;
+      std::string out_str = env_str + " " + path_str + " " + sys_str;
       junk_opts.clear();
       junk_opts.shrink_to_fit();
-      std::istringstream is_it_segfault(execer(sys_str)); // run it and grab stdout and stderr
+      junk_opts_env.clear();
+      junk_opts_env.shrink_to_fit();
+      std::istringstream is_it_segfault(execer(out_str)); // run it and grab stdout and stderr
       std::string sf_line;
       while (std::getline(is_it_segfault, sf_line)) {
         std::regex sf_reg ("(.*Segmentation fault.*|.*core dump.*)"); // regex for the sf
         std::smatch sf;
         if (regex_match(sf_line, sf, sf_reg)) {  // match segfault
-          std::cout << "Segfaulted with: " << sys_str << std::endl;
+          std::cout << "Segfaulted with: " << out_str << std::endl;
+          if (write_to_file == true) {
+            write_seg(write_file_n, out_str);
+            std::cout << "Segmentation fault logged" << std::endl;
+          }
           return(true);
         }
       }
@@ -326,20 +364,20 @@ bool match_seg(int buf_size, std::vector<std::string> opts, std::vector<std::str
 }
 
 
-
-int thread_me(int id, int buf_size_int, std::vector<std::string> opts, std::vector<std::string> spec_env, std::string path_str, std::string strip_shell, bool rand_all) {
+int thread_me(int id, int buf_size_int, std::vector<std::string> opts, std::vector<std::string> spec_env, std::string path_str, std::string strip_shell, bool rand_all, bool write_to_file, std::string write_file_n, bool rand_buf) {
   while(!ready) {
     std::this_thread::yield();
   }      // wait for sig
-  match_seg(buf_size_int, opts, spec_env, path_str, strip_shell, rand_all);
+  match_seg(buf_size_int, opts, spec_env, path_str, strip_shell, rand_all, write_to_file, write_file_n, rand_buf);
   return(0);
   if (!wins.test_and_set()) {
     exit(0);  // exit all threads cleanly on a segfault
   }
 }
 
-int coat (int id, int buf_size_int, std::vector<std::string> opts, std::vector<std::string> spec_env, std::string path_str, std::string strip_shell, bool rand_all) {
-  std::future<int> fut = std::async (thread_me, id, buf_size_int, opts, spec_env, path_str, strip_shell, rand_all);
+
+int coat (int id, int buf_size_int, std::vector<std::string> opts, std::vector<std::string> spec_env, std::string path_str, std::string strip_shell, bool rand_all, bool write_to_file, std::string write_file_n, bool rand_buf) {
+  std::future<int> fut = std::async (thread_me, id, buf_size_int, opts, spec_env, path_str, strip_shell, rand_all, write_to_file, write_file_n, rand_buf);
   std::chrono::milliseconds span (100);
   while (fut.wait_for(span)==std::future_status::timeout) std::cout << '.';
   fut.get();
@@ -348,21 +386,26 @@ int coat (int id, int buf_size_int, std::vector<std::string> opts, std::vector<s
 
 
 int main (int argc, char* argv[]) {
-  std::string buf_size;
+
   char* man_chr;
-  std::vector<std::string> opts;
-  std::string path_str;
-  std::vector<std::string> spec_env;
   int opt;
+  int num_threads = 2;
+  std::vector<std::string> opts;
+  std::vector<std::string> spec_env;
   std::string man_loc = "8";
+  std::string buf_size;
   std::string mp;
   std::string template_file;
   std::string strip_shell = "<>\n |&\[]\()\{}:";
+  std::string write_file_n = "";
+  std::string path_str = "";
   bool template_opt = false;
   bool man_opt = false;
   bool rand_all = false;
-  int num_threads = 2;
-  while ((opt = getopt(argc, argv, "m:p:t:e:c:f:b:hr")) != -1) {
+  bool rand_buf = false;
+  bool write_to_file = false;
+
+  while ((opt = getopt(argc, argv, "m:p:t:e:c:f:o:b:hrz")) != -1) {
     switch (opt) {
       case 't':
         template_opt = true;
@@ -387,17 +430,25 @@ int main (int argc, char* argv[]) {
       case 'f':
         num_threads = std::atoi(optarg);
         break;
+      case 'o':
+        write_to_file = true;
+        write_file_n = optarg;
+        break;
       case 'h':
         help_me(argv[0]);
         break;
       case 'r':
         rand_all = true;
         break;
+      case 'z':
+        rand_buf = true;
+        break;
       default:
         std::cout
         << "Usage:" << std::endl
         << " " << argv[0] << " -t|m template_or_manpage -e env_var_file -c commandpath -b bufsize" << std::endl
-        << " " << argv[0] << " -t template -c ./faulty -b 2048" << std::endl;
+        << " " << argv[0] << " -t template -c ./faulty -b 2048" << std::endl
+        << " " << argv[0] << " -h" << std::endl;
         exit(1);
     }  
   }
@@ -411,9 +462,15 @@ int main (int argc, char* argv[]) {
     std::cerr << "The -t and -m options cannot be specified simultaniously..." << std::endl;
     exit(1);
   }
-  else {
+  else if ((man_opt == false) && (template_opt == false)) {
     std::cerr << "You must specify -t or -m..." << std::endl;
     exit(1);
+  }
+  else if (path_str == "") {
+    std::cerr << "You must specify -c..." << std::endl;
+  }
+  else {
+    help_me(argv[0]);
   }
   std::istringstream b_size(buf_size);
   int is_int;
@@ -429,15 +486,9 @@ int main (int argc, char* argv[]) {
   else {
     int buf_size_int = std::stoi(buf_size);
     std::vector<std::thread> threads;
-    for (int cur_thread=1; cur_thread <= num_threads; ++cur_thread) threads.push_back(std::thread(coat, cur_thread, buf_size_int, opts, spec_env, path_str, strip_shell, rand_all));  // Thrift Shop
+    for (int cur_thread=1; cur_thread <= num_threads; ++cur_thread) threads.push_back(std::thread(coat, cur_thread, buf_size_int, opts, spec_env, path_str, strip_shell, rand_all, write_to_file, write_file_n, rand_buf));  // Thrift Shop
     ready = true;  // bout to go get me some threads
     for (auto& all_thread : threads) all_thread.join();  // is that your grandma's coat?
     exit(0);
   }
 }
-
-
-
-
-  
-

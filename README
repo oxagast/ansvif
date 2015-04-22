@@ -35,10 +35,13 @@ Options:
   -f Number of threads to use.  Default is 2.
   -b Specifies the buffer size to fuzz with.  256-2048 Is usually sufficient.
   -r Uses only random garbage data.  (note: this is buggy)
+  -o Writes output to log file.
+  -z Randomize the buffer size from 1 to what is specified by -b.
   -h Shows the help page.
 
 Recommendations:
   DO NOT RUN THIS CODE AS ROOT!
+  DO NOT RUN THIS CODE IN A PRODUCTION ENVIRONMENT!
   If you try setting faulty.c's output to suid(0) then PLEASE do it in a virtual machine
   or atleast a machine that you don't care about.
   Other than that, just play around and have fun!
