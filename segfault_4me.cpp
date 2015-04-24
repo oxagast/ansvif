@@ -42,7 +42,7 @@ void help_me(std::string mr_me) {
   << " -e [file]    This file should hold line by line environment variables" << std::endl
   << "              as shown in the example file.  You can" << std::endl
   << "              usually get these by doing something like:" << std::endl
-  << "              $ strings /bin/mount | perl -ne 'print if /[A-Z]=$/ > mount_envs" << std::endl
+  << "              $ strings /bin/mount | perl -ne 'print if /[A-Z]=$/' > mount_envs" << std::endl
   << " -c [path]    Specifies the command path." << std::endl
   << " -p [integer] Specifies the manpage location (as an integer, usually 1 or 8)." << std::endl
   << " -m [command] Specifies the commands manpage." << std::endl
@@ -51,6 +51,9 @@ void help_me(std::string mr_me) {
   << "              256-2048 Is usually sufficient."  << std::endl
   << " -r           Use only random data." << std::endl
   << " -z           Randomize buffer size from 1 to specified by the -b option." << std::endl
+  << " -s \"@#^$CE\"  Characters to omit from randomization.  Default omitted" << std::endl
+  << "              characters are: <>\\n |&\[]\()\{}: and mandatory omitted" << std::endl
+  << "              characters are: >\\n" << std::endl
   << " -o [file]    Log to this file." << std::endl;
   exit(0);
 }
@@ -397,6 +400,7 @@ int main (int argc, char* argv[]) {
   std::string mp;
   std::string template_file;
   std::string strip_shell = "<>\n |&\[]\()\{}:";
+  std::string u_strip_shell;
   std::string write_file_n = "";
   std::string path_str = "";
   bool template_opt = false;
@@ -404,8 +408,8 @@ int main (int argc, char* argv[]) {
   bool rand_all = false;
   bool rand_buf = false;
   bool write_to_file = false;
-
-  while ((opt = getopt(argc, argv, "m:p:t:e:c:f:o:b:hrz")) != -1) {
+  bool u_strip_shell_set = false;
+  while ((opt = getopt(argc, argv, "m:p:t:e:c:f:o:b:s:hrz")) != -1) {
     switch (opt) {
       case 't':
         template_opt = true;
@@ -443,14 +447,16 @@ int main (int argc, char* argv[]) {
       case 'z':
         rand_buf = true;
         break;
+      case 's':
+        u_strip_shell = optarg;
+        u_strip_shell_set = true;
+        break;
       default:
-        std::cout
-        << "Usage:" << std::endl
-        << " " << argv[0] << " -t|m template_or_manpage -e env_var_file -c commandpath -b bufsize" << std::endl
-        << " " << argv[0] << " -t template -c ./faulty -b 2048" << std::endl
-        << " " << argv[0] << " -h" << std::endl;
-        exit(1);
+        help_me(argv[0]);
     }  
+  }
+  if (u_strip_shell_set == true) {
+    strip_shell = u_strip_shell + ">\n";
   }
   if ((man_opt == true) && (template_opt == false)) {
     opts = get_flags_man(man_chr, man_loc);
@@ -459,15 +465,13 @@ int main (int argc, char* argv[]) {
     opts = get_flags_template(template_file);
   }
   else if ((man_opt == true) && (template_opt == true)) {
-    std::cerr << "The -t and -m options cannot be specified simultaniously..." << std::endl;
-    exit(1);
+    help_me(argv[0]);
   }
   else if ((man_opt == false) && (template_opt == false)) {
-    std::cerr << "You must specify -t or -m..." << std::endl;
-    exit(1);
+    help_me(argv[0]);
   }
   else if (path_str == "") {
-    std::cerr << "You must specify -c..." << std::endl;
+    help_me(argv[0]);
   }
   else {
     help_me(argv[0]);
@@ -475,13 +479,11 @@ int main (int argc, char* argv[]) {
   std::istringstream b_size(buf_size);
   int is_int;
   if (!(b_size >> is_int)) {
-    std::cerr << "Buffer size must be an integer..." << std::endl;
-    exit(1);
+    help_me(argv[0]);
   }
   char buf_char_maybe;
   if (b_size >> buf_char_maybe) {
-    std::cerr << "Buffer size must be an integer..." << std::endl;
-    exit(1);
+    help_me(argv[0]);
   }
   else {
     int buf_size_int = std::stoi(buf_size);
