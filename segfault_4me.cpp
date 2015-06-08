@@ -54,7 +54,9 @@ void help_me(std::string mr_me) {
   << " -s \"@#^$CE\"  Characters to omit from randomization.  Default omitted" << std::endl
   << "              characters are: <>\\n |&\[]\()\{}: and mandatory omitted" << std::endl
   << "              characters are: >\\n" << std::endl
-  << " -o [file]    Log to this file." << std::endl;
+  << " -o [file]    Log to this file." << std::endl
+  << " -v           Verbose." << std::endl
+  << " -d           Debug." << std::endl;
   exit(0);
 }
 
@@ -100,7 +102,7 @@ char fortune_cookie () {
 }
 
 
-std::vector<std::string> get_flags_man(char* cmd, std::string man_loc) {
+std::vector<std::string> get_flags_man(char* cmd, std::string man_loc, bool verbose, bool debug) {
   std::string cmd_name(cmd);
   std::string filename;
   std::vector<std::string> opt_vec;
@@ -137,11 +139,18 @@ std::vector<std::string> get_flags_man(char* cmd, std::string man_loc) {
   }
   std::sort(opt_vec.begin(), opt_vec.end());
   opt_vec.erase(unique(opt_vec.begin(), opt_vec.end()), opt_vec.end());
+  if (verbose == true) {
+    std::cout << "Options being used: " << std::endl;
+    for(int man_ln = 0; man_ln < opt_vec.size(); man_ln++) {  // loop around the options
+      std::cout << opt_vec.at(man_ln) << " ";  // output options
+    }
+    std::cout << std::endl;
+  }
   return(opt_vec);
 }
 
 
-std::vector<std::string> get_flags_template(std::string filename) {
+std::vector<std::string> get_flags_template(std::string filename, bool verbose, bool debug) {
   int man_num;
   std::vector<std::string> opt_vec;
   std::string line;
@@ -251,11 +260,14 @@ std::string make_garbage(int trash, int buf) {
 }
 
 
-std::string execer(std::string the_cmd_str) {
+std::string execer(std::string the_cmd_str, bool verbose, bool debug) {
   std::vector<std::string> errors;
   redi::ipstream in(the_cmd_str + " >&2", redi::pstreambuf::pstderr); // gotta put them to stderr
   std::string errmsg;                                                      // some os thing
   while (std::getline(in, errmsg)) {
+    if (debug == true) {
+      std::cout << errmsg << std::endl;
+    }
     errors.push_back(errmsg);
   }
   if (errors.size() > 0) {
@@ -282,7 +294,7 @@ void write_seg(std::string filename, std::string seg_line) {
 }
 
 
-bool match_seg(int buf_size, std::vector<std::string> opts, std::vector<std::string> spec_env, std::string path_str, std::string strip_shell, bool rand_all, bool write_to_file, std::string write_file_n, bool rand_buf) {
+bool match_seg(int buf_size, std::vector<std::string> opts, std::vector<std::string> spec_env, std::string path_str, std::string strip_shell, bool rand_all, bool write_to_file, std::string write_file_n, bool rand_buf, bool verbose, bool debug) {
   bool segged = false;
   if (file_exists(path_str) == true) {
     while (segged == false) {
@@ -344,7 +356,10 @@ bool match_seg(int buf_size, std::vector<std::string> opts, std::vector<std::str
       junk_opts.shrink_to_fit();
       junk_opts_env.clear();
       junk_opts_env.shrink_to_fit();
-      std::istringstream is_it_segfault(execer(out_str)); // run it and grab stdout and stderr
+      if (debug == true) {
+        std::cout << std::endl << out_str << std::endl;
+      }
+      std::istringstream is_it_segfault(execer(out_str, verbose, debug)); // run it and grab stdout and stderr
       std::string sf_line;
       while (std::getline(is_it_segfault, sf_line)) {
         std::regex sf_reg ("(.*Segmentation fault.*|.*core dump.*)"); // regex for the sf
@@ -367,11 +382,11 @@ bool match_seg(int buf_size, std::vector<std::string> opts, std::vector<std::str
 }
 
 
-int thread_me(int id, int buf_size_int, std::vector<std::string> opts, std::vector<std::string> spec_env, std::string path_str, std::string strip_shell, bool rand_all, bool write_to_file, std::string write_file_n, bool rand_buf) {
+int thread_me(int id, int buf_size_int, std::vector<std::string> opts, std::vector<std::string> spec_env, std::string path_str, std::string strip_shell, bool rand_all, bool write_to_file, std::string write_file_n, bool rand_buf, bool verbose, bool debug) {
   while(!ready) {
     std::this_thread::yield();
   }      // wait for sig
-  match_seg(buf_size_int, opts, spec_env, path_str, strip_shell, rand_all, write_to_file, write_file_n, rand_buf);
+  match_seg(buf_size_int, opts, spec_env, path_str, strip_shell, rand_all, write_to_file, write_file_n, rand_buf, verbose, debug);
   return(0);
   if (!wins.test_and_set()) {
     exit(0);  // exit all threads cleanly on a segfault
@@ -379,8 +394,8 @@ int thread_me(int id, int buf_size_int, std::vector<std::string> opts, std::vect
 }
 
 
-int coat (int id, int buf_size_int, std::vector<std::string> opts, std::vector<std::string> spec_env, std::string path_str, std::string strip_shell, bool rand_all, bool write_to_file, std::string write_file_n, bool rand_buf) {
-  std::future<int> fut = std::async (thread_me, id, buf_size_int, opts, spec_env, path_str, strip_shell, rand_all, write_to_file, write_file_n, rand_buf);
+int coat (int id, int buf_size_int, std::vector<std::string> opts, std::vector<std::string> spec_env, std::string path_str, std::string strip_shell, bool rand_all, bool write_to_file, std::string write_file_n, bool rand_buf, bool verbose, bool debug) {
+  std::future<int> fut = std::async (thread_me, id, buf_size_int, opts, spec_env, path_str, strip_shell, rand_all, write_to_file, write_file_n, rand_buf, verbose, debug);
   std::chrono::milliseconds span (100);
   while (fut.wait_for(span)==std::future_status::timeout) std::cout << '.';
   fut.get();
@@ -409,8 +424,16 @@ int main (int argc, char* argv[]) {
   bool rand_buf = false;
   bool write_to_file = false;
   bool u_strip_shell_set = false;
-  while ((opt = getopt(argc, argv, "m:p:t:e:c:f:o:b:s:hrz")) != -1) {
+  bool verbose = false;
+  bool debug = false;
+  while ((opt = getopt(argc, argv, "m:p:t:e:c:f:o:b:s:hrzvd")) != -1) {
     switch (opt) {
+      case 'v':
+        verbose = true;
+        break;
+      case 'd':
+        debug = true;
+        break;
       case 't':
         template_opt = true;
         template_file = optarg;
@@ -422,7 +445,7 @@ int main (int argc, char* argv[]) {
         buf_size = optarg;
         break;
       case 'e':
-        spec_env = get_flags_template(optarg);
+        spec_env = get_flags_template(optarg, verbose, debug);
         break;
       case 'p':
         man_loc = optarg;
@@ -459,10 +482,10 @@ int main (int argc, char* argv[]) {
     strip_shell = u_strip_shell + ">\n";
   }
   if ((man_opt == true) && (template_opt == false)) {
-    opts = get_flags_man(man_chr, man_loc);
+    opts = get_flags_man(man_chr, man_loc, verbose, debug);
   }
   else if ((man_opt == false) && (template_opt == true)) {
-    opts = get_flags_template(template_file);
+    opts = get_flags_template(template_file, verbose, debug);
   }
   else if ((man_opt == true) && (template_opt == true)) {
     help_me(argv[0]);
@@ -488,7 +511,7 @@ int main (int argc, char* argv[]) {
   else {
     int buf_size_int = std::stoi(buf_size);
     std::vector<std::thread> threads;
-    for (int cur_thread=1; cur_thread <= num_threads; ++cur_thread) threads.push_back(std::thread(coat, cur_thread, buf_size_int, opts, spec_env, path_str, strip_shell, rand_all, write_to_file, write_file_n, rand_buf));  // Thrift Shop
+    for (int cur_thread=1; cur_thread <= num_threads; ++cur_thread) threads.push_back(std::thread(coat, cur_thread, buf_size_int, opts, spec_env, path_str, strip_shell, rand_all, write_to_file, write_file_n, rand_buf, verbose, debug));  // Thrift Shop
     ready = true;  // bout to go get me some threads
     for (auto& all_thread : threads) all_thread.join();  // is that your grandma's coat?
     exit(0);
