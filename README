@@ -37,6 +37,8 @@ Options:
   -r Uses only random garbage data.  (note: this is buggy)
   -o Writes output to log file.
   -z Randomize the buffer size from 1 to what is specified by -b.
+  -v Verbose.
+  -d Debug data.
   -h Shows the help page.
 
 Recommendations:

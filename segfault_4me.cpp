@@ -26,11 +26,9 @@
  * Marshall Whittaker / oxagast
  */
 
-std::atomic<bool> ready (false);
 std::condition_variable cv;
 std::mutex cv_m;
 std::atomic<int> timer_a = ATOMIC_VAR_INIT(0);
-std::atomic_flag wins = ATOMIC_FLAG_INIT;
 
 void help_me(std::string mr_me) {
   std::cout
@@ -260,13 +258,17 @@ std::string make_garbage(int trash, int buf) {
 }
 
 
-std::string execer(std::string the_cmd_str, bool verbose, bool debug) {
+std::string execer(std::string the_cmd_str, bool verbose, bool debug, std::string write_file_n) {
   std::vector<std::string> errors;
   redi::ipstream in(the_cmd_str + " >&2", redi::pstreambuf::pstderr); // gotta put them to stderr
   std::string errmsg;                                                      // some os thing
   while (std::getline(in, errmsg)) {
     if (debug == true) {
       std::cout << errmsg << std::endl;
+      std::ofstream w_f;
+      w_f.open (write_file_n, std::ios::out | std::ios::app);
+      w_f << errmsg << std::endl;
+      w_f.close();
     }
     errors.push_back(errmsg);
   }
@@ -288,7 +290,7 @@ std::string binstr_to_hex(std::string bin_str) {
 
 void write_seg(std::string filename, std::string seg_line) {
   std::ofstream w_f;
-  w_f.open (filename);
+  w_f.open (filename, std::ios::out | std::ios::app);
   w_f << seg_line << std::endl;
   w_f.close();
 }
@@ -357,9 +359,13 @@ bool match_seg(int buf_size, std::vector<std::string> opts, std::vector<std::str
       junk_opts_env.clear();
       junk_opts_env.shrink_to_fit();
       if (debug == true) {
+        std::ofstream w_f;
+        w_f.open (write_file_n, std::ios::out | std::ios::app);
+        w_f << out_str << std::endl;
+        w_f.close();
         std::cout << std::endl << out_str << std::endl;
       }
-      std::istringstream is_it_segfault(execer(out_str, verbose, debug)); // run it and grab stdout and stderr
+      std::istringstream is_it_segfault(execer(out_str, verbose, debug, write_file_n)); // run it and grab stdout and stderr
       std::string sf_line;
       while (std::getline(is_it_segfault, sf_line)) {
         std::regex sf_reg ("(.*Segmentation fault.*|.*core dump.*)"); // regex for the sf
@@ -382,29 +388,16 @@ bool match_seg(int buf_size, std::vector<std::string> opts, std::vector<std::str
 }
 
 
-int thread_me(int id, int buf_size_int, std::vector<std::string> opts, std::vector<std::string> spec_env, std::string path_str, std::string strip_shell, bool rand_all, bool write_to_file, std::string write_file_n, bool rand_buf, bool verbose, bool debug) {
-  while(!ready) {
-    std::this_thread::yield();
-  }      // wait for sig
-  match_seg(buf_size_int, opts, spec_env, path_str, strip_shell, rand_all, write_to_file, write_file_n, rand_buf, verbose, debug);
-  return(0);
-  if (!wins.test_and_set()) {
-    exit(0);  // exit all threads cleanly on a segfault
-  }
-}
-
-
 int coat (int id, int buf_size_int, std::vector<std::string> opts, std::vector<std::string> spec_env, std::string path_str, std::string strip_shell, bool rand_all, bool write_to_file, std::string write_file_n, bool rand_buf, bool verbose, bool debug) {
-  std::future<int> fut = std::async (thread_me, id, buf_size_int, opts, spec_env, path_str, strip_shell, rand_all, write_to_file, write_file_n, rand_buf, verbose, debug);
+  std::future<bool> fut = std::async (match_seg, buf_size_int, opts, spec_env, path_str, strip_shell, rand_all, write_to_file, write_file_n, rand_buf, verbose, debug);
   std::chrono::milliseconds span (100);
-  while (fut.wait_for(span)==std::future_status::timeout) std::cout << '.';
+  while (fut.wait_for(span) == std::future_status::timeout) std::cout << '.';
   fut.get();
   exit(0);
 }
 
 
 int main (int argc, char* argv[]) {
-
   char* man_chr;
   int opt;
   int num_threads = 2;
@@ -512,7 +505,6 @@ int main (int argc, char* argv[]) {
     int buf_size_int = std::stoi(buf_size);
     std::vector<std::thread> threads;
     for (int cur_thread=1; cur_thread <= num_threads; ++cur_thread) threads.push_back(std::thread(coat, cur_thread, buf_size_int, opts, spec_env, path_str, strip_shell, rand_all, write_to_file, write_file_n, rand_buf, verbose, debug));  // Thrift Shop
-    ready = true;  // bout to go get me some threads
     for (auto& all_thread : threads) all_thread.join();  // is that your grandma's coat?
     exit(0);
   }
