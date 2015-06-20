@@ -21,6 +21,7 @@
 #include <condition_variable>
 #include <chrono>
 #include <future>
+#include <glob.h>
 
 /*
  * Marshall Whittaker / oxagast
@@ -32,7 +33,7 @@ std::atomic<int> timer_a = ATOMIC_VAR_INIT(0);
 
 void help_me(std::string mr_me) {
   std::cout
-  << "Useage:" << std::endl
+  << "Usage:" << std::endl
   << " " << mr_me << " -t template -c ./faulty -b 2048" << std::endl
   << "Options:" << std::endl
   << " -t [file]    This file should hold line by line command arguments" << std::endl
@@ -57,7 +58,7 @@ void help_me(std::string mr_me) {
   << " -d           Debug." << std::endl;
   exit(0);
 }
-
+  
 
 std::string remove_chars(const std::string& source, const std::string& chars) {
   std::string result="";
