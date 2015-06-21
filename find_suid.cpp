@@ -1,12 +1,5 @@
-#include <unistd.h>
-#include <fcntl.h>
-#include <stdio.h>
 #include <sys/stat.h>
 #include <sys/types.h>
-#include <iostream>
-#include <cstdlib>
-#include <iostream>
-#include <stdlib.h>
 #include <iostream>
 #include <string>
 #include <sstream>
