@@ -13,7 +13,7 @@ segfault_4me:
 
 test:
 	${CC} faulty.c -o faulty
-	./segfault_4me -t template ./faulty 2048
+	./segfault_4me -t template -c ./faulty -b 2048
 	rm faulty
 	# Test success
 
