@@ -385,7 +385,7 @@ bool match_seg(int buf_size, std::vector<std::string> opts, std::vector<std::str
                 sys_str = " " + sys_str + *junk_opt + " " + oscar + " ";
               }
               if (sep_type == 1) {
-                sys_str = " " + sys_str + *junk_opt + other_sep + oscar + " ";
+                sys_str = sys_str + " " + *junk_opt + other_sep + oscar + other_sep;
               }
             }
           }
@@ -405,7 +405,7 @@ bool match_seg(int buf_size, std::vector<std::string> opts, std::vector<std::str
                 sys_str = " " + sys_str + *junk_opt + " " + oscar + " ";
               }
               if (sep_type == 1) {
-                sys_str = " " + sys_str + *junk_opt + other_sep + oscar + " ";
+                sys_str = sys_str + " " + *junk_opt + other_sep + oscar + other_sep;
               }
             }
           }
@@ -427,7 +427,7 @@ bool match_seg(int buf_size, std::vector<std::string> opts, std::vector<std::str
                 sys_str = " " + sys_str + *junk_opt + " " + oscar + " ";
               }
               if (sep_type == 1) {
-                sys_str = " " + sys_str + *junk_opt + other_sep + oscar + " ";
+                sys_str = sys_str + " " + *junk_opt + other_sep + oscar + other_sep;
               }
             }
           }
@@ -447,7 +447,7 @@ bool match_seg(int buf_size, std::vector<std::string> opts, std::vector<std::str
                 sys_str = " " + sys_str + *junk_opt + " " + oscar + " ";
               }
               if (sep_type == 1) {
-                sys_str = " " + sys_str + *junk_opt + other_sep + oscar + " ";
+                sys_str = sys_str + " " + *junk_opt + other_sep + oscar + other_sep;
               }
             }
           }
@@ -512,7 +512,7 @@ int main (int argc, char* argv[]) {
   std::string u_strip_shell;
   std::string write_file_n = "";
   std::string path_str = "";
-  std::string other_sep = " ";
+  std::string other_sep = "";
   bool template_opt = false;
   bool man_opt = false;
   bool rand_all = false;
