@@ -1,3 +1,8 @@
+/*
+ * Marshall Whittaker / oxagast
+ */
+
+
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -28,13 +33,7 @@
 #include <string.h>
 #include <sys/wait.h>
 #include <errno.h>
-/*
-* Marshall Whittaker / oxagast
-*/
 
-std::condition_variable cv;
-std::mutex cv_m;
-std::atomic<int> timer_a = ATOMIC_VAR_INIT(0);
 #define READ   0
 #define WRITE  1
 
@@ -539,7 +538,7 @@ bool match_seg(int buf_size, std::vector<std::string> opts, std::vector<std::str
           }
           
           
-          return(true);
+          exit(0);
         }
       }
     }
@@ -549,15 +548,6 @@ bool match_seg(int buf_size, std::vector<std::string> opts, std::vector<std::str
     exit(1);
   }
   
-}
-
-
-int coat (int id, int buf_size_int, std::vector<std::string> opts, std::vector<std::string> spec_env, std::string path_str, std::string strip_shell, bool rand_all, bool write_to_file, std::string write_file_n, bool rand_buf, std::vector<std::string> opt_other, bool is_other, std::string other_sep, bool verbose, bool debug) {
-  std::future<bool> fut = std::async (match_seg, buf_size_int, opts, spec_env, path_str, strip_shell, rand_all, write_to_file, write_file_n, rand_buf, opt_other, is_other, other_sep, verbose, debug);
-  std::chrono::milliseconds span (100);
-  while (fut.wait_for(span) == std::future_status::timeout) std::cout << '.';
-  fut.get();
-  exit(0);
 }
 
 
@@ -682,7 +672,7 @@ int main (int argc, char* argv[]) {
   else {
     int buf_size_int = std::stoi(buf_size);
     std::vector<std::thread> threads;
-    for (int cur_thread=1; cur_thread <= num_threads; ++cur_thread) threads.push_back(std::thread(coat, cur_thread, buf_size_int, opts, spec_env, path_str, strip_shell, rand_all, write_to_file, write_file_n, rand_buf, opt_other, is_other, other_sep, verbose, debug));  // Thrift Shop
+    for (int cur_thread=1; cur_thread <= num_threads; ++cur_thread) threads.push_back(std::thread(match_seg, buf_size_int, opts, spec_env, path_str, strip_shell, rand_all, write_to_file, write_file_n, rand_buf, opt_other, is_other, other_sep, verbose, debug));  // Thrift Shop
     for (auto& all_thread : threads) all_thread.join();  // is that your grandma's coat?
     exit(0);
   }
