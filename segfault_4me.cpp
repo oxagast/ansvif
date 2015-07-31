@@ -11,7 +11,6 @@
 #include <climits>
 #include <sstream>
 #include <new>
-#include "pstreams/pstream.h"
 #include <cstring>
 #include <sys/stat.h>
 #include <thread>
@@ -22,14 +21,22 @@
 #include <chrono>
 #include <future>
 #include <glob.h>
-
+#include <sys/wait.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <signal.h>
+#include <string.h>
+#include <sys/wait.h>
+#include <errno.h>
 /*
- * Marshall Whittaker / oxagast
- */
+* Marshall Whittaker / oxagast
+*/
 
 std::condition_variable cv;
 std::mutex cv_m;
 std::atomic<int> timer_a = ATOMIC_VAR_INIT(0);
+#define READ   0
+#define WRITE  1
 
 void help_me(std::string mr_me) {
   std::cout
@@ -45,7 +52,7 @@ void help_me(std::string mr_me) {
   << " -c [path]    Specifies the command path." << std::endl
   << " -p [integer] Specifies the manpage location (as an integer, usually 1 or 8)." << std::endl
   << " -m [command] Specifies the commands manpage." << std::endl
-  << " -l           Dump what we can out of the manpage to stdout." << std::endl
+  << " -D           Dump what we can out of the manpage to stdout." << std::endl
   << " -f [integer] Number of threads to use.  Default is 2." << std::endl
   << " -b [integer] Specifies the buffer size to fuzz with." << std::endl
   << "              256-2048 Is usually sufficient."  << std::endl
@@ -56,7 +63,7 @@ void help_me(std::string mr_me) {
   << "              characters are: >\\n" << std::endl
   << " -o [file]    Log to this file." << std::endl
   << " -x [file]    Other opts to put in, such as usernames, etc." << std::endl
-  << " -S \",\"     Some seperator besides 'space' between opts, such as ',:-' etc." << std::endl
+  << " -S \",\"       Some seperator besides 'space' between opts, such as ',:-' etc." << std::endl
   << " -v           Verbose." << std::endl
   << " -d           Debug." << std::endl;
   exit(0);
@@ -85,11 +92,14 @@ bool file_exists(const std::string& filen) {
 
 
 int rand_me_plz (int rand_from, int rand_to) {
+  
   std::random_device rd;
   std::default_random_engine generator(rd());   // seed random
   std::uniform_int_distribution<int> distribution(rand_from,rand_to);  // get a random
   auto roll = std::bind ( distribution, generator );  // bind it so we can do it multiple times
   return(roll());  
+  
+  
 }
 
 
@@ -302,25 +312,65 @@ std::string make_garbage(int trash, int buf, std::string opt_other_str, bool is_
   return(all_junk);
 }
 
-
-std::string execer(std::string the_cmd_str, bool verbose, bool debug, std::string write_file_n) {
-  std::vector<std::string> errors;
-  redi::ipstream in(the_cmd_str + " >&2", redi::pstreambuf::pstderr); // gotta put them to stderr
-  std::string errmsg;                                                      // some os thing
-  while (std::getline(in, errmsg)) {
-    if (debug == true) {
-      std::cout << errmsg << std::endl;
-      std::ofstream w_f;
-      w_f.open (write_file_n, std::ios::out | std::ios::app);
-      w_f << errmsg << std::endl;
-      w_f.close();
+FILE * popen2(std::string command, std::string type, int & pid)
+{
+  pid_t child_pid;
+  int fd[2];
+  pipe(fd);
+  if((child_pid = fork()) == -1)
+  {
+    perror("fork");
+    exit(1);
+  }
+  /* child */
+  if (child_pid == 0)
+  {
+    if (type == "r")
+    {
+      close(fd[READ]);    //Close the READ
+      dup2(fd[WRITE], 2); //Redirect stdout to pipe
     }
-    errors.push_back(errmsg);
+    else
+    {
+      close(fd[WRITE]);    //Close the WRITE
+      dup2(fd[READ], 0);   //Redirect stdin to pipe
+    }
+    execl("/bin/sh", "/bin/sh", "-c", command.c_str(), NULL);
+    exit(0);
   }
-  if (errors.size() > 0) {
-    return (errors[errors.size() - 1]);
+  else
+  {
+    if (type == "r")
+    {
+      close(fd[WRITE]); //Close the WRITE
+    }
+    else
+    {
+      close(fd[READ]); //Close the READ
+    }
   }
-  else return ("NOSEG");                                                // damn it...
+  pid = child_pid;
+  if (type == "r")
+  {
+    return fdopen(fd[READ], "r");
+  }
+  return fdopen(fd[WRITE], "w");
+}
+
+
+int pclose2(FILE * fp, pid_t pid)
+{
+  int stat;
+  fclose(fp);
+  while (waitpid(pid, &stat, 0) == -1)
+  {
+    if (errno != EINTR)
+    {
+      stat = -1;
+      break;
+    }
+  }
+  return stat;
 }
 
 
@@ -374,7 +424,7 @@ bool match_seg(int buf_size, std::vector<std::string> opts, std::vector<std::str
           for( std::vector<std::string>::const_iterator junk_opt_env = junk_opts_env.begin(); junk_opt_env != junk_opts_env.end(); ++junk_opt_env) { // loop through the vector of junk envs
             std::string oscar_env = remove_chars(make_garbage(rand_me_plz(rand_spec_one,rand_spec_two), rand_me_plz(1,buf_size), opt_other.at(rand_me_plz(0, opt_other.size()-1)), is_other), strip_shell);
             if (oscar_env != "OOR") {
-                env_str = env_str + *junk_opt_env + oscar_env + " ";
+              env_str = env_str + *junk_opt_env + oscar_env + " ";
             }
           }
           for( std::vector<std::string>::const_iterator junk_opt = junk_opts.begin(); junk_opt != junk_opts.end(); ++junk_opt) { // loop through the vector of junk opts
@@ -465,17 +515,30 @@ bool match_seg(int buf_size, std::vector<std::string> opts, std::vector<std::str
         w_f.close();
         std::cout << std::endl << out_str << std::endl;
       }
-      std::istringstream is_it_segfault(execer(out_str, verbose, debug, write_file_n)); // run it and grab stdout and stderr
-      std::string sf_line;
-      while (std::getline(is_it_segfault, sf_line)) {
+      int pid;
+      FILE * fp = popen2(out_str, "r", pid);
+      char command_out[4096] = {0};
+      std::stringstream output;
+      while (read(fileno(fp), command_out, sizeof(command_out)-1) != 0)
+      {
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+        output << std::string(command_out);
+        kill (pid, 9);
+        memset(&command_out, 0, sizeof(command_out));
+      }
+      pclose2(fp, pid);
+      std::string token;
+      while (std::getline(output, token)) {
         std::regex sf_reg ("(.*Segmentation fault.*|.*core dump.*)"); // regex for the sf
         std::smatch sf;
-        if (regex_match(sf_line, sf, sf_reg)) {  // match segfault
+        if (regex_match(token, sf, sf_reg)) {  // match segfault
           std::cout << "Segfaulted with: " << out_str << std::endl;
           if (write_to_file == true) {
             write_seg(write_file_n, out_str);
             std::cout << "Segmentation fault logged" << std::endl;
           }
+          
+          
           return(true);
         }
       }
@@ -485,6 +548,7 @@ bool match_seg(int buf_size, std::vector<std::string> opts, std::vector<std::str
     std::cerr << "Command not found at path..." << std::endl;
     exit(1);
   }
+  
 }
 
 
