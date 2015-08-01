@@ -1,7 +1,7 @@
+
 /*
  * Marshall Whittaker / oxagast
  */
-
 
 #include <iostream>
 #include <fstream>
@@ -324,60 +324,49 @@ FILE * popen2 (std::string command, std::string type, int & pid, std::string low
   pid_t child_pid;
   int fd[2];
   pipe(fd);
-  if((child_pid = fork()) == -1)
-  {
+  if((child_pid = fork()) == -1) {
     perror("fork");
     exit(1);
-  }  
-  /* child */
-  if (child_pid == 0)
-  {
-    if (type == "r")
-    {
+  }
+  if (child_pid == 0) {  // child begins
+    if (type == "r") {
       close(fd[READ]);    //Close the READ
       dup2(fd[WRITE], 2); //Redirect stdout to pipe
     }
-    else
-    {
+    else {
       close(fd[WRITE]);    //Close the WRITE
       dup2(fd[READ], 0);   //Redirect stdin to pipe
     }
     if (getuid() == 0) {
-      execl("/bin/su", "su", "-c", "/bin/sh", "-c", command.c_str(), low_lvl_user.c_str(), NULL);
+      execl("/bin/su", "su", "-c", "/bin/sh", "-c", command.c_str(), low_lvl_user.c_str(), NULL);  // fixes not being able to reap suid 0 processes
     }
     else {
-      execl("/bin/sh", "/bin/sh", "-c", command.c_str(), NULL);
+      execl("/bin/sh", "/bin/sh", "-c", command.c_str(), NULL); // runs it all
     }
     exit(0);
   }
-  else
-  {
-    if (type == "r")
-    {
+  else {
+    if (type == "r") {
       close(fd[WRITE]); //Close the WRITE
     }
-    else
-    {
+    else {
       close(fd[READ]); //Close the READ
     }
   }
   pid = child_pid;
-  if (type == "r")
-  {
+  if (type == "r") {
     return fdopen(fd[READ], "r");
   }
   return fdopen(fd[WRITE], "w");
 }
 
 
-int pclose2(FILE * fp, pid_t pid)
+int pclose2(FILE * fp, pid_t pid) // close it so we don't fuck outselves
 {
   int stat;
   fclose(fp);
-  while (waitpid(pid, &stat, 0) == -1)
-  {
-    if (errno != EINTR)
-    {
+  while (waitpid(pid, &stat, 0) == -1) {
+    if (errno != EINTR) {
       stat = -1;
       break;
     }
@@ -527,14 +516,13 @@ bool match_seg(int buf_size, std::vector<std::string> opts, std::vector<std::str
         w_f.close();
         std::cout << std::endl << out_str << std::endl;
       }
-      int pid;
-      FILE * fp = popen2(out_str, "r", pid, low_lvl_user);
+      int pid;  // initializes child
+      FILE * fp = popen2(out_str, "r", pid, low_lvl_user); // opens child process fork
       char command_out[4096] = {0};
       std::stringstream output;
-      std::thread reaper_thread(reaper, pid, t_timeout);
+      std::thread reaper_thread(reaper, pid, t_timeout);  // takes care of killing it off if it takes too long
       reaper_thread.join();
-      while (read(fileno(fp), command_out, sizeof(command_out)-1) != 0)
-      {
+      while (read(fileno(fp), command_out, sizeof(command_out)-1) != 0) {
         output << std::string(command_out);
         memset(&command_out, 0, sizeof(command_out));
       }

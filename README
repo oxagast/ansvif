@@ -18,11 +18,11 @@ Using the example code:
 
 Useage:
   ./find_suid /usr/bin/ /bin/ /sbin/
-  ./segfault_4me -[tm] [template manpage] -c /path/to/executable -b buffersize
+  ./peachfuzz -[tm] [template manpage] -c /path/to/executable -b buffersize
 
   Examples:
-  $ cd tmp && echo "Marshall" | ../segfault_4me -t template -c ./faulty -b 64
-  $ cd tmp && ../segfault_4me -m mount -c /usr/sbin/mount -e env_template -f 8 -b 2048
+  $ cd tmp && echo "Marshall" | ../peachfuzz -t template -c ./faulty -b 64
+  $ cd tmp && ../peachfuzz -m mount -c /usr/sbin/mount -e env_template -f 8 -b 2048
 
 Options:
   -t This file should hold line by line command arguments as shown in the example file.
