@@ -41,11 +41,12 @@ Options:
   -x Other junk to put in.  Usernames and such can go here.
   -S Seperator between options.
   -v Verbose.
+  -T Timeout for threads.
+  -L Unpriviledged user to run as if root.
   -d Debug data.
   -h Shows the help page.
 
 Recommendations:
-  DO NOT RUN THIS CODE AS ROOT!
   DO NOT RUN THIS CODE IN A PRODUCTION ENVIRONMENT!
   If you try setting faulty.c's output to suid(0) then PLEASE do it in a virtual machine
   or atleast a machine that you don't care about.

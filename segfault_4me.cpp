@@ -63,6 +63,8 @@ void help_me(std::string mr_me) {
   << " -o [file]    Log to this file." << std::endl
   << " -x [file]    Other opts to put in, such as usernames, etc." << std::endl
   << " -S \",\"       Some seperator besides 'space' between opts, such as ',:-' etc." << std::endl
+  << " -T [integer] Specifies how long to wait before killing a hung thread." << std::endl
+  << " -L [nobody]  An unprivileged user to run as if you're root.  Defaults nobody." << std::endl
   << " -v           Verbose." << std::endl
   << " -d           Debug." << std::endl;
   exit(0);
@@ -113,7 +115,13 @@ char fortune_cookie () {
 }
 
 
-std::vector<std::string> get_flags_man(char* cmd, std::string man_loc, bool verbose, bool debug, bool dump_opts) {
+void reaper (int c_pid, int t_timeout) {
+  std::this_thread::sleep_for(std::chrono::milliseconds(t_timeout));
+  kill (c_pid, 9);
+}
+
+
+std::vector<std::string> get_flags_man (char* cmd, std::string man_loc, bool verbose, bool debug, bool dump_opts) {
   std::string cmd_name(cmd);
   std::string filename;
   std::vector<std::string> opt_vec;
@@ -283,7 +291,7 @@ std::string trash_generator(int trash, int buf, std::string user_junk, std::stri
 
 
 
-std::string make_garbage(int trash, int buf, std::string opt_other_str, bool is_other) {
+std::string make_garbage (int trash, int buf, std::string opt_other_str, bool is_other) {
   buf = buf-1;
   std::string all_junk;
   if (is_other == true) {
@@ -311,7 +319,7 @@ std::string make_garbage(int trash, int buf, std::string opt_other_str, bool is_
   return(all_junk);
 }
 
-FILE * popen2(std::string command, std::string type, int & pid)
+FILE * popen2 (std::string command, std::string type, int & pid, std::string low_lvl_user)
 {
   pid_t child_pid;
   int fd[2];
@@ -320,7 +328,7 @@ FILE * popen2(std::string command, std::string type, int & pid)
   {
     perror("fork");
     exit(1);
-  }
+  }  
   /* child */
   if (child_pid == 0)
   {
@@ -334,7 +342,12 @@ FILE * popen2(std::string command, std::string type, int & pid)
       close(fd[WRITE]);    //Close the WRITE
       dup2(fd[READ], 0);   //Redirect stdin to pipe
     }
-    execl("/bin/sh", "/bin/sh", "-c", command.c_str(), NULL);
+    if (getuid() == 0) {
+      execl("/bin/su", "su", "-c", "/bin/sh", "-c", command.c_str(), low_lvl_user.c_str(), NULL);
+    }
+    else {
+      execl("/bin/sh", "/bin/sh", "-c", command.c_str(), NULL);
+    }
     exit(0);
   }
   else
@@ -390,7 +403,7 @@ void write_seg(std::string filename, std::string seg_line) {
 }
 
 
-bool match_seg(int buf_size, std::vector<std::string> opts, std::vector<std::string> spec_env, std::string path_str, std::string strip_shell, bool rand_all, bool write_to_file, std::string write_file_n, bool rand_buf, std::vector<std::string> opt_other, bool is_other, std::string other_sep, bool verbose, bool debug) {
+bool match_seg(int buf_size, std::vector<std::string> opts, std::vector<std::string> spec_env, std::string path_str, std::string strip_shell, bool rand_all, bool write_to_file, std::string write_file_n, bool rand_buf, std::vector<std::string> opt_other, bool is_other, std::string other_sep, int t_timeout, std::string low_lvl_user, bool verbose, bool debug) {
   bool segged = false;
   if (file_exists(path_str) == true) {
     while (segged == false) {
@@ -515,14 +528,14 @@ bool match_seg(int buf_size, std::vector<std::string> opts, std::vector<std::str
         std::cout << std::endl << out_str << std::endl;
       }
       int pid;
-      FILE * fp = popen2(out_str, "r", pid);
+      FILE * fp = popen2(out_str, "r", pid, low_lvl_user);
       char command_out[4096] = {0};
       std::stringstream output;
+      std::thread reaper_thread(reaper, pid, t_timeout);
+      reaper_thread.join();
       while (read(fileno(fp), command_out, sizeof(command_out)-1) != 0)
       {
-        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
         output << std::string(command_out);
-        kill (pid, 9);
         memset(&command_out, 0, sizeof(command_out));
       }
       pclose2(fp, pid);
@@ -535,10 +548,8 @@ bool match_seg(int buf_size, std::vector<std::string> opts, std::vector<std::str
           if (write_to_file == true) {
             write_seg(write_file_n, out_str);
             std::cout << "Segmentation fault logged" << std::endl;
+            exit(0);
           }
-          
-          
-          exit(0);
         }
       }
     }
@@ -555,6 +566,7 @@ int main (int argc, char* argv[]) {
   char* man_chr;
   int opt;
   int num_threads = 2;
+  int t_timeout = 25;
   std::vector<std::string> opts;
   std::vector<std::string> spec_env;
   std::vector<std::string> opt_other;
@@ -567,6 +579,7 @@ int main (int argc, char* argv[]) {
   std::string write_file_n = "";
   std::string path_str = "";
   std::string other_sep = "";
+  std::string low_lvl_user = "nobody";
   bool template_opt = false;
   bool man_opt = false;
   bool rand_all = false;
@@ -577,7 +590,7 @@ int main (int argc, char* argv[]) {
   bool debug = false;
   bool is_other = false;
   bool dump_opts = false;
-  while ((opt = getopt(argc, argv, "m:p:t:e:c:f:o:b:s:x:S:hrzvdD")) != -1) {
+  while ((opt = getopt(argc, argv, "m:p:t:e:c:f:o:b:s:x:S:T:L:hrzvdD")) != -1) {
     switch (opt) {
       case 'v':
         verbose = true;
@@ -635,6 +648,12 @@ int main (int argc, char* argv[]) {
       case 'S':
         other_sep = optarg;
         break;
+      case 'T':
+        t_timeout = std::atoi(optarg);
+        break;
+      case 'L':
+        low_lvl_user = optarg;
+        break;
       default:
         help_me(argv[0]);
     }  
@@ -672,7 +691,8 @@ int main (int argc, char* argv[]) {
   else {
     int buf_size_int = std::stoi(buf_size);
     std::vector<std::thread> threads;
-    for (int cur_thread=1; cur_thread <= num_threads; ++cur_thread) threads.push_back(std::thread(match_seg, buf_size_int, opts, spec_env, path_str, strip_shell, rand_all, write_to_file, write_file_n, rand_buf, opt_other, is_other, other_sep, verbose, debug));  // Thrift Shop
+    bool did_it_fault;
+    for (int cur_thread=1; cur_thread <= num_threads; ++cur_thread) threads.push_back(std::thread(match_seg, buf_size_int, opts, spec_env, path_str, strip_shell, rand_all, write_to_file, write_file_n, rand_buf, opt_other, is_other, other_sep, t_timeout, low_lvl_user, verbose, debug));  // Thrift Shop
     for (auto& all_thread : threads) all_thread.join();  // is that your grandma's coat?
     exit(0);
   }
