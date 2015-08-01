@@ -1,43 +1,34 @@
 <!DOCTYPE html>
-<html>
+<html lang="en-us">
   <head>
-    <meta charset='utf-8'>
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+    <meta charset="UTF-8">
+    <title>peachfuzz by oxagast</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
-    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen">
-    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
-
-    <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-
-    <title>segfault_4me by oxagast</title>
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
   </head>
-
   <body>
-    <header>
-      <div class="inner">
-        <h1>segfault_4me</h1>
-        <h2>Feeds garbage arguments and data into programs trying to induce a segmentation fault.  Good for finding bugs.</h2>
-        <a href="https://github.com/oxagast/segfault_4me" class="button"><small>View project on</small> GitHub</a>
-      </div>
-    </header>
+    <section class="page-header">
+      <h1 class="project-name">peachfuzz</h1>
+      <h2 class="project-tagline">Feeds garbage arguments and data into programs trying to induce a segmentation fault.  Good for finding bugs.</h2>
+      <a href="https://github.com/oxagast/peachfuzz" class="btn">View on GitHub</a>
+      <a href="https://github.com/oxagast/peachfuzz/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/oxagast/peachfuzz/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
 
-    <div id="content-wrapper">
-      <div class="inner clearfix">
-        <section id="main-content">
-          <h3>
+    <section class="main-content">
+      <h3>
 <a id="intro" class="anchor" href="#intro" aria-hidden="true"><span class="octicon octicon-link"></span></a>Intro</h3>
 
-<p>segfault_4me, written primarily in C++, is designed to find code bugs by throwing garbage input at programs to see how they react.  This is great for finding bugs, because not every type of input is always handled, and buffers are not always checked, etc.  It also comes in handy when writing (and protecting against), buffer overflow exploitation.</p>
+<p>peachfuzz, written primarily in C++, is designed to find code bugs by throwing garbage input at programs to see how they react.  This is great for finding bugs, because not every type of input is always handled, and buffers are not always checked, etc.  It also comes in handy when writing (and protecting against), buffer overflow exploitation.</p>
 
 <h3>
 <a id="checkout-and-compliation" class="anchor" href="#checkout-and-compliation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Checkout and compliation</h3>
 
-<pre><code>$ git clone https://github.com/oxagast/segfault_4me
-$ cd segfault_4me
+<pre><code>$ git clone https://github.com/oxagast/peachfuzz
+$ cd peachfuzz
 $ make
 $ make test
 </code></pre>
@@ -52,44 +43,35 @@ $ make test
 
 <p>The most simplistic usage is:</p>
 
-<pre><code>$ ./segfault_4me -[tm] template_or_manpage /path/to/binary [buffersize]
-$ ./segfault_4me -m mount /bin/mount 2048
-$ cat filewithgarbagelinebyline | ./segfault_4me -t template ./faulty 2048
+<pre><code>$ ./peachfuzz -[tm] template_or_manpage -c /path/to/binary -b [buffersize]
+$ ./peachfuzz -m mount -c /bin/mount -b 2048
+$ cat filewithgarbagelinebyline | ./peachfuzz -t template ./faulty 2048
 </code></pre>
 
 <h3>
 <a id="other" class="anchor" href="#other" aria-hidden="true"><span class="octicon octicon-link"></span></a>Other</h3>
 
-<p>Included is a file, bad_input.tar.xz.  This has some pregenerated semi-psudorandom data in it.  You can try it out by piping it to segfault_4me.  You may want some more specific data to be piped in, if so, create a file line by line and pipe it in.</p>
+<p>Included is a file, bad_input.tar.xz.  This has some pregenerated semi-psudorandom data in it.  You can try it out by piping it to peachfuzz.  You may want some more specific data to be piped in, if so, create a file line by line and pipe it in.</p>
 
 <h3>
 <a id="authors-and-contributors" class="anchor" href="#authors-and-contributors" aria-hidden="true"><span class="octicon octicon-link"></span></a>Authors and Contributors</h3>
 
-<p>Marshall Whittaker (<a href="https://github.com/oxagast" class="user-mention">@oxagast</a>), with some help from random other sources such as stackexchanges.</p>
+<p>Marshall Whittaker (<a href="https://github.com/oxagast" class="user-mention">@oxagast</a>), with some help from other sources such as stackexchanges, and IRC.  Thanks!</p>
 
 <h3>
 <a id="support-or-contact" class="anchor" href="#support-or-contact" aria-hidden="true"><span class="octicon octicon-link"></span></a>Support or Contact</h3>
 
 <p>You can contact me at <a href="mailto:marshall@wtyw.net">marshall@wtyw.net</a> and I will try to respond in a timely manner!</p>
-        </section>
 
-        <aside id="sidebar">
-          <a href="https://github.com/oxagast/segfault_4me/zipball/master" class="button">
-            <small>Download</small>
-            .zip file
-          </a>
-          <a href="https://github.com/oxagast/segfault_4me/tarball/master" class="button">
-            <small>Download</small>
-            .tar.gz file
-          </a>
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/oxagast/peachfuzz">peachfuzz</a> is maintained by <a href="https://github.com/oxagast">oxagast</a>.</span>
 
-          <p class="repo-owner"><a href="https://github.com/oxagast/segfault_4me"></a> is maintained by <a href="https://github.com/oxagast">oxagast</a>.</p>
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
 
-          <p>This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
-        </aside>
-      </div>
-    </div>
+    </section>
 
   
   </body>
 </html>
+
