@@ -1,0 +1,75 @@
+#!/bin/sh
+OS=$(uname)
+echo -n "Checking OS... "
+if test $OS = "Linux"
+then
+#linux stuff
+echo ${OS}
+echo -n "Removing old Makefile... "
+rm Makefile 2>/dev/null
+echo "Done."
+CFLAGS="-lstdc++ -lgzstream -lz -std=gnu++11 -lpthread -O3"
+LDFLAGS="-L./gzstream"
+CXX=gcc
+CC=gcc
+PATH=$PATH
+INCLUDES=""
+elif test $OS = "OpenBSD"
+then
+echo -n "Removing old Makefile... "
+rm Makefile 2>/dev/null
+echo "Done... "
+#obsd stuff
+echo -n "Detecting OS... "
+echo $OS
+echo -n "Detecting OS Ver... "
+OSVER=$(uname -r)
+echo ${OSVER}
+echo -n "Detecting ports gcc version... "
+GCCVER=$(ls /usr/ports/pobj/ | grep gcc | tail -n 1 | sed -e 's/gcc-//')
+echo ${GCCVER}
+echo -n "Detecting arch... "
+ARCH=$(uname -p)
+if test $ARCH = "amd64"
+then
+PROC="x86_64"
+else
+PROC="x86"
+fi
+echo ${PROC}
+CXX="/usr/ports/pobj/gcc-${GCCVER}/build-${ARCH}/gcc/xg++"
+CC="/usr/ports/usr/local/bin/${PROC}-unknown-openbsd$OSVER-gcc-${GCCVER}"
+PATH="$PATH:/usr/ports/pobj/gcc-${GCCVER}/build-${ARCH}/gcc:/usr/ports/pobj/gcc-${GCCVER}/bin"
+CFLAGS="-lgzstream -lz -std=gnu++11 -lpthread -O3 -L./gzstream -lestdc++"
+INCLUDES="-I/usr/ports/pobj/gcc-${GCCVER}/build-amd64/${PROC}-unknown-openbsd${OSVER}/libstdc++-v3/include -I/usr/ports/pobj/gcc-${GCCVER}/build-${ARCH}/${PROC}-unknown-openbsd${OSVER}/libstdc++-v3/include/${PROC}-unknown-openbsd${OSVER} -I/usr/ports/pobj/gcc-${GCCVER}/fake-${ARCH}/usr/local/include/c++/${GCCVER} -I/usr/ports/pobj/gcc-${GCCVER}/build-${ARCH}/gcc/include"
+LDFLAGS="-L/usr/ports/pobj/gcc-${GCCVER}/build-amd64/${PROC}-unknown-openbsd${OSVER}/libstdc++-v3/include -L/usr/ports/pobj/gcc-${GCCVER}/build-${ARCH}/prev-${PROC}-unknown-openbsd${OSVER}/libstdc++-v3/src/.libs -L/usr/local/lib/gcc/${PROC}-unknown-openbsd${OSVER}/${GCCVER}"
+else
+echo "Sorry unsupported OS..."
+fi
+printf "CXX=${CXX}\n" >> Makefile
+printf "CC=${CC}\n" >> Makefile
+printf "CFLAGS=${CFLAGS}\n" >> Makefile
+printf "LDFLAGS=${LDFLAGS}\n" >> Makefile
+printf "INCLUDES=${INCLUDES}\n" >> Makefile
+printf "PATH=${PATH}\n" >> Makefile
+printf "all: peachfuzz\n" >> Makefile
+printf "\n" >> Makefile
+printf "default: peachfuzz\n" >> Makefile
+printf "\n" >> Makefile
+printf "peachfuzz:\n" >> Makefile
+printf "\tcd ./gzstream;make;cd ../\n" >> Makefile
+printf "\tPATH=${PATH} ${CXX} peachfuzz.cpp ${CFLAGS} ${LDFLAGS} ${INCLUDES} -o peachfuzz\n" >> Makefile
+printf "\tPATH=${PATH} ${CXX} find_suid.cpp ${CFLAGS} ${LDFLAGS} ${INCLUDES} -O2 -o find_suid\n" >> Makefile
+printf "\n" >> Makefile
+printf "test:\n" >> Makefile
+printf "\t${CC} faulty.c -o faulty\n" >> Makefile
+printf "\t./peachfuzz -t template -c ./faulty -b 2048\n" >> Makefile
+printf "\trm faulty\n" >> Makefile
+printf "\t# Test success\n" >> Makefile
+printf "\n" >> Makefile
+printf "faulty : faulty.c\n" >> Makefile
+printf "\t${CC} -o faulty faulty.c\n" >> Makefile
+printf "\n" >> Makefile
+printf "clean:\n" >> Makefile
+printf "\trm Makefile peachfuzz find_suid ./gzstream/*.o\n" >> Makefile
+echo "Configuration written.  Now type make."
