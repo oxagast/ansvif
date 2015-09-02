@@ -10,6 +10,6 @@ void spawnme() {setuid(0); int stat = system("/bin/bash -p");}
 int main(int argc, char *argv[]) {
   int blah = 0;
   if ((argc > 2) && (argc < 4)) func(argv);
-  if (blah = 0) spawnme();
+  if (blah == 1) spawnme();
   else return 1;
 }

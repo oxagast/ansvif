@@ -71,5 +71,5 @@ printf "faulty : faulty.c\n" >> Makefile
 printf "\t${CC} -o faulty faulty.c\n" >> Makefile
 printf "\n" >> Makefile
 printf "clean:\n" >> Makefile
-printf "\trm Makefile peachfuzz find_suid ./gzstream/*.o\n" >> Makefile
+printf "\trm Makefile peachfuzz find_suid ./gzstream/*.o ./gzstream/*.a\n" >> Makefile
 echo "Configuration written.  Now type make."
