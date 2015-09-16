@@ -535,6 +535,9 @@ bool match_seg(int buf_size, std::vector<std::string> opts, std::vector<std::str
             std::cout << "Segmentation fault logged" << std::endl;
             exit(0);
           }
+          else {
+            exit(0);
+          }
         }
       }
     }
