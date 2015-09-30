@@ -65,6 +65,8 @@ void help_me(std::string mr_me) {
   << " -S \",\"       Some seperator besides 'space' between opts, such as ',:-' etc." << std::endl
   << " -T [integer] Specifies how long to wait before killing a hung thread." << std::endl
   << " -L [nobody]  An unprivileged user to run as if you're root.  Defaults nobody." << std::endl
+  << " -A \"blah\"  Always put this string in the command." << std::endl
+  << " -F [file]    A file with junk to be fuzzed with whole." << std::endl
   << " -v           Verbose." << std::endl
   << " -d           Debug." << std::endl;
   exit(0);
@@ -388,8 +390,20 @@ void write_seg(std::string filename, std::string seg_line) {
   w_f.close();
 }
 
+void write_junk_file(std::string filename, std::vector<std::string> opt_other, int buf_size) {
+  remove(filename.c_str());
+  std::string oscar;
+  std::ofstream w_f;
+  w_f.open (filename, std::ios::out | std::ios::app);
+  for (int start_buf = 0; start_buf <= buf_size; start_buf++) {
+    std::string oscar = opt_other.at(rand_me_plz(0, opt_other.size()-1));
+    w_f << oscar << std::endl;
+  }
+  w_f.close();
+}
 
-bool match_seg(int buf_size, std::vector<std::string> opts, std::vector<std::string> spec_env, std::string path_str, std::string strip_shell, bool rand_all, bool write_to_file, std::string write_file_n, bool rand_buf, std::vector<std::string> opt_other, bool is_other, std::string other_sep, int t_timeout, std::string low_lvl_user, bool verbose, bool debug) {
+
+bool match_seg(int buf_size, std::vector<std::string> opts, std::vector<std::string> spec_env, std::string path_str, std::string strip_shell, bool rand_all, bool write_to_file, std::string write_file_n, bool rand_buf, std::vector<std::string> opt_other, bool is_other, std::string other_sep, int t_timeout, std::string low_lvl_user, std::string junk_file_of_args, std::string always_arg, bool verbose, bool debug) {
   bool segged = false;
   if (file_exists(path_str) == true) {
     while (segged == false) {
@@ -406,6 +420,9 @@ bool match_seg(int buf_size, std::vector<std::string> opts, std::vector<std::str
       std::vector<std::string> junk_opts;
       std::string env_str;
       std::string sys_str;
+      if (junk_file_of_args != "") {
+        write_junk_file(junk_file_of_args, opt_other, buf_size);
+      }
       int sep_type;
       for(int cmd_flag_l = 0; cmd_flag_l < opts.size(); cmd_flag_l++) {  // loop around the options
         if (rand_me_plz(0,1) == 1) {   // roll tha die
@@ -501,7 +518,7 @@ bool match_seg(int buf_size, std::vector<std::string> opts, std::vector<std::str
           }
         }
       } 
-      std::string out_str = env_str + " " + path_str + " " + sys_str;
+      std::string out_str = env_str + " " + path_str + " " + sys_str + " " + always_arg;
       junk_opts.clear();
       junk_opts.shrink_to_fit();
       junk_opts_env.clear();
@@ -568,6 +585,8 @@ int main (int argc, char* argv[]) {
   std::string path_str = "";
   std::string other_sep = "";
   std::string low_lvl_user = "nobody";
+  std::string junk_file_of_args;
+  std::string always_arg = "";
   bool template_opt = false;
   bool man_opt = false;
   bool rand_all = false;
@@ -578,7 +597,7 @@ int main (int argc, char* argv[]) {
   bool debug = false;
   bool is_other = false;
   bool dump_opts = false;
-  while ((opt = getopt(argc, argv, "m:p:t:e:c:f:o:b:s:x:S:T:L:hrzvdD")) != -1) {
+  while ((opt = getopt(argc, argv, "m:p:t:e:c:f:o:b:s:x:A:F:S:T:L:hrzvdD")) != -1) {
     switch (opt) {
       case 'v':
         verbose = true;
@@ -642,9 +661,15 @@ int main (int argc, char* argv[]) {
       case 'L':
         low_lvl_user = optarg;
         break;
+      case 'F':
+        junk_file_of_args = optarg;
+        break;
+      case 'A':
+        always_arg = optarg;
+        break;
       default:
         help_me(argv[0]);
-    }  
+    }
   }
   if (u_strip_shell_set == true) {
     strip_shell = u_strip_shell + ">\n";
@@ -680,7 +705,7 @@ int main (int argc, char* argv[]) {
     int buf_size_int = std::stoi(buf_size);
     std::vector<std::thread> threads;
     bool did_it_fault;
-    for (int cur_thread=1; cur_thread <= num_threads; ++cur_thread) threads.push_back(std::thread(match_seg, buf_size_int, opts, spec_env, path_str, strip_shell, rand_all, write_to_file, write_file_n, rand_buf, opt_other, is_other, other_sep, t_timeout, low_lvl_user, verbose, debug));  // Thrift Shop
+    for (int cur_thread=1; cur_thread <= num_threads; ++cur_thread) threads.push_back(std::thread(match_seg, buf_size_int, opts, spec_env, path_str, strip_shell, rand_all, write_to_file, write_file_n, rand_buf, opt_other, is_other, other_sep, t_timeout, low_lvl_user, junk_file_of_args, always_arg, verbose, debug));  // Thrift Shop
     for (auto& all_thread : threads) all_thread.join();  // is that your grandma's coat?
     exit(0);
   }
