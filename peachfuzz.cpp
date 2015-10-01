@@ -65,7 +65,7 @@ void help_me(std::string mr_me) {
   << " -S \",\"       Some seperator besides 'space' between opts, such as ',:-' etc." << std::endl
   << " -T [integer] Specifies how long to wait before killing a hung thread." << std::endl
   << " -L [nobody]  An unprivileged user to run as if you're root.  Defaults nobody." << std::endl
-  << " -A \"blah\"  Always put this string in the command." << std::endl
+  << " -A \"blah\"    Always put this string in the command." << std::endl
   << " -F [file]    A file with junk to be fuzzed with whole." << std::endl
   << " -v           Verbose." << std::endl
   << " -d           Debug." << std::endl;
@@ -390,14 +390,18 @@ void write_seg(std::string filename, std::string seg_line) {
   w_f.close();
 }
 
-void write_junk_file(std::string filename, std::vector<std::string> opt_other, int buf_size) {
+void write_junk_file(std::string filename, std::vector<std::string> opt_other, int buf_size, int rand_spec_one, int rand_spec_two) {
   remove(filename.c_str());
   std::string oscar;
   std::ofstream w_f;
   w_f.open (filename, std::ios::out | std::ios::app);
   for (int start_buf = 0; start_buf <= buf_size; start_buf++) {
     std::string oscar = opt_other.at(rand_me_plz(0, opt_other.size()-1));
+    std::string trash = make_garbage(rand_me_plz(rand_spec_one,rand_spec_two), rand_me_plz(1,buf_size), "", false);
     w_f << oscar << std::endl;
+    if (trash != "OOR") {
+      w_f << trash << std::endl;
+    }
   }
   w_f.close();
 }
@@ -421,7 +425,7 @@ bool match_seg(int buf_size, std::vector<std::string> opts, std::vector<std::str
       std::string env_str;
       std::string sys_str;
       if (junk_file_of_args != "") {
-        write_junk_file(junk_file_of_args, opt_other, buf_size);
+        write_junk_file(junk_file_of_args, opt_other, buf_size, rand_spec_one, rand_spec_two);
       }
       int sep_type;
       for(int cmd_flag_l = 0; cmd_flag_l < opts.size(); cmd_flag_l++) {  // loop around the options
@@ -546,7 +550,10 @@ bool match_seg(int buf_size, std::vector<std::string> opts, std::vector<std::str
         std::regex sf_reg ("(.*Segmentation fault.*|.*core dump.*)"); // regex for the sf
         std::smatch sf;
         if (regex_match(token, sf, sf_reg)) {  // match segfault
-          std::cout << "Segfaulted with: " << out_str << std::endl;
+          std::cout << "Segfaulted with command: " << std::endl << out_str << std::endl;
+          if (junk_file_of_args != "") {
+            std::cout << "File data left in: " << junk_file_of_args << std::endl;
+          }
           if (write_to_file == true) {
             write_seg(write_file_n, out_str);
             std::cout << "Segmentation fault logged" << std::endl;

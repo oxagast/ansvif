@@ -63,7 +63,7 @@ printf "\tPATH=${PATH} ${CXX} find_suid.cpp ${CFLAGS} ${LDFLAGS} ${INCLUDES} -O2
 printf "\n" >> Makefile
 printf "test:\n" >> Makefile
 printf "\t${CC} faulty.c -o faulty\n" >> Makefile
-printf "\t./peachfuzz -t template -c ./faulty -b 2048\n" >> Makefile
+printf "\t./peachfuzz -t examples/template -c ./faulty -b 2048\n" >> Makefile
 printf "\trm faulty\n" >> Makefile
 printf "\t# Test success\n" >> Makefile
 printf "\n" >> Makefile

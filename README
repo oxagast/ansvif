@@ -21,8 +21,10 @@ Useage:
   ./peachfuzz -[tm] [template manpage] -c /path/to/executable -b buffersize
 
   Examples:
-  $ cd tmp && echo "Marshall" | ../peachfuzz -t template -c ./faulty -b 64
-  $ cd tmp && ../peachfuzz -m mount -c /usr/sbin/mount -e env_template -f 8 -b 2048
+  $ echo "Marshall" ./peachfuzz -t examples/template -c ./faulty -b 64
+  $ ./peachfuzz -m mount -c /usr/sbin/mount -e examples/template_env -x examples/template_other -f 8 -b 2048
+  $ ./peachfuzz -t blank -F junk -x examples/htmltags -c /opt/google/chrome/chrome -b 512 -A file:///home/marshall/Code/peachfuzz/junk -f 2
+
 
 Options:
   -t This file should hold line by line command arguments as shown in the example file.
@@ -43,6 +45,8 @@ Options:
   -v Verbose.
   -T Timeout for threads.
   -L Unpriviledged user to run as if root.
+  -A Always put whats after this in the command to run.
+  -F File to feed into the program that -x along with normal fuzzing data will be put in.
   -d Debug data.
   -h Shows the help page.
 
