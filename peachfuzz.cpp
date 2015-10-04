@@ -426,11 +426,6 @@ bool match_seg(int buf_size, std::vector<std::string> opts, std::vector<std::str
   bool segged = false;
   if (file_exists(path_str) == true) {
     while (segged == false) {
-      if (run_command != "") {
-        int run_com_pid;  // initializes child
-        FILE * fp = popen2(run_command, "r", run_com_pid, low_lvl_user); // opens child process fork
-        pclose2(fp, run_com_pid);
-      }
       int rand_spec_one, rand_spec_two;
       if (rand_all == true) {
         rand_spec_one = 2;
@@ -565,6 +560,11 @@ bool match_seg(int buf_size, std::vector<std::string> opts, std::vector<std::str
         memset(&command_out, 0, sizeof(command_out));
       }
       pclose2(fp, pid);
+      if (run_command != "") {
+        int run_com_pid;  // initializes child
+        FILE * fp = popen2(run_command, "r", run_com_pid, low_lvl_user); // opens child process fork
+        pclose2(fp, run_com_pid);
+      }
       std::string token;
       while (std::getline(output, token)) {
         std::regex sf_reg ("(.*Segmentation fault.*|.*core dump.*)"); // regex for the sf
