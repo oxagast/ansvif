@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>peachfuzz by oxagast</title>
+    <title>ansvif by oxagast</title>
     <link rel="stylesheet" href="stylesheets/styles.css">
     <link rel="stylesheet" href="stylesheets/github-dark.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
@@ -20,9 +20,9 @@
   <body>
       <div id="header">
         <nav>
-          <li class="fork"><a href="https://github.com/oxagast/peachfuzz">View On GitHub</a></li>
-          <li class="downloads"><a href="https://github.com/oxagast/peachfuzz/zipball/master">ZIP</a></li>
-          <li class="downloads"><a href="https://github.com/oxagast/peachfuzz/tarball/master">TAR</a></li>
+          <li class="fork"><a href="https://github.com/oxagast/ansvif">View On GitHub</a></li>
+          <li class="downloads"><a href="https://github.com/oxagast/ansvif/zipball/master">ZIP</a></li>
+          <li class="downloads"><a href="https://github.com/oxagast/ansvif/tarball/master">TAR</a></li>
           <li class="title">DOWNLOADS</li>
         </nav>
       </div><!-- end header -->
@@ -31,7 +31,7 @@
 
       <section>
         <div id="title">
-          <h1>peachfuzz</h1>
+          <h1>ansvif</h1>
           <p>Feeds garbage arguments and data into programs trying to induce a segmentation fault.  Good for finding bugs.</p>
           <hr>
           <span class="credits left">Project maintained by <a href="https://github.com/oxagast">oxagast</a></span>
@@ -41,13 +41,15 @@
         <h3>
 <a id="intro" class="anchor" href="#intro" aria-hidden="true"><span class="octicon octicon-link"></span></a>Intro</h3>
 
-<p>peachfuzz, written primarily in C++, is designed to find code bugs by throwing garbage input at programs to see how they react.  This is great for finding bugs, because not every type of input is always handled, and buffers are not always checked, etc.  It also comes in handy when writing (and protecting against), buffer overflow exploitation.</p>
+<p><strong>A Not So Very Intelligent Fuzzer</strong></p>
+
+<p>ansvif, written primarily in C++, is designed to find code bugs by throwing garbage input at programs to see how they react.  This is great for finding bugs, because not every type of input is always handled, and buffers are not always checked, etc.  It also comes in handy when writing (and protecting against), buffer overflow exploitation.</p>
 
 <h3>
 <a id="checkout-and-compliation" class="anchor" href="#checkout-and-compliation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Checkout and compliation</h3>
 
-<pre><code>$ git clone https://github.com/oxagast/peachfuzz
-$ cd peachfuzz
+<pre><code>$ git clone https://github.com/oxagast/ansvif
+$ cd ansvif
 $ make
 $ make test
 </code></pre>
@@ -62,15 +64,15 @@ $ make test
 
 <p>The most simplistic usage is:</p>
 
-<pre><code>$ ./peachfuzz -[tm] template_or_manpage -c /path/to/binary -b [buffersize]
-$ ./peachfuzz -m mount -c /bin/mount -b 2048
-$ cat filewithgarbagelinebyline | ./peachfuzz -t template ./faulty 2048
+<pre><code>$ echo "Marshall" ./ansvif -t examples/template -c ./faulty -b 64
+$ ./ansvif -m mount -c /usr/sbin/mount -e examples/template_env -x examples/template_other -f 8 -b 2048
+$ ./ansvif -t examples/blank -F tmp/tmphtml -x examples/htmltags -c /usr/bin/iceweasel -b 128 -A "file:///home/username/src/ansvif/tmp/tmphtml"  -f 2 -n -R "sleep 3 &amp;&amp; killall iceweasel" -S "&gt;"
 </code></pre>
 
 <h3>
 <a id="other" class="anchor" href="#other" aria-hidden="true"><span class="octicon octicon-link"></span></a>Other</h3>
 
-<p>Included is a file, bad_input.tar.xz.  This has some pregenerated semi-psudorandom data in it.  You can try it out by piping it to peachfuzz.  You may want some more specific data to be piped in, if so, create a file line by line and pipe it in.</p>
+<p>Included is a file, bad_input.tar.xz.  This has some pregenerated semi-psudorandom data in it.  You can try it out by piping it to ansvif.  You may want some more specific data to be piped in, if so, create a file line by line and pipe it in.</p>
 
 <h3>
 <a id="authors-and-contributors" class="anchor" href="#authors-and-contributors" aria-hidden="true"><span class="octicon octicon-link"></span></a>Authors and Contributors</h3>
