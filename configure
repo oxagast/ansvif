@@ -52,18 +52,18 @@ printf "CFLAGS=${CFLAGS}\n" >> Makefile
 printf "LDFLAGS=${LDFLAGS}\n" >> Makefile
 printf "INCLUDES=${INCLUDES}\n" >> Makefile
 printf "PATH=${PATH}\n" >> Makefile
-printf "all: peachfuzz\n" >> Makefile
+printf "all: ansvif\n" >> Makefile
 printf "\n" >> Makefile
-printf "default: peachfuzz\n" >> Makefile
+printf "default: ansvif\n" >> Makefile
 printf "\n" >> Makefile
-printf "peachfuzz:\n" >> Makefile
+printf "ansvif:\n" >> Makefile
 printf "\tcd ./gzstream;make;cd ../\n" >> Makefile
-printf "\tPATH=${PATH} ${CXX} peachfuzz.cpp ${CFLAGS} ${LDFLAGS} ${INCLUDES} -o peachfuzz\n" >> Makefile
+printf "\tPATH=${PATH} ${CXX} ansvif.cpp ${CFLAGS} ${LDFLAGS} ${INCLUDES} -o ansvif\n" >> Makefile
 printf "\tPATH=${PATH} ${CXX} find_suid.cpp ${CFLAGS} ${LDFLAGS} ${INCLUDES} -O2 -o find_suid\n" >> Makefile
 printf "\n" >> Makefile
 printf "test:\n" >> Makefile
 printf "\t${CC} faulty.c -o faulty\n" >> Makefile
-printf "\t./peachfuzz -t examples/template -c ./faulty -b 2048\n" >> Makefile
+printf "\t./ansvif -t examples/template -c ./faulty -b 2048\n" >> Makefile
 printf "\trm faulty\n" >> Makefile
 printf "\t# Test success\n" >> Makefile
 printf "\n" >> Makefile
@@ -71,5 +71,5 @@ printf "faulty : faulty.c\n" >> Makefile
 printf "\t${CC} -o faulty faulty.c\n" >> Makefile
 printf "\n" >> Makefile
 printf "clean:\n" >> Makefile
-printf "\trm Makefile peachfuzz find_suid ./gzstream/*.o ./gzstream/*.a\n" >> Makefile
+printf "\trm Makefile ansvif find_suid ./gzstream/*.o ./gzstream/*.a\n" >> Makefile
 echo "Configuration written.  Now type make."

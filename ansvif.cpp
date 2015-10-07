@@ -1,5 +1,7 @@
 
 /*
+ * ansvif
+ * A Not So Very Intelligent Fuzzer
  * Marshall Whittaker / oxagast
  */
 
@@ -103,7 +105,6 @@ int rand_me_plz (int rand_from, int rand_to) {
   auto roll = std::bind ( distribution, generator );  // bind it so we can do it multiple times
   return(roll());
 }
-
 
 char fortune_cookie () {
   char chr;
@@ -398,7 +399,7 @@ void write_seg(std::string filename, std::string seg_line) {
   w_f.close();
 }
 
-void write_junk_file(std::string filename, std::vector<std::string> opt_other, int buf_size, int rand_spec_one, int rand_spec_two, bool never_rand, bool verbose) {
+void write_junk_file(std::string filename, std::vector<std::string> opt_other, int buf_size, int rand_spec_one, int rand_spec_two, bool never_rand, std::string other_sep, bool verbose) {
   remove(filename.c_str());
   std::string oscar;
   std::ofstream w_f;
@@ -406,17 +407,31 @@ void write_junk_file(std::string filename, std::vector<std::string> opt_other, i
   for (int start_buf = 0; start_buf <= buf_size; start_buf++) {
     std::string oscar = opt_other.at(rand_me_plz(0, opt_other.size()-1));
     std::string trash = make_garbage(rand_me_plz(rand_spec_one,rand_spec_two), rand_me_plz(1,buf_size), "", false, never_rand);
-    w_f << oscar << std::endl;
+    w_f << oscar;
     if (trash != "OOR") {
-      w_f << trash << std::endl;
+      w_f << trash;
+    }
+    int is_sep = rand_me_plz(0, 1);
+    if (is_sep == 1) {
+      w_f << other_sep << std::endl;
+    }
+    else {
+      w_f << std::endl;
     }
     if (verbose == true) {
-      std::cerr << oscar << std::endl;
+      std::cerr << oscar;
       {
         if (trash != "OOR")
-          std::cerr << trash << std::endl;
+          std::cerr << trash;
+      }
+      if (is_sep == 1) {
+        std::cerr << other_sep << std::endl;
+      }
+      else {
+        std::cerr << std::endl;
       }
     }
+
   }
   w_f.close();
 }
@@ -440,7 +455,7 @@ bool match_seg(int buf_size, std::vector<std::string> opts, std::vector<std::str
       std::string env_str;
       std::string sys_str;
       if (junk_file_of_args != "") {
-        write_junk_file(junk_file_of_args, opt_other, buf_size, rand_spec_one, rand_spec_two, never_rand, verbose);
+        write_junk_file(junk_file_of_args, opt_other, buf_size, rand_spec_one, rand_spec_two, never_rand, other_sep, verbose);
       }
       int sep_type;
       for(int cmd_flag_l = 0; cmd_flag_l < opts.size(); cmd_flag_l++) {  // loop around the options
