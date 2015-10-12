@@ -327,10 +327,11 @@ std::string make_garbage (int trash, int buf, std::string opt_other_str, bool is
   return(all_junk);
 }
 
+
 FILE * popen2 (std::string command, std::string type, int & pid, std::string low_lvl_user)
 {
   pid_t child_pid;
-  int fd[2];
+  int fd[1];
   pipe(fd);
   if((child_pid = fork()) == -1) {
     perror("fork");
@@ -339,7 +340,7 @@ FILE * popen2 (std::string command, std::string type, int & pid, std::string low
   if (child_pid == 0) {  // child begins
     if (type == "r") {
       close(fd[READ]);    //Close the READ
-      dup2(fd[WRITE], 2); //Redirect stdout to pipe
+      dup2(fd[WRITE], 1); //Redirect stdout to pipe
     }
     else {
       close(fd[WRITE]);    //Close the WRITE
@@ -552,7 +553,7 @@ bool match_seg(int buf_size, std::vector<std::string> opts, std::vector<std::str
           }
         }
       } 
-      std::string out_str = env_str + " " + path_str + " " + sys_str + " " + always_arg;
+      std::string out_str = env_str + " " + path_str + " " + sys_str + " " + always_arg + " ; echo $?";
       junk_opts.clear();
       junk_opts.shrink_to_fit();
       junk_opts_env.clear();
@@ -582,10 +583,10 @@ bool match_seg(int buf_size, std::vector<std::string> opts, std::vector<std::str
       }
       std::string token;
       while (std::getline(output, token)) {
-        std::regex sf_reg ("(.*Segmentation fault.*|.*core dump.*)"); // regex for the sf
+        std::regex sf_reg ("(132|136|139|135|134|159)"); // regex for the sf
         std::smatch sf;
         if (regex_match(token, sf, sf_reg)) {  // match segfault
-          std::cout << "Segfaulted with command: " << std::endl << out_str << std::endl;
+          std::cout << "Crashed with command: " << std::endl << out_str << std::endl;
           if (junk_file_of_args != "") {
             std::cout << "File data left in: " << junk_file_of_args << std::endl;
           }
