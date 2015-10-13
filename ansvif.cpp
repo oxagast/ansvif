@@ -472,13 +472,13 @@ bool match_seg(int buf_size, std::vector<std::string> opts, std::vector<std::str
       if (is_other == true) {
         if (rand_buf == true) {
           for( std::vector<std::string>::const_iterator junk_opt_env = junk_opts_env.begin(); junk_opt_env != junk_opts_env.end(); ++junk_opt_env) { // loop through the vector of junk envs
-            std::string oscar_env = remove_chars(make_garbage(rand_me_plz(rand_spec_one,rand_spec_two), rand_me_plz(1,buf_size), opt_other.at(rand_me_plz(0, opt_other.size()-1)), is_other, never_rand), strip_shell);
+            std::string oscar_env = make_garbage(rand_me_plz(rand_spec_one,rand_spec_two), rand_me_plz(1,buf_size), opt_other.at(rand_me_plz(0, opt_other.size()-1)), is_other, never_rand);
             if (oscar_env != "OOR") {
               env_str = env_str + *junk_opt_env + oscar_env + " ";
             }
           }
           for( std::vector<std::string>::const_iterator junk_opt = junk_opts.begin(); junk_opt != junk_opts.end(); ++junk_opt) { // loop through the vector of junk opts
-            std::string oscar = remove_chars(make_garbage(rand_me_plz(rand_spec_one,rand_spec_two), rand_me_plz(1,buf_size), opt_other.at(rand_me_plz(0, opt_other.size()-1)), is_other, never_rand), strip_shell);
+            std::string oscar = make_garbage(rand_me_plz(rand_spec_one,rand_spec_two), rand_me_plz(1,buf_size), opt_other.at(rand_me_plz(0, opt_other.size()-1)), is_other, never_rand);
             if (oscar != "OOR") {
               sep_type = rand_me_plz(0,1);
               if (sep_type == 0) {
@@ -492,13 +492,13 @@ bool match_seg(int buf_size, std::vector<std::string> opts, std::vector<std::str
         }
         else if (rand_buf == false) {
           for( std::vector<std::string>::const_iterator junk_opt_env = junk_opts_env.begin(); junk_opt_env != junk_opts_env.end(); ++junk_opt_env) { // loop through the vector of junk envs
-            std::string oscar_env = remove_chars(make_garbage(rand_me_plz(rand_spec_one,rand_spec_two), buf_size, opt_other.at(rand_me_plz(0, opt_other.size()-1)), is_other, never_rand), strip_shell);
+            std::string oscar_env = make_garbage(rand_me_plz(rand_spec_one,rand_spec_two), buf_size, opt_other.at(rand_me_plz(0, opt_other.size()-1)), is_other, never_rand);
             if (oscar_env != "OOR") {
               env_str = env_str + *junk_opt_env + oscar_env + " ";
             }
           }
           for( std::vector<std::string>::const_iterator junk_opt = junk_opts.begin(); junk_opt != junk_opts.end(); ++junk_opt) { // loop through the vector of junk opts
-            std::string oscar = remove_chars(make_garbage(rand_me_plz(rand_spec_one,rand_spec_two), buf_size, opt_other.at(rand_me_plz(0, opt_other.size()-1)), is_other, never_rand), strip_shell);
+            std::string oscar = make_garbage(rand_me_plz(rand_spec_one,rand_spec_two), buf_size, opt_other.at(rand_me_plz(0, opt_other.size()-1)), is_other, never_rand);
             if (oscar != "OOR") {
               sep_type = rand_me_plz(0,1);
               if (sep_type == 0) {
@@ -514,13 +514,13 @@ bool match_seg(int buf_size, std::vector<std::string> opts, std::vector<std::str
       if (is_other == false) {
         if (rand_buf == true) {
           for( std::vector<std::string>::const_iterator junk_opt_env = junk_opts_env.begin(); junk_opt_env != junk_opts_env.end(); ++junk_opt_env) { // loop through the vector of junk envs
-            std::string oscar_env = remove_chars(make_garbage(rand_me_plz(rand_spec_one,rand_spec_two), rand_me_plz(1,buf_size), "", is_other, never_rand), strip_shell);
+            std::string oscar_env = make_garbage(rand_me_plz(rand_spec_one,rand_spec_two), rand_me_plz(1,buf_size), "", is_other, never_rand);
             if (oscar_env != "OOR") {
               env_str = env_str + *junk_opt_env + oscar_env + " ";
             }
           }
           for( std::vector<std::string>::const_iterator junk_opt = junk_opts.begin(); junk_opt != junk_opts.end(); ++junk_opt) { // loop through the vector of junk opts
-            std::string oscar = remove_chars(make_garbage(rand_me_plz(rand_spec_one,rand_spec_two), rand_me_plz(1,buf_size), "", is_other, never_rand), strip_shell);
+            std::string oscar = make_garbage(rand_me_plz(rand_spec_one,rand_spec_two), rand_me_plz(1,buf_size), "", is_other, never_rand);
             if (oscar != "OOR") {
               sep_type = rand_me_plz(0,1);
               if (sep_type == 0) {
@@ -534,13 +534,13 @@ bool match_seg(int buf_size, std::vector<std::string> opts, std::vector<std::str
         }
         else if (rand_buf == false) {
           for( std::vector<std::string>::const_iterator junk_opt_env = junk_opts_env.begin(); junk_opt_env != junk_opts_env.end(); ++junk_opt_env) { // loop through the vector of junk envs
-            std::string oscar_env = remove_chars(make_garbage(rand_me_plz(rand_spec_one,rand_spec_two), buf_size, "", is_other, never_rand), strip_shell);
+            std::string oscar_env = make_garbage(rand_me_plz(rand_spec_one,rand_spec_two), buf_size, "", is_other, never_rand);
             if (oscar_env != "OOR") {
               env_str = env_str + *junk_opt_env + oscar_env + " ";
             }
           }
           for( std::vector<std::string>::const_iterator junk_opt = junk_opts.begin(); junk_opt != junk_opts.end(); ++junk_opt) { // loop through the vector of junk opts
-            std::string oscar = remove_chars(make_garbage(rand_me_plz(rand_spec_one,rand_spec_two), buf_size, "", is_other, never_rand), strip_shell);
+            std::string oscar = make_garbage(rand_me_plz(rand_spec_one,rand_spec_two), buf_size, "", is_other, never_rand);
             if (oscar != "OOR") {
               sep_type = rand_me_plz(0,1);
               if (sep_type == 0) {
@@ -553,7 +553,8 @@ bool match_seg(int buf_size, std::vector<std::string> opts, std::vector<std::str
           }
         }
       } 
-      std::string out_str = env_str + " " + path_str + " " + sys_str + " " + always_arg + " ; echo $?";
+      std::string out_str = remove_chars(env_str + " " + path_str + " " + sys_str + " " + always_arg, strip_shell);
+      out_str = out_str + "; echo $?";
       junk_opts.clear();
       junk_opts.shrink_to_fit();
       junk_opts_env.clear();
@@ -621,7 +622,7 @@ int main (int argc, char* argv[]) {
   std::string buf_size;
   std::string mp;
   std::string template_file;
-  std::string strip_shell = "<>\n |&\[]\()\{}:";
+  std::string strip_shell = "<>\n|&\[]\()\{}:";
   std::string u_strip_shell;
   std::string write_file_n = "";
   std::string path_str = "";
