@@ -25,7 +25,6 @@
 #include <stdlib.h>
 #include <iomanip>
 #include <condition_variable>
-#include <chrono>
 #include <future>
 #include <glob.h>
 #include <sys/wait.h>
@@ -60,7 +59,7 @@
   << " -r           Use only random data." << std::endl
   << " -z           Randomize buffer size from 1 to specified by the -b option." << std::endl
   << " -s \"@#^$CE\"  Characters to omit from randomization.  Default omitted" << std::endl
-  << "              characters are: <>\\n |&\[]\()\{}: and mandatory omitted" << std::endl
+  << "              characters are: <>\\n |&\[]\()\{}:; and mandatory omitted" << std::endl
   << "              characters are: >\\n" << std::endl
   << " -o [file]    Log to this file." << std::endl
   << " -x [file]    Other opts to put in, such as usernames, etc." << std::endl
@@ -71,6 +70,7 @@
   << " -F [file]    A file with junk to be fuzzed with whole." << std::endl
   << " -n           Never use random data in the fuzz." << std::endl
   << " -R \"ls\"      Always run this command after the fuzz." << std::endl
+  << " -W [integer] Thread timeout.  This is experimental." << std::endl
   << " -v           Verbose." << std::endl
   << " -d           Debug." << std::endl;
   exit(0);
@@ -117,9 +117,11 @@ char fortune_cookie () {
 }
 
 
-void reaper (int c_pid, int t_timeout) {
-  std::this_thread::sleep_for(std::chrono::milliseconds(t_timeout));
+int reaper (int c_pid, int t_timeout) {
+//  std::this_thread::sleep_for(std::chrono::milliseconds(t_timeout));
+  sleep(t_timeout);
   kill (c_pid, 9);
+  return(0);
 }
 
 
@@ -472,7 +474,7 @@ bool match_seg(int buf_size, std::vector<std::string> opts, std::vector<std::str
       if (is_other == true) {
         if (rand_buf == true) {
           for( std::vector<std::string>::const_iterator junk_opt_env = junk_opts_env.begin(); junk_opt_env != junk_opts_env.end(); ++junk_opt_env) { // loop through the vector of junk envs
-            std::string oscar_env = make_garbage(rand_me_plz(rand_spec_one,rand_spec_two), rand_me_plz(1,buf_size), opt_other.at(rand_me_plz(0, opt_other.size()-1)), is_other, never_rand);
+            std::string oscar_env = remove_chars(make_garbage(rand_me_plz(rand_spec_one,rand_spec_two), rand_me_plz(1,buf_size), opt_other.at(rand_me_plz(0, opt_other.size()-1)), is_other, never_rand), " ");
             if (oscar_env != "OOR") {
               env_str = env_str + *junk_opt_env + oscar_env + " ";
             }
@@ -492,7 +494,7 @@ bool match_seg(int buf_size, std::vector<std::string> opts, std::vector<std::str
         }
         else if (rand_buf == false) {
           for( std::vector<std::string>::const_iterator junk_opt_env = junk_opts_env.begin(); junk_opt_env != junk_opts_env.end(); ++junk_opt_env) { // loop through the vector of junk envs
-            std::string oscar_env = make_garbage(rand_me_plz(rand_spec_one,rand_spec_two), buf_size, opt_other.at(rand_me_plz(0, opt_other.size()-1)), is_other, never_rand);
+            std::string oscar_env = remove_chars(make_garbage(rand_me_plz(rand_spec_one,rand_spec_two), buf_size, opt_other.at(rand_me_plz(0, opt_other.size()-1)), is_other, never_rand), " ");
             if (oscar_env != "OOR") {
               env_str = env_str + *junk_opt_env + oscar_env + " ";
             }
@@ -514,7 +516,7 @@ bool match_seg(int buf_size, std::vector<std::string> opts, std::vector<std::str
       if (is_other == false) {
         if (rand_buf == true) {
           for( std::vector<std::string>::const_iterator junk_opt_env = junk_opts_env.begin(); junk_opt_env != junk_opts_env.end(); ++junk_opt_env) { // loop through the vector of junk envs
-            std::string oscar_env = make_garbage(rand_me_plz(rand_spec_one,rand_spec_two), rand_me_plz(1,buf_size), "", is_other, never_rand);
+            std::string oscar_env = remove_chars(make_garbage(rand_me_plz(rand_spec_one,rand_spec_two), rand_me_plz(1,buf_size), "", is_other, never_rand), " ");
             if (oscar_env != "OOR") {
               env_str = env_str + *junk_opt_env + oscar_env + " ";
             }
@@ -534,7 +536,7 @@ bool match_seg(int buf_size, std::vector<std::string> opts, std::vector<std::str
         }
         else if (rand_buf == false) {
           for( std::vector<std::string>::const_iterator junk_opt_env = junk_opts_env.begin(); junk_opt_env != junk_opts_env.end(); ++junk_opt_env) { // loop through the vector of junk envs
-            std::string oscar_env = make_garbage(rand_me_plz(rand_spec_one,rand_spec_two), buf_size, "", is_other, never_rand);
+            std::string oscar_env = remove_chars(make_garbage(rand_me_plz(rand_spec_one,rand_spec_two), buf_size, "", is_other, never_rand), " ");
             if (oscar_env != "OOR") {
               env_str = env_str + *junk_opt_env + oscar_env + " ";
             }
@@ -552,7 +554,7 @@ bool match_seg(int buf_size, std::vector<std::string> opts, std::vector<std::str
             }
           }
         }
-      } 
+      }
       std::string out_str = remove_chars(env_str + " " + path_str + " " + sys_str + " " + always_arg, strip_shell);
       out_str = out_str + "; echo $?";
       junk_opts.clear();
@@ -570,8 +572,6 @@ bool match_seg(int buf_size, std::vector<std::string> opts, std::vector<std::str
       FILE * fp = popen2(out_str, "r", pid, low_lvl_user); // opens child process fork
       char command_out[4096] = {0};
       std::stringstream output;
-      std::thread reaper_thread(reaper, pid, t_timeout);  // takes care of killing it off if it takes too long
-      reaper_thread.join();
       while (read(fileno(fp), command_out, sizeof(command_out)-1) != 0) {
         output << std::string(command_out);
         memset(&command_out, 0, sizeof(command_out));
@@ -582,6 +582,8 @@ bool match_seg(int buf_size, std::vector<std::string> opts, std::vector<std::str
         FILE * fp = popen2(run_command, "r", run_com_pid, low_lvl_user); // opens child process fork
         pclose2(fp, run_com_pid);
       }
+      std::thread reaper_thread(reaper, pid, t_timeout);  // takes care of killing it off if it takes too long
+      reaper_thread.detach();
       std::string token;
       while (std::getline(output, token)) {
         std::regex sf_reg ("(132|136|139|135|134|159)"); // regex for the sf
@@ -614,7 +616,7 @@ int main (int argc, char* argv[]) {
   char* man_chr;
   int opt;
   int num_threads = 2;
-  int t_timeout = 25;
+  int t_timeout = 3;
   std::vector<std::string> opts;
   std::vector<std::string> spec_env;
   std::vector<std::string> opt_other;
@@ -622,7 +624,7 @@ int main (int argc, char* argv[]) {
   std::string buf_size;
   std::string mp;
   std::string template_file;
-  std::string strip_shell = "<>\n|&\[]\()\{}:";
+  std::string strip_shell = "<>\n|&\[]\()\{}:;";
   std::string u_strip_shell;
   std::string write_file_n = "";
   std::string path_str = "";
@@ -642,7 +644,7 @@ int main (int argc, char* argv[]) {
   bool is_other = false;
   bool dump_opts = false;
   bool never_rand = false;
-  while ((opt = getopt(argc, argv, "m:p:t:e:c:f:o:b:s:x:R:A:F:S:T:L:hrzvdDn")) != -1) {
+  while ((opt = getopt(argc, argv, "m:p:t:e:c:f:o:b:s:x:R:A:F:S:T:L:W:hrzvdDn")) != -1) {
     switch (opt) {
       case 'v':
       verbose = true;
@@ -717,6 +719,9 @@ int main (int argc, char* argv[]) {
       break;
       case 'R':
       run_command = optarg;
+      break;
+      case 'W':
+      t_timeout = std::atoi(optarg);
       break;
       default:
       help_me(argv[0]);
