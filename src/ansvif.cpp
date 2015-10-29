@@ -9,7 +9,7 @@
 #include <fstream>
 #include <string>
 #include <regex>
-#include "gzstream/gzstream.h"
+#include "../include/gzstream/gzstream.h"
 #include <algorithm>
 #include <vector>
 #include <sys/time.h>

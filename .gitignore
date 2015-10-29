@@ -1,4 +1,4 @@
 gzstream/*.[oa]
-ansvif
-faulty
-find_suid
+bin/ansvif
+bin/faulty
+bin/find_suid

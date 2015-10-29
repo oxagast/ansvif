@@ -9,7 +9,7 @@ echo -n "Removing old Makefile... "
 rm Makefile 2>/dev/null
 echo "Done."
 CFLAGS="-lstdc++ -lgzstream -lz -std=gnu++11 -lpthread -O3"
-LDFLAGS="-L./gzstream"
+LDFLAGS="-L./include/gzstream"
 CXX=gcc
 CC=gcc
 PATH=$PATH
@@ -40,7 +40,7 @@ echo ${PROC}
 CXX="/usr/ports/pobj/gcc-${GCCVER}/build-${ARCH}/gcc/xg++"
 CC="/usr/ports/usr/local/bin/${PROC}-unknown-openbsd$OSVER-gcc-${GCCVER}"
 PATH="$PATH:/usr/ports/pobj/gcc-${GCCVER}/build-${ARCH}/gcc:/usr/ports/pobj/gcc-${GCCVER}/bin"
-CFLAGS="-lgzstream -lz -std=gnu++11 -lpthread -O3 -L./gzstream -lestdc++"
+CFLAGS="-lgzstream -lz -std=gnu++11 -lpthread -O3 -L./include/gzstream -lestdc++"
 INCLUDES="-I/usr/ports/pobj/gcc-${GCCVER}/build-amd64/${PROC}-unknown-openbsd${OSVER}/libstdc++-v3/include -I/usr/ports/pobj/gcc-${GCCVER}/build-${ARCH}/${PROC}-unknown-openbsd${OSVER}/libstdc++-v3/include/${PROC}-unknown-openbsd${OSVER} -I/usr/ports/pobj/gcc-${GCCVER}/fake-${ARCH}/usr/local/include/c++/${GCCVER} -I/usr/ports/pobj/gcc-${GCCVER}/build-${ARCH}/gcc/include"
 LDFLAGS="-L/usr/ports/pobj/gcc-${GCCVER}/build-amd64/${PROC}-unknown-openbsd${OSVER}/libstdc++-v3/include -L/usr/ports/pobj/gcc-${GCCVER}/build-${ARCH}/prev-${PROC}-unknown-openbsd${OSVER}/libstdc++-v3/src/.libs -L/usr/local/lib/gcc/${PROC}-unknown-openbsd${OSVER}/${GCCVER}"
 else
@@ -57,19 +57,19 @@ printf "\n" >> Makefile
 printf "default: ansvif\n" >> Makefile
 printf "\n" >> Makefile
 printf "ansvif:\n" >> Makefile
-printf "\tcd ./gzstream;make;cd ../\n" >> Makefile
-printf "\tPATH=${PATH} ${CXX} ansvif.cpp ${CFLAGS} ${LDFLAGS} ${INCLUDES} -o ansvif\n" >> Makefile
-printf "\tPATH=${PATH} ${CXX} find_suid.cpp ${CFLAGS} ${LDFLAGS} ${INCLUDES} -O2 -o find_suid\n" >> Makefile
+printf "\tcd ./include/gzstream;make;cd ../../\n" >> Makefile
+printf "\tPATH=${PATH} ${CXX} ./src/ansvif.cpp ${CFLAGS} ${LDFLAGS} ${INCLUDES} -o ./bin/ansvif\n" >> Makefile
+printf "\tPATH=${PATH} ${CXX} ./src/find_suid.cpp ${CFLAGS} ${LDFLAGS} ${INCLUDES} -O2 -o ./bin/find_suid\n" >> Makefile
 printf "\n" >> Makefile
 printf "test:\n" >> Makefile
-printf "\t${CC} faulty.c -o faulty\n" >> Makefile
-printf "\t./ansvif -t examples/template -c ./faulty -b 2048\n" >> Makefile
-printf "\trm faulty\n" >> Makefile
+printf "\t${CC} ./src/faulty.c -o ./bin/faulty\n" >> Makefile
+printf "\t./bin/ansvif -t examples/template -c ./bin/faulty -b 64\n" >> Makefile
+printf "\trm ./bin/faulty\n" >> Makefile
 printf "\t# Test success\n" >> Makefile
 printf "\n" >> Makefile
-printf "faulty : faulty.c\n" >> Makefile
-printf "\t${CC} -o faulty faulty.c\n" >> Makefile
+printf "faulty : ./src/faulty.c\n" >> Makefile
+printf "\t${CC} -o ./bin/faulty ./src/faulty.c\n" >> Makefile
 printf "\n" >> Makefile
 printf "clean:\n" >> Makefile
-printf "\trm Makefile ansvif find_suid ./gzstream/*.o ./gzstream/*.a\n" >> Makefile
+printf "\trm Makefile ./bin/ansvif ./bin/find_suid ./include/gzstream/*.o ./include/gzstream/*.a\n" >> Makefile
 echo "Configuration written.  Now type make."
