@@ -64,13 +64,12 @@
   << " -o [file]    Log to this file." << std::endl
   << " -x [file]    Other opts to put in, such as usernames, etc." << std::endl
   << " -S \",\"       Some seperator besides 'space' between opts, such as ',:-' etc." << std::endl
-  << " -T [integer] Specifies how long to wait before killing a hung thread." << std::endl
   << " -L [nobody]  An unprivileged user to run as if you're root.  Defaults nobody." << std::endl
   << " -A \"blah\"    Always put this string in the command." << std::endl
   << " -F [file]    A file with junk to be fuzzed with whole." << std::endl
   << " -n           Never use random data in the fuzz." << std::endl
   << " -R \"ls\"      Always run this command after the fuzz." << std::endl
-  << " -W [integer] Thread timeout.  This is experimental." << std::endl
+  << " -W [integer] Thread timeout." << std::endl
   << " -v           Verbose." << std::endl
   << " -d           Debug." << std::endl;
   exit(0);
@@ -595,7 +594,7 @@ bool match_seg(int buf_size, std::vector<std::string> opts, std::vector<std::str
           }
           if (write_to_file == true) {
             write_seg(write_file_n, out_str);
-            std::cout << "Segmentation fault logged" << std::endl;
+            std::cout << "Crash logged." << std::endl;
             exit(0);
           }
           else {
@@ -644,7 +643,7 @@ int main (int argc, char* argv[]) {
   bool is_other = false;
   bool dump_opts = false;
   bool never_rand = false;
-  while ((opt = getopt(argc, argv, "m:p:t:e:c:f:o:b:s:x:R:A:F:S:T:L:W:hrzvdDn")) != -1) {
+  while ((opt = getopt(argc, argv, "m:p:t:e:c:f:o:b:s:x:R:A:F:S:L:W:hrzvdDn")) != -1) {
     switch (opt) {
       case 'v':
       verbose = true;
@@ -701,9 +700,6 @@ int main (int argc, char* argv[]) {
       break;
       case 'S':
       other_sep = optarg;
-      break;
-      case 'T':
-      t_timeout = std::atoi(optarg);
       break;
       case 'L':
       low_lvl_user = optarg;
@@ -762,7 +758,7 @@ int main (int argc, char* argv[]) {
     std::vector<std::thread> threads;
     bool did_it_fault;
     for (int cur_thread=1; cur_thread <= num_threads; ++cur_thread) threads.push_back(std::thread(match_seg, buf_size_int, opts, spec_env, path_str, strip_shell, rand_all, write_to_file, write_file_n, rand_buf, opt_other, is_other, other_sep, t_timeout, low_lvl_user, junk_file_of_args, always_arg, never_rand, run_command, verbose, debug));  // Thrift Shop
-    for (auto& all_thread : threads) all_thread.join();  // is that your grandma's coat?
-      exit(0);
-  }
+      for (auto& all_thread : threads) all_thread.join();  // is that your grandma's coat?
+        exit(0);
+    }
 }

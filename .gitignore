@@ -1,3 +1,4 @@
-*.[oa]
-segfault_4me
+gzstream/*.[oa]
+ansvif
 faulty
+find_suid
