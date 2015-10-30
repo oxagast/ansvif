@@ -105,6 +105,7 @@ int rand_me_plz (int rand_from, int rand_to) {
   return(roll());
 }
 
+
 char fortune_cookie () {
   char chr;
   const char *hex_digits = "0123456789ABCDEF";
