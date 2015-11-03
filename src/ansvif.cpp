@@ -116,14 +116,14 @@ char fortune_cookie () {
   return(chr);
 }
 
-/*
+
 int reaper (int c_pid, int t_timeout) {
 //  std::this_thread::sleep_for(std::chrono::milliseconds(t_timeout));
   sleep(t_timeout);
   kill (c_pid, 9);
   return(0);
 }
-*/
+
 
 std::vector<std::string> get_flags_man (char* cmd, std::string man_loc, bool verbose, bool debug, bool dump_opts) {
   std::string cmd_name(cmd);
@@ -595,10 +595,9 @@ bool match_seg(int buf_size, std::vector<std::string> opts, std::vector<std::str
         FILE * fp = popen2(run_command, "r", run_com_pid, low_lvl_user); // opens child process fork
         pclose2(fp, run_com_pid);
       }
-/*
       std::thread reaper_thread(reaper, pid, t_timeout);  // takes care of killing it off if it takes too long
       reaper_thread.detach();
-*/
+
       std::string token;
       while (std::getline(output, token)) {
         std::regex sf_reg ("(132|136|139|135|134|159)"); // regex for the crash
