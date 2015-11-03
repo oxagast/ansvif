@@ -116,14 +116,14 @@ char fortune_cookie () {
   return(chr);
 }
 
-
+/*
 int reaper (int c_pid, int t_timeout) {
 //  std::this_thread::sleep_for(std::chrono::milliseconds(t_timeout));
   sleep(t_timeout);
   kill (c_pid, 9);
   return(0);
 }
-
+*/
 
 std::vector<std::string> get_flags_man (char* cmd, std::string man_loc, bool verbose, bool debug, bool dump_opts) {
   std::string cmd_name(cmd);
@@ -376,7 +376,7 @@ int pclose2(FILE * fp, pid_t pid) // close it so we don't fuck outselves
 {
   int stat;
   fclose(fp);
-  while (waitpid(pid, &stat, 0) == -1) {
+  while (waitpid(pid, &stat, 0) == 0) {
     if (errno != EINTR) {
       stat = -1;
       break;
@@ -388,9 +388,12 @@ int pclose2(FILE * fp, pid_t pid) // close it so we don't fuck outselves
 
 std::string binstr_to_hex(std::string bin_str) {
   std::stringstream hex_out;
-  hex_out << std::setw(2) << std::hex << std::uppercase;
-  std::copy(bin_str.begin(), bin_str.end(), std::ostream_iterator<unsigned int>(hex_out, "\\"));
-  std::string hexxy = "\\" + hex_out.str();
+  std::string hexxy;
+  hex_out << std::setw(2) << std::setfill('0') << std::hex << std::uppercase;
+  std::copy(bin_str.begin(), bin_str.end(), std::ostream_iterator<unsigned int>(hex_out, "\\\\x"));
+  if (hex_out.str() != "") {
+    hexxy = hex_out.str() + "20";
+  }
   return (hexxy);
 }
 
@@ -401,6 +404,7 @@ void write_seg(std::string filename, std::string seg_line) {
   w_f << seg_line << std::endl;
   w_f.close();
 }
+
 
 void write_junk_file(std::string filename, std::vector<std::string> opt_other, int buf_size, int rand_spec_one, int rand_spec_two, bool never_rand, std::string other_sep, bool verbose) {
   remove(filename.c_str());
@@ -480,7 +484,7 @@ bool match_seg(int buf_size, std::vector<std::string> opts, std::vector<std::str
             }
           }
           for( std::vector<std::string>::const_iterator junk_opt = junk_opts.begin(); junk_opt != junk_opts.end(); ++junk_opt) { // loop through the vector of junk opts
-            std::string oscar = make_garbage(rand_me_plz(rand_spec_one,rand_spec_two), rand_me_plz(1,buf_size), opt_other.at(rand_me_plz(0, opt_other.size()-1)), is_other, never_rand);
+            std::string oscar = remove_chars(make_garbage(rand_me_plz(rand_spec_one,rand_spec_two), rand_me_plz(1,buf_size), opt_other.at(rand_me_plz(0, opt_other.size()-1)), is_other, never_rand), strip_shell);
             if (oscar != "OOR") {
               sep_type = rand_me_plz(0,1);
               if (sep_type == 0) {
@@ -500,7 +504,7 @@ bool match_seg(int buf_size, std::vector<std::string> opts, std::vector<std::str
             }
           }
           for( std::vector<std::string>::const_iterator junk_opt = junk_opts.begin(); junk_opt != junk_opts.end(); ++junk_opt) { // loop through the vector of junk opts
-            std::string oscar = make_garbage(rand_me_plz(rand_spec_one,rand_spec_two), buf_size, opt_other.at(rand_me_plz(0, opt_other.size()-1)), is_other, never_rand);
+            std::string oscar = remove_chars(make_garbage(rand_me_plz(rand_spec_one,rand_spec_two), buf_size, opt_other.at(rand_me_plz(0, opt_other.size()-1)), is_other, never_rand), strip_shell);
             if (oscar != "OOR") {
               sep_type = rand_me_plz(0,1);
               if (sep_type == 0) {
@@ -522,7 +526,7 @@ bool match_seg(int buf_size, std::vector<std::string> opts, std::vector<std::str
             }
           }
           for( std::vector<std::string>::const_iterator junk_opt = junk_opts.begin(); junk_opt != junk_opts.end(); ++junk_opt) { // loop through the vector of junk opts
-            std::string oscar = make_garbage(rand_me_plz(rand_spec_one,rand_spec_two), rand_me_plz(1,buf_size), "", is_other, never_rand);
+            std::string oscar = remove_chars(make_garbage(rand_me_plz(rand_spec_one,rand_spec_two), rand_me_plz(1,buf_size), "", is_other, never_rand), strip_shell);
             if (oscar != "OOR") {
               sep_type = rand_me_plz(0,1);
               if (sep_type == 0) {
@@ -542,7 +546,7 @@ bool match_seg(int buf_size, std::vector<std::string> opts, std::vector<std::str
             }
           }
           for( std::vector<std::string>::const_iterator junk_opt = junk_opts.begin(); junk_opt != junk_opts.end(); ++junk_opt) { // loop through the vector of junk opts
-            std::string oscar = make_garbage(rand_me_plz(rand_spec_one,rand_spec_two), buf_size, "", is_other, never_rand);
+            std::string oscar = remove_chars(make_garbage(rand_me_plz(rand_spec_one,rand_spec_two), buf_size, "", is_other, never_rand), strip_shell);
             if (oscar != "OOR") {
               sep_type = rand_me_plz(0,1);
               if (sep_type == 0) {
@@ -555,8 +559,17 @@ bool match_seg(int buf_size, std::vector<std::string> opts, std::vector<std::str
           }
         }
       }
-      std::string out_str = remove_chars(env_str + " " + path_str + " " + sys_str + " " + always_arg, strip_shell);
+      std::string out_str;
+      if (sys_str != "") {
+      if (env_str != "") {
+        out_str = "`printf \"\\\\x" + binstr_to_hex(env_str) + "\"` " + path_str + " `printf \"\\\\x" + binstr_to_hex(sys_str) + "\"` " + always_arg;
+      }
+      if (env_str == "") {
+        out_str = path_str + " `printf \"\\\\x" + binstr_to_hex(sys_str) + "\"` " + always_arg;
+      }
+    }
       out_str = out_str + "; echo $?";
+      if (out_str != "; echo $?") {
       junk_opts.clear();
       junk_opts.shrink_to_fit();
       junk_opts_env.clear();
@@ -582,11 +595,14 @@ bool match_seg(int buf_size, std::vector<std::string> opts, std::vector<std::str
         FILE * fp = popen2(run_command, "r", run_com_pid, low_lvl_user); // opens child process fork
         pclose2(fp, run_com_pid);
       }
+/*
       std::thread reaper_thread(reaper, pid, t_timeout);  // takes care of killing it off if it takes too long
       reaper_thread.detach();
+*/
       std::string token;
       while (std::getline(output, token)) {
-        std::regex sf_reg ("(132|136|139|135|134|159)"); // regex for the sf
+        std::regex sf_reg ("[132|136|139|135|134|159]"); // regex for the crash
+      //  std::regex sf_reg ("Segmentation");
         std::smatch sf;
         if (regex_match(token, sf, sf_reg)) {  // match segfault
           std::cout << "Crashed with command: " << std::endl << out_str << std::endl;
@@ -601,14 +617,18 @@ bool match_seg(int buf_size, std::vector<std::string> opts, std::vector<std::str
           else {
             exit(0);
           }
+}
         }
+
       }
-    }
   }
+  }
+
   else {
     std::cerr << "Command not found at path..." << std::endl;
     exit(1);
   }
+
 }
 
 
@@ -624,7 +644,7 @@ int main (int argc, char* argv[]) {
   std::string buf_size;
   std::string mp;
   std::string template_file;
-  std::string strip_shell = "<>\n|&\[]\()\{}:;";
+  std::string strip_shell = "`<>\n|&\[]\()\{}:;";
   std::string u_strip_shell;
   std::string write_file_n = "";
   std::string path_str = "";
