@@ -601,7 +601,7 @@ bool match_seg(int buf_size, std::vector<std::string> opts, std::vector<std::str
 */
       std::string token;
       while (std::getline(output, token)) {
-        std::regex sf_reg ("[132|136|139|135|134|159]"); // regex for the crash
+        std::regex sf_reg ("(132|136|139|135|134|159)"); // regex for the crash
       //  std::regex sf_reg ("Segmentation");
         std::smatch sf;
         if (regex_match(token, sf, sf_reg)) {  // match segfault

@@ -63,7 +63,7 @@ printf "\tPATH=${PATH} ${CXX} ./src/find_suid.cpp ${CFLAGS} ${LDFLAGS} ${INCLUDE
 printf "\n" >> Makefile
 printf "test:\n" >> Makefile
 printf "\t${CC} ./src/faulty.c -o ./bin/faulty\n" >> Makefile
-printf "\t./bin/ansvif -t examples/template -c ./bin/faulty -b 64\n" >> Makefile
+printf "\t./bin/ansvif -t examples/space -c ./bin/faulty -b 32 -A "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"\n" >> Makefile
 printf "\trm ./bin/faulty\n" >> Makefile
 printf "\t# Test success\n" >> Makefile
 printf "\n" >> Makefile
