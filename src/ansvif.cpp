@@ -231,14 +231,19 @@ std::string trash_generator(int trash, int buf, std::string user_junk,
       junk = "9" + junk; // yadda yadda
     }
   }
+  if (trash == 2) {
+    for (trash_num = 0; trash_num < buf; trash_num++) {
+      junk = "\%s" + junk; // yadda yadda
+    }
+  }
   if (never_rand == false) {
-    if (trash == 2) {
+    if (trash == 3) {
       for (trash_num = 0; trash_num < buf; trash_num++) {
         junk = junk += fortune_cookie();
       }
     }
   }
-  if (trash == 3) { // front
+  if (trash == 4) { // front
     for (trash_num = 0; trash_num < buf; trash_num++) {
       junk = "A" + junk; // put lots of As
     }
@@ -248,7 +253,7 @@ std::string trash_generator(int trash, int buf, std::string user_junk,
     else
       return ("OOR");
   }
-  if (trash == 4) {
+  if (trash == 5) {
     for (trash_num = 0; trash_num < buf; trash_num++) {
       junk = "9" + junk; // yadda yadda
     }
@@ -258,8 +263,18 @@ std::string trash_generator(int trash, int buf, std::string user_junk,
     else
       return ("OOR");
   }
+    if (trash == 6) {
+    for (trash_num = 0; trash_num < buf; trash_num++) {
+      junk = "\%s" + junk; // yadda yadda
+    }
+    junk = user_junk + junk;
+    if (buf - user_junk.length() < junk.size())
+      junk = junk.substr(0, buf);
+    else
+      return ("OOR");
+  }
   if (never_rand == false) {
-    if (trash == 5) {
+    if (trash == 7) {
       for (trash_num = 0; trash_num < buf; trash_num++) {
         junk = junk += fortune_cookie();
       }
@@ -270,7 +285,7 @@ std::string trash_generator(int trash, int buf, std::string user_junk,
         return ("OOR");
     }
   }
-  if (trash == 6) {
+  if (trash == 8) {
     for (trash_num = 0; trash_num < buf; trash_num++) { // back
       junk = "A" + junk;                                // put lots of As
     }
@@ -280,7 +295,7 @@ std::string trash_generator(int trash, int buf, std::string user_junk,
     else
       return ("OOR");
   }
-  if (trash == 7) {
+  if (trash == 9) {
     for (trash_num = 0; trash_num < buf; trash_num++) {
       junk = "9" + junk; // yadda yadda
     }
@@ -290,8 +305,18 @@ std::string trash_generator(int trash, int buf, std::string user_junk,
     else
       return ("OOR");
   }
+  if (trash == 10) {
+    for (trash_num = 0; trash_num < buf; trash_num++) {
+      junk = "\%s" + junk; // yadda yadda
+    }
+    junk = junk + user_junk;
+    if (buf - user_junk.length() < junk.size())
+      junk = junk.substr(junk.length() - buf);
+    else
+      return ("OOR");
+  }
   if (never_rand == false) {
-    if (trash == 8) {
+    if (trash == 11) {
       for (trash_num = 0; trash_num < buf; trash_num++) {
         junk = junk += fortune_cookie();
       }
@@ -302,7 +327,7 @@ std::string trash_generator(int trash, int buf, std::string user_junk,
         return ("OOR");
     }
   }
-  if (trash == 9) {
+  if (trash == 12) {
     junk = opt_other_str;
   }
   return (junk);
@@ -463,7 +488,7 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
         rand_spec_two = 2;
       } else {
         rand_spec_one = 0;
-        rand_spec_two = 9;
+        rand_spec_two = 12;
       }
       std::vector<std::string> junk_opts_env;
       std::vector<std::string> junk_opts;
@@ -633,16 +658,18 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
         }
       }
       std::string out_str;
+      std::string out_str_p;
       if (sys_str != "") {
         if (env_str != "") {
-          out_str = "`printf \"\\\\x" + binstr_to_hex(env_str) + "\"` " +
-                    path_str + " `printf \"\\\\x" + binstr_to_hex(sys_str) +
-                    "\"` " + always_arg;
+          out_str_p = "$(printf \"\\\\x" + binstr_to_hex(env_str) + "\") " +
+                    path_str + " $(printf \"\\\\x" + binstr_to_hex(sys_str) +
+                    "\") " + always_arg;
         }
         if (env_str == "") {
-          out_str = path_str + " `printf \"\\\\x" + binstr_to_hex(sys_str) +
-                    "\"` " + always_arg;
+          out_str_p = path_str + " $(printf \"\\\\x" + binstr_to_hex(sys_str) +
+                    "\") " + always_arg;
         }
+        out_str = env_str + " " + path_str + " " + sys_str + " " + always_arg;
       }
       out_str = out_str + "; echo $?"; // get the signal
       if (out_str != "; echo $?") {
@@ -684,13 +711,13 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
           std::smatch sf;
           if (regex_match(token, sf, sf_reg)) { // match crash
             std::cout << "Crashed with command: " << std::endl
-                      << out_str << std::endl;
+                      << out_str_p << std::endl;
             if (junk_file_of_args != "") {
               std::cout << "File data left in: " << junk_file_of_args
                         << std::endl;
             }
             if (write_to_file == true) {
-              write_seg(write_file_n, out_str);
+              write_seg(write_file_n, out_str_p);
               std::cout << "Crash logged." << std::endl;
               exit(0);
             } else {
