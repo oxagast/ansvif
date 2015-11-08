@@ -680,9 +680,9 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
         if (debug == true) {
           std::ofstream w_f;
           w_f.open(write_file_n, std::ios::out | std::ios::app);
-          w_f << out_str << std::endl;
+          w_f << out_str << std::endl << out_str_p << std::endl << std::endl;
           w_f.close();
-          std::cout << std::endl << out_str << std::endl;
+          std::cout << out_str << std::endl << out_str_p << std::endl << std::endl;
         }
         int pid; // initializes child
         FILE *fp =
