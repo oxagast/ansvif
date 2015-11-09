@@ -111,10 +111,10 @@ char fortune_cookie() {
   return (chr);
 }
 
-int reaper(int c_pid, int t_timeout) {
+int reaper(int grim, int t_timeout) {
   //  std::this_thread::sleep_for(std::chrono::milliseconds(t_timeout));
   sleep(t_timeout);
-  kill(c_pid, 9);
+  kill(grim, 9);
   return (0);
 }
 
@@ -232,7 +232,7 @@ std::string trash_generator(int trash, int buf, std::string user_junk,
     }
   }
   if (trash == 2) {
-    for (trash_num = 0; trash_num < buf; trash_num++) {
+    for (trash_num = 0; trash_num < buf/2; trash_num++) {
       junk = "\%s" + junk; // yadda yadda
     }
   }
@@ -264,7 +264,7 @@ std::string trash_generator(int trash, int buf, std::string user_junk,
       return ("OOR");
   }
     if (trash == 6) {
-    for (trash_num = 0; trash_num < buf; trash_num++) {
+    for (trash_num = 0; trash_num < buf/2; trash_num++) {
       junk = "\%s" + junk; // yadda yadda
     }
     junk = user_junk + junk;
@@ -306,7 +306,7 @@ std::string trash_generator(int trash, int buf, std::string user_junk,
       return ("OOR");
   }
   if (trash == 10) {
-    for (trash_num = 0; trash_num < buf; trash_num++) {
+    for (trash_num = 0; trash_num < buf/2; trash_num++) {
       junk = "\%s" + junk; // yadda yadda
     }
     junk = junk + user_junk;
