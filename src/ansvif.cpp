@@ -66,6 +66,9 @@ void help_me(std::string mr_me) {
       << " -F [file]    A file with junk to be fuzzed with whole." << std::endl
       << " -n           Never use random data in the fuzz." << std::endl
       << " -R \"ls\"      Always run this command after the fuzz." << std::endl
+      << " -C \"(1|13)\"  Non default crash recognition error codes." << std::endl
+      << "              Defaults are 132, 136, 139, 135, 134, and 159." << std::endl
+      << "              Must be formatted in C++ compatible regex form." << std::endl
       << " -W [integer] Thread timeout." << std::endl
       << " -v           Verbose." << std::endl
       << " -d           Debug." << std::endl;
@@ -477,7 +480,7 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
                std::vector<std::string> opt_other, bool is_other,
                std::string other_sep, int t_timeout, std::string low_lvl_user,
                std::string junk_file_of_args, std::string always_arg,
-               bool never_rand, std::string run_command, bool verbose,
+               bool never_rand, std::string run_command, std::regex sf_reg, bool verbose,
                bool debug) {
   bool segged = false;
   if (file_exists(path_str) == true) {
@@ -704,10 +707,10 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
             reaper, pid,
             t_timeout); // takes care of killing it off if it takes too long
         reaper_thread.detach();
-
         std::string token;
         while (std::getline(output, token)) {
-          std::regex sf_reg("(132|136|139|135|134|159)"); // regex for the crash
+//          std::regex sf_reg("(132|136|139|135|134|159)"); // regex for the crash
+          //std::regex sf_reg(catch_sig);
           std::smatch sf;
           if (regex_match(token, sf, sf_reg)) { // match crash
             std::cout << "Crashed with command: " << std::endl
@@ -756,6 +759,7 @@ int main(int argc, char *argv[]) {
   std::string junk_file_of_args;
   std::string always_arg = "";
   std::string run_command = "";
+  std::regex sf_reg("(132|136|139|135|134|159)");
   bool template_opt = false;
   bool man_opt = false;
   bool rand_all = false;
@@ -768,7 +772,7 @@ int main(int argc, char *argv[]) {
   bool dump_opts = false;
   bool never_rand = false;
   while ((opt = getopt(argc, argv,
-                       "m:p:t:e:c:f:o:b:s:x:R:A:F:S:L:W:hrzvdDn")) != -1) {
+                       "m:p:t:e:c:f:o:b:s:x:R:A:F:S:L:W:C:hrzvdDn")) != -1) {
     switch (opt) {
     case 'v':
       verbose = true;
@@ -844,6 +848,9 @@ int main(int argc, char *argv[]) {
     case 'W':
       t_timeout = std::atoi(optarg);
       break;
+    case 'C':
+      sf_reg = optarg;
+      break;
     default:
       help_me(argv[0]);
     }
@@ -881,7 +888,7 @@ int main(int argc, char *argv[]) {
           match_seg, buf_size_int, opts, spec_env, path_str, strip_shell,
           rand_all, write_to_file, write_file_n, rand_buf, opt_other, is_other,
           other_sep, t_timeout, low_lvl_user, junk_file_of_args, always_arg,
-          never_rand, run_command, verbose, debug)); // Thrift Shop
+          never_rand, run_command, sf_reg, verbose, debug)); // Thrift Shop
     for (auto &all_thread : threads)
       all_thread.join(); // is that your grandma's coat?
     exit(0);

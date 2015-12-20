@@ -51,6 +51,7 @@ Options:
   -F File to feed into the program that -x along with normal fuzzing data will be put in.
   -n Never use random data in the fuzz.
   -R Run this command after each fuzz.
+  -C C++ formatted regex of crash codes to detect. For example: "(139|136)"
   -d Debug data.
   -h Shows the help page.
 
