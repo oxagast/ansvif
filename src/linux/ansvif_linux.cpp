@@ -6,7 +6,7 @@
  */
 
 #include <regex>
-#include "../include/gzstream/gzstream.h"
+#include "../../include/gzstream/gzstream.h"
 #include <thread>
 #include <iomanip>
 #include <sys/wait.h>
