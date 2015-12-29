@@ -5,13 +5,15 @@
  * Marshall Whittaker / oxagast
  */
 
+#include <unistd.h>
 #include <regex>
-#include "../include/gzstream/gzstream.h"
+#include "../../include/gzstream/gzstream.h"
 #include <thread>
 #include <iomanip>
 #include <sys/wait.h>
 #include <sys/stat.h>
 #include <vector>
+#include "/usr/src/zlib-1.2.8/zlib.h"
 
 #define READ 0
 #define WRITE 1
@@ -87,6 +89,11 @@ std::string remove_chars(const std::string &source, const std::string &chars) {
     }
   }
   return (result);
+}
+
+int toint(std::string ints) // for compatability with cygwin and mingw
+{
+    return atoi(ints.c_str());
 }
 
 bool file_exists(const std::string &filen) {
@@ -381,13 +388,7 @@ FILE *popen2(std::string command, std::string type, int &pid,
       close(fd[WRITE]); // Close the WRITE
       dup2(fd[READ], 0); // Redirect stdin to pipe
     }
-    if (getuid() == 0) {
-      execl("/bin/su", "su", "-c", "/bin/sh", "-c", command.c_str(),
-            low_lvl_user.c_str(),
-            NULL); // fixes not being able to reap suid 0 processes
-    } else {
-      execl("/bin/sh", "/bin/sh", "-c", command.c_str(), NULL); // runs it all
-    }
+      execl("C:\\Windows\\SysWOW64\\WindowsPowerShell\\v1.0\\Powershell.exe", "C:\\Windows\\SysWOW64\\WindowsPowerShell\\v1.0\\Powershell.exe", "-command ", command.c_str(), NULL); // runs it all
     exit(0);
   } else {
     if (type == "r") {
@@ -421,7 +422,7 @@ std::string binstr_to_hex(std::string bin_str) {
   std::string hexxy;
   hex_out << std::setw(2) << std::setfill('0') << std::hex << std::uppercase;
   std::copy(bin_str.begin(), bin_str.end(),
-            std::ostream_iterator<unsigned int>(hex_out, "\\\\x"));
+            std::ostream_iterator<unsigned int>(hex_out, "\\x"));  // changed from linux version to accomodate for revised printf
   if (hex_out.str() != "") {
     hexxy = hex_out.str() + "20";
   }
@@ -664,18 +665,17 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
       std::string out_str_p;
       if (sys_str != "") {
         if (env_str != "") {
-          out_str_p = "$(printf \"\\\\x" + binstr_to_hex(env_str) + "\") " +
-                    path_str + " $(printf \"\\\\x" + binstr_to_hex(sys_str) +
-                    "\") " + always_arg;
+          out_str_p = " (.\\printf.exe \\x" + binstr_to_hex(env_str) + "\") " +
+                    path_str + " (.\\printf.exe \\x" + binstr_to_hex(sys_str) + ")" + always_arg + "; echo $LastExitCode"; // for windows compatibility
         }
         if (env_str == "") {
-          out_str_p = path_str + " $(printf \"\\\\x" + binstr_to_hex(sys_str) +
-                    "\") " + always_arg;
+          out_str_p = path_str + " (.\\printf.exe \\x" + binstr_to_hex(sys_str) +
+                    ") " + always_arg + "; echo $LastExitCode"; // also for win compatibility
         }
         out_str = env_str + " " + path_str + " " + sys_str + " " + always_arg;
       }
-      out_str = out_str + "; echo $?"; // get the signal
-      if (out_str != "; echo $?") {
+      out_str = out_str + "; echo $LastExitCode"; // get the signal
+      if (out_str != "; echo $LastExitCode") {
         junk_opts.clear();
         junk_opts.shrink_to_fit();
         junk_opts_env.clear();
@@ -709,10 +709,9 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
         reaper_thread.detach();
         std::string token;
         while (std::getline(output, token)) {
-//          std::regex sf_reg("(132|136|139|135|134|159)"); // regex for the crash
-          //std::regex sf_reg(catch_sig);
           std::smatch sf;
-          if (regex_match(token, sf, sf_reg)) { // match crash
+          if (regex_search(token, sf, sf_reg)) { // match crash
+            std::cout << token << std::endl;
             std::cout << "Crashed with command: " << std::endl
                       << out_str_p << std::endl;
             if (junk_file_of_args != "") {
@@ -759,7 +758,7 @@ int main(int argc, char *argv[]) {
   std::string junk_file_of_args;
   std::string always_arg = "";
   std::string run_command = "";
-  std::regex sf_reg("(132|136|139|135|134|159)");
+  std::regex sf_reg("-1073741819");
   bool template_opt = false;
   bool man_opt = false;
   bool rand_all = false;
@@ -880,7 +879,7 @@ int main(int argc, char *argv[]) {
   if (b_size >> buf_char_maybe) {
     help_me(argv[0]);
   } else {
-    int buf_size_int = std::stoi(buf_size);
+    int buf_size_int = toint(buf_size);
     std::vector<std::thread> threads;
     bool did_it_fault;
     for (int cur_thread = 1; cur_thread <= num_threads; ++cur_thread)

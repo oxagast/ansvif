@@ -1,10 +1,20 @@
 # ansvif
 A Not So Very Intelligent Fuzzer.
 
-Compliation
+Compliation:
+ Linux:
   You can compile the code with:
   $ make && make test
-  
+  OpenBSD:
+  $ make && make test
+  Windows:
+  Precompiled binaries are left in a zip file in ./bin.
+  Use cygwin, install g++ and gcc.
+  (In cygwin)
+  $ g++ src/win/ansvif_win.cpp -lstdc++ -std=gnu++11 -O3 -o bin/ansvif -L./include/gzstream -L/usr/src/zlib-1.2.8 -lpthread -lgzstream -lz
+  $ gcc src/win/printf.c -o bin/printf
+  Make sure cyggcc_s-seh-1.dll, cygstdc++-6.dll and cygwin1.dll are in the same directory as ansvif.exe.
+
   If you would like to try out the example code, you can compile faulty.c with:
   $ gcc faulty.c -o faulty
 
@@ -20,8 +30,10 @@ Using the example code:
 
 
 Useage:
-  ./find_suid /usr/bin/ /bin/ /sbin/
-  ./ansvif -[tm] [template manpage] -c /path/to/executable -b buffersize
+  Important note: Windows users will have to run ansvif from Powershell!
+
+  $ ./find_suid /usr/bin/ /bin/ /sbin/
+  $ ./ansvif -[tm] [template/manpage] -c /path/to/executable -b buffersize
 
   Examples:
   $ echo "Marshall" ./ansvif -t examples/template -c ./faulty -b 64
@@ -63,5 +75,5 @@ Recommendations:
 
 
 Notes:
-  As for now, this code is mostly still in an experimental state, and may not work
-  correctly.
+  Windows users must have ansvif running from Powershell.  Windows code is in an experimental state.
+  Linux code should be relatively stable.
