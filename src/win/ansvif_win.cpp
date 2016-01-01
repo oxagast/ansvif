@@ -69,7 +69,7 @@ void help_me(std::string mr_me) {
       << " -n           Never use random data in the fuzz." << std::endl
       << " -R \"ls\"      Always run this command after the fuzz." << std::endl
       << " -C \"(1|13)\"  Non default crash recognition error codes." << std::endl
-      << "              Defaults are 132, 136, 139, 135, 134, and 159." << std::endl
+      << "              Default is -1073741819." << std::endl
       << "              Must be formatted in C++ compatible regex form." << std::endl
       << " -W [integer] Thread timeout." << std::endl
       << " -v           Verbose." << std::endl
