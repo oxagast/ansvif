@@ -388,7 +388,9 @@ FILE *popen2(std::string command, std::string type, int &pid,
       close(fd[WRITE]); // Close the WRITE
       dup2(fd[READ], 0); // Redirect stdin to pipe
     }
-      execl("C:\\Windows\\SysWOW64\\WindowsPowerShell\\v1.0\\Powershell.exe", "C:\\Windows\\SysWOW64\\WindowsPowerShell\\v1.0\\Powershell.exe", "-command ", command.c_str(), NULL); // runs it all
+//      execl("C:\\Windows\\SysWOW64\\WindowsPowerShell\\v1.0\\Powershell.exe", "C:\\Windows\\SysWOW64\\WindowsPowerShell\\v1.0\\Powershell.exe", "-command", "{&", command.c_str(), "}", NULL); // runs it all
+execl("C:\\Windows\\SysWOW64\\WindowsPowerShell\\v1.0\\Powershell.exe", "-command", "(", "Start-Job", command.c_str(), "|", "Receive-Job", "-Wait", ")", NULL); // runs it all
+
     exit(0);
   } else {
     if (type == "r") {
@@ -665,17 +667,17 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
       std::string out_str_p;
       if (sys_str != "") {
         if (env_str != "") {
-          out_str_p = " (.\\printf.exe \\x" + binstr_to_hex(env_str) + "\") " +
-                    path_str + " (.\\printf.exe \\x" + binstr_to_hex(sys_str) + ")" + always_arg + "; echo $LastExitCode"; // for windows compatibility
+          out_str_p = " (.\\printf.exe \\x" + binstr_to_hex(env_str) + "\") " + "'" +
+                    path_str + "' (.\\printf.exe \\x" + binstr_to_hex(sys_str) + ")" + always_arg + "; echo $LastExitCode"; // for windows compatibility
         }
         if (env_str == "") {
-          out_str_p = path_str + " (.\\printf.exe \\x" + binstr_to_hex(sys_str) +
+          out_str_p = "'" + path_str + "' (.\\printf.exe \\x" + binstr_to_hex(sys_str) +
                     ") " + always_arg + "; echo $LastExitCode"; // also for win compatibility
         }
-        out_str = env_str + " " + path_str + " " + sys_str + " " + always_arg;
+        out_str = env_str + "{& '" + path_str + "' " + sys_str + " " + always_arg;
       }
-      out_str = out_str + "; echo $LastExitCode"; // get the signal
-      if (out_str != "; echo $LastExitCode") {
+      out_str = out_str + "; echo $LastExitCode}"; // get the signal
+      if (out_str != "; echo $LastExitCode}") {
         junk_opts.clear();
         junk_opts.shrink_to_fit();
         junk_opts_env.clear();

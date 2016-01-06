@@ -36,9 +36,13 @@ Useage:
   $ ./ansvif -[tm] [template/manpage] -c /path/to/executable -b buffersize
 
   Examples:
+   Linux/BSD:
   $ echo "Marshall" ./ansvif -t examples/template -c ./faulty -b 64
   $ ./ansvif -m mount -c /usr/sbin/mount -e examples/template_env -x examples/template_other -f 8 -b 2048
   $ ./ansvif -t examples/blank -F tmp/tmphtml -x examples/htmltags -c /usr/bin/iceweasel -b 128 -A "file:///home/username/src/ansvif/tmp/tmphtml"  -f 2 -n -R "sleep 3 && killall iceweasel" -S ">"
+  Windows:
+  PS C:\ansvif\bin\ansvif_win> .\ansvif -t ..\..\examples\space -F ..\..\tmp\tmphtml -x ..\..\examples\htmltags -c 'C:\Program Files (x86)\Google\Chrome\Application\chrome.exe' -b 128 -A "file:///C:\\Users\marsh\OneDrive\Documents\Code\ansvif\tmp\tmphtml" -f 2 -n -S ">" -R "sleep 2 ; Stop-Process -Name chrome"
+
 
 Options:
   -t This file should hold line by line command arguments as shown in the example file.
