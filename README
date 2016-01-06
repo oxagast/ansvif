@@ -11,8 +11,10 @@ Compliation:
   Precompiled binaries are left in a zip file in ./bin.
   Use cygwin, install g++ and gcc.
   (In cygwin)
+  $ mv include/gzstream/gzstream.h-win include/gzstream.h
   $ g++ src/win/ansvif_win.cpp -lstdc++ -std=gnu++11 -O3 -o bin/ansvif -L./include/gzstream -L/usr/src/zlib-1.2.8 -lpthread -lgzstream -lz
   $ gcc src/win/printf.c -o bin/printf
+  $ cp /bin/cyggcc_s-seh-1.dll /bin/cygstdc++-6.dll /bin/cygwin1.dll bin/
   Make sure cyggcc_s-seh-1.dll, cygstdc++-6.dll and cygwin1.dll are in the same directory as ansvif.exe.
 
   If you would like to try out the example code, you can compile faulty.c with:
@@ -30,7 +32,7 @@ Using the example code:
 
 
 Useage:
-  Important note: Windows users will have to run ansvif from Powershell!
+  Important note: Windows users will have to run ansvif.exe from Powershell for it to work!
 
   $ ./find_suid /usr/bin/ /bin/ /sbin/
   $ ./ansvif -[tm] [template/manpage] -c /path/to/executable -b buffersize
