@@ -6,93 +6,26 @@
  */
 
 #include <regex>
-#include "../../include/gzstream/gzstream.h"
+#include "../include/gzstream/gzstream.h"
 #include <thread>
 #include <iomanip>
 #include <sys/wait.h>
 #include <sys/stat.h>
 #include <vector>
+#include <unistd.h>
 
 #define READ 0
 #define WRITE 1
 
-void help_me(std::string mr_me) {
-  std::cout
-      << "Usage:" << std::endl
-      << " " << mr_me << " -t template -c ./faulty -b 2048" << std::endl
-      << "Options:" << std::endl
-      << " -t [file]    This file should hold line by line command arguments"
-      << std::endl
-      << "              as shown in the example file." << std::endl
-      << " -e [file]    This file should hold line by line environment "
-         "variables"
-      << std::endl
-      << "              as shown in the example file.  You can" << std::endl
-      << "              usually get these by doing something like:" << std::endl
-      << "              $ strings /bin/mount | perl -ne 'print if /[A-Z]=$/' > "
-         "mount_envs"
-      << std::endl
-      << " -c [path]    Specifies the command path." << std::endl
-      << " -p [integer] Specifies the manpage location (as an integer, usually "
-         "1 or 8)."
-      << std::endl
-      << " -m [command] Specifies the commands manpage." << std::endl
-      << " -D           Dump what we can out of the manpage to stdout."
-      << std::endl
-      << " -f [integer] Number of threads to use.  Default is 2." << std::endl
-      << " -b [integer] Specifies the buffer size to fuzz with." << std::endl
-      << "              256-2048 Is usually sufficient." << std::endl
-      << " -r           Use only random data." << std::endl
-      << " -z           Randomize buffer size from 1 to specified by the -b "
-         "option."
-      << std::endl
-      << " -s \"@#^$CE\"  Characters to omit from randomization.  Default "
-         "omitted"
-      << std::endl
-      << "              characters are: <>\\n |&\[]\()\{}:; and mandatory "
-         "omitted"
-      << std::endl
-      << "              characters are: >\\n" << std::endl
-      << " -o [file]    Log to this file." << std::endl
-      << " -x [file]    Other opts to put in, such as usernames, etc."
-      << std::endl
-      << " -S \",\"       Some seperator besides 'space' between opts, such as "
-         "',:-' etc."
-      << std::endl
-      << " -L [nobody]  An unprivileged user to run as if you're root.  "
-         "Defaults nobody."
-      << std::endl
-      << " -A \"blah\"    Always put this string in the command." << std::endl
-      << " -F [file]    A file with junk to be fuzzed with whole." << std::endl
-      << " -n           Never use random data in the fuzz." << std::endl
-      << " -R \"ls\"      Always run this command after the fuzz." << std::endl
-      << " -C \"(1|13)\"  Non default crash recognition error codes." << std::endl
-      << "              Defaults are 132, 136, 139, 135, 134, and 159." << std::endl
-      << "              Must be formatted in C++ compatible regex form." << std::endl
-      << " -W [integer] Thread timeout." << std::endl
-      << " -v           Verbose." << std::endl
-      << " -d           Debug." << std::endl;
-  exit(0);
-}
-
-std::string remove_chars(const std::string &source, const std::string &chars) {
-  std::string result = "";
-  for (unsigned int i = 0; i < source.length(); i++) {
-    bool foundany = false;
-    for (unsigned int j = 0; j < chars.length() && !foundany; j++) {
-      foundany = (source[i] == chars[j]);
-    }
-    if (!foundany) {
-      result += source[i];
-    }
-  }
-  return (result);
-}
-
-bool file_exists(const std::string &filen) {
-  struct stat buf;
-  return (stat(filen.c_str(), &buf) == 0);
-}
+void help_me(std::string mr_me);
+FILE *popen2(std::string command, std::string type, int &pid,
+             std::string low_lvl_user);
+int pclose2(FILE *fp, pid_t pid);
+std::vector<std::string> get_flags_man(char *cmd, std::string man_loc,
+                                       bool verbose, bool debug,
+                                       bool dump_opts);
+std::string remove_chars(const std::string &source, const std::string &chars);
+bool file_exists(const std::string &filen);
 
 int rand_me_plz(int rand_from, int rand_to) {
   std::random_device rd;
@@ -119,70 +52,6 @@ int reaper(int grim, int t_timeout) {
   sleep(t_timeout);
   kill(grim, 9);
   return (0);
-}
-
-std::vector<std::string> get_flags_man(char *cmd, std::string man_loc,
-                                       bool verbose, bool debug,
-                                       bool dump_opts) {
-  std::string cmd_name(cmd);
-  std::string filename;
-  std::vector<std::string> opt_vec;
-  filename = "/usr/share/man/man" + man_loc + "/" + cmd_name + "." + man_loc +
-             ".gz"; // put the filename back together
-  if (file_exists(filename) == true) {
-    char *chr_fn =
-        strdup(filename.c_str()); // change the filename to a char pointer
-    igzstream in(chr_fn);         //  gunzip baby
-    std::string gzline;
-    std::regex start_of_opt_1(
-        "^(\\.?\\\\?\\w{2} )*(\\\\?\\w{2} ?)*(:?\\.B "
-        ")*((?:(?:\\\\-)+\\w+)(?:\\\\-\\w+)*).*"); // hella regex... why you do
-                                                   // this to me manpage?
-    std::smatch opt_part_1;
-    std::regex start_of_opt_2("^\\.Op Fl (\\w+) Ar.*");
-    std::smatch opt_part_2;
-    std::regex start_of_opt_3("^\\\\fB(-.*)\\\\fB.*");
-    std::smatch opt_part_3;
-    while (std::getline(in, gzline)) {
-      if (std::regex_match(gzline, opt_part_1,
-                           start_of_opt_1)) { // ring 'er out
-        std::string opt_1 = opt_part_1[4];
-        std::string opt_release = (remove_chars(
-            opt_part_1[4], "\\")); // remove the fucking backslashes plz
-        opt_vec.push_back(opt_release);
-      }
-      if (std::regex_match(gzline, opt_part_2, start_of_opt_2)) {
-        std::string opt_2 = opt_part_2[1];
-        opt_vec.push_back("-" + opt_2);
-      }
-      if (std::regex_match(gzline, opt_part_3, start_of_opt_3)) {
-        std::string opt_3 = opt_part_3[1];
-        opt_vec.push_back(opt_3);
-      }
-    }
-  } else {
-    std::cerr << "Could not find a manpage for that command..." << std::endl;
-    exit(1);
-  }
-  std::sort(opt_vec.begin(), opt_vec.end());
-  opt_vec.erase(unique(opt_vec.begin(), opt_vec.end()), opt_vec.end());
-  if (verbose == true) {
-    std::cout << "Options being used: " << std::endl;
-    for (int man_ln = 0; man_ln < opt_vec.size();
-         man_ln++) {                          // loop around the options
-      std::cout << opt_vec.at(man_ln) << " "; // output options
-    }
-    std::cout << std::endl;
-  }
-  if (dump_opts == true) {
-    for (int man_ln = 0; man_ln < opt_vec.size();
-         man_ln++) {                                // loop around the options
-      std::cout << opt_vec.at(man_ln) << std::endl; // output options
-    }
-    std::cout << std::endl;
-    exit(0);
-  }
-  return (opt_vec);
 }
 
 std::vector<std::string> get_flags_template(std::string filename, bool verbose,
@@ -362,58 +231,6 @@ std::string make_garbage(int trash, int buf, std::string opt_other_str,
     }
   }
   return (all_junk);
-}
-
-FILE *popen2(std::string command, std::string type, int &pid,
-             std::string low_lvl_user) {
-  pid_t child_pid;
-  int fd[1];
-  pipe(fd);
-  if ((child_pid = fork()) == -1) {
-    perror("fork");
-    exit(1);
-  }
-  if (child_pid == 0) { // child begins
-    if (type == "r") {
-      close(fd[READ]); // Close the READ
-      dup2(fd[WRITE], 1); // Redirect stdout to pipe
-    } else {
-      close(fd[WRITE]); // Close the WRITE
-      dup2(fd[READ], 0); // Redirect stdin to pipe
-    }
-    if (getuid() == 0) {
-      execl("/bin/su", "su", "-c", "/bin/sh", "-c", command.c_str(),
-            low_lvl_user.c_str(),
-            NULL); // fixes not being able to reap suid 0 processes
-    } else {
-      execl("/bin/sh", "/bin/sh", "-c", command.c_str(), NULL); // runs it all
-    }
-    exit(0);
-  } else {
-    if (type == "r") {
-      close(fd[WRITE]); // Close the WRITE
-    } else {
-      close(fd[READ]); // Close the READ
-    }
-  }
-  pid = child_pid;
-  if (type == "r") {
-    return fdopen(fd[READ], "r");
-  }
-  return fdopen(fd[WRITE], "w");
-}
-
-int pclose2(FILE *fp, pid_t pid) // close it so we don't fuck outselves
-{
-  int stat;
-  fclose(fp);
-  while (waitpid(pid, &stat, 0) == 0) {
-    if (errno != EINTR) {
-      stat = -1;
-      break;
-    }
-  }
-  return stat;
 }
 
 std::string binstr_to_hex(std::string bin_str) {
