@@ -17,6 +17,7 @@
 #define READ 0
 #define WRITE 1
 
+int toint(std::string ints);
 void help_me(std::string mr_me);
 FILE *popen2(std::string command, std::string type, int &pid,
              std::string low_lvl_user);
@@ -697,7 +698,7 @@ int main(int argc, char *argv[]) {
   if (b_size >> buf_char_maybe) {
     help_me(argv[0]);
   } else {
-    int buf_size_int = std::stoi(buf_size);
+    int buf_size_int = toint(buf_size);
     std::vector<std::thread> threads;
     bool did_it_fault;
     for (int cur_thread = 1; cur_thread <= num_threads; ++cur_thread)
