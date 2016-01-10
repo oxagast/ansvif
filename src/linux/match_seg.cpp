@@ -3,6 +3,29 @@
 #include <unistd.h>
 #include <iomanip>
 #include <thread>
+#include <cstdio>
+#include <cstdlib>
+#include <iostream>
+#include <regex>
+#include <cstdlib>
+#include <fstream>
+#include <thread>
+#include <sstream>
+
+std::string binstr_to_hex(std::string bin_str);
+std::string remove_chars(const std::string &source, const std::string &chars);
+int reaper(int grim, int t_timeout);
+FILE *popen2(std::string command, std::string type, int &pid,
+             std::string low_lvl_user);
+int pclose2(FILE *fp, pid_t pid);
+void write_seg(std::string filename, std::string seg_line);
+int rand_me_plz(int rand_from, int rand_to);
+std::string make_garbage(int trash, int buf, std::string opt_other_str,
+                         bool is_other, bool never_rand);
+bool file_exists(const std::string &filen);
+void write_junk_file(std::string filename, std::vector<std::string> opt_other,
+                     int buf_size, int rand_spec_one, int rand_spec_two,
+                     bool never_rand, std::string other_sep, bool verbose);
 
 bool match_seg(int buf_size, std::vector<std::string> opts,
                std::vector<std::string> spec_env, std::string path_str,
@@ -240,8 +263,6 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
         reaper_thread.detach();
         std::string token;
         while (std::getline(output, token)) {
-//          std::regex sf_reg("(132|136|139|135|134|159)"); // regex for the crash
-          //std::regex sf_reg(catch_sig);
           std::smatch sf;
           if (regex_match(token, sf, sf_reg)) { // match crash
             std::cout << "Crashed with command: " << std::endl

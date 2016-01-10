@@ -1,4 +1,5 @@
 gzstream/*.[oa]
+*.[oa]
 bin/ansvif
 bin/faulty
 bin/find_suid
