@@ -28,9 +28,7 @@ FILE *popen2(std::string command, std::string type, int &pid,
       close(fd[WRITE]); // Close the WRITE
       dup2(fd[READ], 0); // Redirect stdin to pipe
     }
-//      execl("C:\\Windows\\SysWOW64\\WindowsPowerShell\\v1.0\\Powershell.exe", "C:\\Windows\\SysWOW64\\WindowsPowerShell\\v1.0\\Powershell.exe", "-command", "{&", command.c_str(), "}", NULL); // runs it all
-execl("C:\\Windows\\SysWOW64\\WindowsPowerShell\\v1.0\\Powershell.exe", "-command", "(", "Start-Job", command.c_str(), "|", "Receive-Job", "-Wait", ")", NULL); // runs it all
-
+    execl("C:\\Windows\\SysWOW64\\WindowsPowerShell\\v1.0\\Powershell.exe", "-command", "(", "Start-Job", command.c_str(), "|", "Receive-Job", "-Wait", ")", NULL); // runs it all
     exit(0);
   } else {
     if (type == "r") {
