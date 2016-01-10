@@ -58,7 +58,7 @@ printf "default: ansvif\n" >> Makefile
 printf "\n" >> Makefile
 printf "ansvif:\n" >> Makefile
 printf "\tcd ./include/gzstream;make;cd ../../\n" >> Makefile
-printf "\tPATH=${PATH} ${CXX} -c src/ansvif.cpp src/file_exists.cpp src/remove_chars.cpp src/linux/help.cpp src/linux/man_read.cpp src/linux/popen2.cpp ${CFLAGS} ${LDFLAGS} ${INCLUDES}\n" >> Makefile
+printf "\tPATH=${PATH} ${CXX} -c src/ansvif.cpp src/file_exists.cpp src/toint.cpp src/remove_chars.cpp src/linux/help.cpp src/linux/man_read.cpp src/linux/popen2.cpp ${CFLAGS} ${LDFLAGS} ${INCLUDES}\n" >> Makefile
 printf "\tPATH=${PATH} ${CXX} *.o -o bin/ansvif ${CFLAGS} ${LDFLAGS} ${INCLUDES}\n" >> Makefile
 printf "\tPATH=${PATH} ${CXX} ./src/linux/find_suid.cpp ${CFLAGS} ${LDFLAGS} ${INCLUDES} -O2 -o ./bin/find_suid\n" >> Makefile
 printf "\n" >> Makefile
