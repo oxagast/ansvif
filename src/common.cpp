@@ -5,7 +5,6 @@
  * Marshall Whittaker / oxagast
  */
 
-
 #include <thread>
 #include <sys/wait.h>
 #include <sys/stat.h>
@@ -27,14 +26,12 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
                std::vector<std::string> opt_other, bool is_other,
                std::string other_sep, int t_timeout, std::string low_lvl_user,
                std::string junk_file_of_args, std::string always_arg,
-               bool never_rand, std::string run_command, std::regex sf_reg, bool verbose,
-               bool debug);
+               bool never_rand, std::string run_command, std::regex sf_reg,
+               bool verbose, bool debug);
 void help_me(std::string mr_me);
 std::vector<std::string> get_flags_man(char *cmd, std::string man_loc,
                                        bool verbose, bool debug,
                                        bool dump_opts);
-
-
 
 std::string remove_chars(const std::string &source, const std::string &chars) {
   std::string result = "";
@@ -59,15 +56,13 @@ bool file_exists(const std::string &filen) {
   return (stat(filen.c_str(), &buf) == 0);
 }
 
-
-
 int rand_me_plz(int rand_from, int rand_to) {
   std::random_device rd;
-  std::default_random_engine generator(rd()); // seed random
+  std::default_random_engine generator(rd());  // seed random
   std::uniform_int_distribution<int> distribution(rand_from,
-                                                  rand_to); // get a random
+                                                  rand_to);  // get a random
   auto roll = std::bind(distribution,
-                        generator); // bind it so we can do it multiple times
+                        generator);  // bind it so we can do it multiple times
   return (roll());
 }
 
@@ -127,19 +122,19 @@ std::string trash_generator(int trash, int buf, std::string user_junk,
   std::string junk = "";
   std::string hex_stuff;
   int trash_num;
-  if (trash == 0) { // kosher
+  if (trash == 0) {  // kosher
     for (trash_num = 0; trash_num < buf; trash_num++) {
-      junk = "A" + junk; // put lots of As
+      junk = "A" + junk;  // put lots of As
     }
   }
   if (trash == 1) {
     for (trash_num = 0; trash_num < buf; trash_num++) {
-      junk = "9" + junk; // yadda yadda
+      junk = "9" + junk;  // yadda yadda
     }
   }
   if (trash == 2) {
-    for (trash_num = 0; trash_num < buf/2; trash_num++) {
-      junk = "\%s" + junk; // yadda yadda
+    for (trash_num = 0; trash_num < buf / 2; trash_num++) {
+      junk = "\%s" + junk;  // yadda yadda
     }
   }
   if (never_rand == false) {
@@ -149,9 +144,9 @@ std::string trash_generator(int trash, int buf, std::string user_junk,
       }
     }
   }
-  if (trash == 4) { // front
+  if (trash == 4) {  // front
     for (trash_num = 0; trash_num < buf; trash_num++) {
-      junk = "A" + junk; // put lots of As
+      junk = "A" + junk;  // put lots of As
     }
     junk = user_junk + junk;
     if (buf - user_junk.length() < junk.size())
@@ -161,7 +156,7 @@ std::string trash_generator(int trash, int buf, std::string user_junk,
   }
   if (trash == 5) {
     for (trash_num = 0; trash_num < buf; trash_num++) {
-      junk = "9" + junk; // yadda yadda
+      junk = "9" + junk;  // yadda yadda
     }
     junk = user_junk + junk;
     if (buf - user_junk.length() < junk.size())
@@ -169,9 +164,9 @@ std::string trash_generator(int trash, int buf, std::string user_junk,
     else
       return ("OOR");
   }
-    if (trash == 6) {
-    for (trash_num = 0; trash_num < buf/2; trash_num++) {
-      junk = "\%s" + junk; // yadda yadda
+  if (trash == 6) {
+    for (trash_num = 0; trash_num < buf / 2; trash_num++) {
+      junk = "\%s" + junk;  // yadda yadda
     }
     junk = user_junk + junk;
     if (buf - user_junk.length() < junk.size())
@@ -192,8 +187,8 @@ std::string trash_generator(int trash, int buf, std::string user_junk,
     }
   }
   if (trash == 8) {
-    for (trash_num = 0; trash_num < buf; trash_num++) { // back
-      junk = "A" + junk;                                // put lots of As
+    for (trash_num = 0; trash_num < buf; trash_num++) {  // back
+      junk = "A" + junk;                                 // put lots of As
     }
     junk = junk + user_junk;
     if (buf - user_junk.length() < junk.size())
@@ -203,7 +198,7 @@ std::string trash_generator(int trash, int buf, std::string user_junk,
   }
   if (trash == 9) {
     for (trash_num = 0; trash_num < buf; trash_num++) {
-      junk = "9" + junk; // yadda yadda
+      junk = "9" + junk;  // yadda yadda
     }
     junk = junk + user_junk;
     if (buf - user_junk.length() < junk.size())
@@ -212,8 +207,8 @@ std::string trash_generator(int trash, int buf, std::string user_junk,
       return ("OOR");
   }
   if (trash == 10) {
-    for (trash_num = 0; trash_num < buf/2; trash_num++) {
-      junk = "\%s" + junk; // yadda yadda
+    for (trash_num = 0; trash_num < buf / 2; trash_num++) {
+      junk = "\%s" + junk;  // yadda yadda
     }
     junk = junk + user_junk;
     if (buf - user_junk.length() < junk.size())
@@ -299,8 +294,7 @@ void write_junk_file(std::string filename, std::vector<std::string> opt_other,
     if (verbose == true) {
       std::cerr << oscar;
       {
-        if (trash != "OOR")
-          std::cerr << trash;
+        if (trash != "OOR") std::cerr << trash;
       }
       if (is_sep == 1) {
         std::cerr << other_sep << std::endl;

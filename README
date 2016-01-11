@@ -12,7 +12,7 @@ Compliation:
   Use cygwin, install g++ and gcc.
   (In cygwin)
   $ mv include/gzstream/gzstream.h-win include/gzstream.h
-  $ g++ src/ansvif.cpp src/toint.cpp src/win/help.cpp src/win/popen2.cpp src/win/man_read.cpp src/remove_chars.cpp src/file_exists.cpp -lstdc++ -std=gnu++11 -O3 -o bin/ansvif.exe -lpthread
+  $ g++ src/common.cpp src/win/bin2hex.cpp src/match_seg.cpp src/win/main.cpp src/win/help.cpp src/win/popen2.cpp src/win/man_read.cpp src/win/sys_string.cpp -lstdc++ -std=gnu++11 -O3 -o bin/ansvif_win/ansvif.exe -lpthread
   $ gcc src/win/printf.c -o bin/printf
   $ cp /bin/cyggcc_s-seh-1.dll /bin/cygstdc++-6.dll /bin/cygwin1.dll bin/
   Make sure cyggcc_s-seh-1.dll, cygstdc++-6.dll and cygwin1.dll are in the same directory as ansvif.exe.

@@ -21,8 +21,8 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
                std::vector<std::string> opt_other, bool is_other,
                std::string other_sep, int t_timeout, std::string low_lvl_user,
                std::string junk_file_of_args, std::string always_arg,
-               bool never_rand, std::string run_command, std::regex sf_reg, bool verbose,
-               bool debug);
+               bool never_rand, std::string run_command, std::regex sf_reg,
+               bool verbose, bool debug);
 std::vector<std::string> get_flags_template(std::string filename, bool verbose,
                                             bool debug);
 std::vector<std::string> get_other(std::string filename, bool verbose,
@@ -64,85 +64,85 @@ int main(int argc, char *argv[]) {
   while ((opt = getopt(argc, argv,
                        "m:p:t:e:c:f:o:b:s:x:R:A:F:S:L:W:C:hrzvdDn")) != -1) {
     switch (opt) {
-    case 'v':
-      verbose = true;
-      break;
-    case 'd':
-      debug = true;
-      break;
-    case 't':
-      template_opt = true;
-      template_file = optarg;
-      break;
-    case 'c':
-      path_str = optarg;
-      break;
-    case 'b':
-      buf_size = optarg;
-      break;
-    case 'e':
-      spec_env = get_flags_template(optarg, verbose, debug);
-      break;
-    case 'p':
-      man_loc = optarg;
-      break;
-    case 'm':
-      man_opt = true;
-      man_chr = optarg;
-      break;
-    case 'f':
-      num_threads = std::atoi(optarg);
-      break;
-    case 'o':
-      write_to_file = true;
-      write_file_n = optarg;
-      break;
-    case 'h':
-      help_me(argv[0]);
-      break;
-    case 'r':
-      rand_all = true;
-      break;
-    case 'z':
-      rand_buf = true;
-      break;
-    case 's':
-      u_strip_shell = optarg;
-      u_strip_shell_set = true;
-      break;
-    case 'x':
-      opt_other = get_other(optarg, verbose, debug);
-      is_other = true;
-      break;
-    case 'D':
-      dump_opts = true;
-      break;
-    case 'S':
-      other_sep = optarg;
-      break;
-    case 'L':
-      low_lvl_user = optarg;
-      break;
-    case 'F':
-      junk_file_of_args = optarg;
-      break;
-    case 'A':
-      always_arg = optarg;
-      break;
-    case 'n':
-      never_rand = true;
-      break;
-    case 'R':
-      run_command = optarg;
-      break;
-    case 'W':
-      t_timeout = std::atoi(optarg);
-      break;
-    case 'C':
-      sf_reg = optarg;
-      break;
-    default:
-      help_me(argv[0]);
+      case 'v':
+        verbose = true;
+        break;
+      case 'd':
+        debug = true;
+        break;
+      case 't':
+        template_opt = true;
+        template_file = optarg;
+        break;
+      case 'c':
+        path_str = optarg;
+        break;
+      case 'b':
+        buf_size = optarg;
+        break;
+      case 'e':
+        spec_env = get_flags_template(optarg, verbose, debug);
+        break;
+      case 'p':
+        man_loc = optarg;
+        break;
+      case 'm':
+        man_opt = true;
+        man_chr = optarg;
+        break;
+      case 'f':
+        num_threads = std::atoi(optarg);
+        break;
+      case 'o':
+        write_to_file = true;
+        write_file_n = optarg;
+        break;
+      case 'h':
+        help_me(argv[0]);
+        break;
+      case 'r':
+        rand_all = true;
+        break;
+      case 'z':
+        rand_buf = true;
+        break;
+      case 's':
+        u_strip_shell = optarg;
+        u_strip_shell_set = true;
+        break;
+      case 'x':
+        opt_other = get_other(optarg, verbose, debug);
+        is_other = true;
+        break;
+      case 'D':
+        dump_opts = true;
+        break;
+      case 'S':
+        other_sep = optarg;
+        break;
+      case 'L':
+        low_lvl_user = optarg;
+        break;
+      case 'F':
+        junk_file_of_args = optarg;
+        break;
+      case 'A':
+        always_arg = optarg;
+        break;
+      case 'n':
+        never_rand = true;
+        break;
+      case 'R':
+        run_command = optarg;
+        break;
+      case 'W':
+        t_timeout = std::atoi(optarg);
+        break;
+      case 'C':
+        sf_reg = optarg;
+        break;
+      default:
+        help_me(argv[0]);
     }
   }
   if (u_strip_shell_set == true) {
@@ -178,9 +178,9 @@ int main(int argc, char *argv[]) {
           match_seg, buf_size_int, opts, spec_env, path_str, strip_shell,
           rand_all, write_to_file, write_file_n, rand_buf, opt_other, is_other,
           other_sep, t_timeout, low_lvl_user, junk_file_of_args, always_arg,
-          never_rand, run_command, sf_reg, verbose, debug)); // Thrift Shop
+          never_rand, run_command, sf_reg, verbose, debug));  // Thrift Shop
     for (auto &all_thread : threads)
-      all_thread.join(); // is that your grandma's coat?
+      all_thread.join();  // is that your grandma's coat?
     exit(0);
   }
 }

@@ -20,21 +20,23 @@ FILE *popen2(std::string command, std::string type, int &pid,
     perror("fork");
     exit(1);
   }
-  if (child_pid == 0) { // child begins
+  if (child_pid == 0) {  // child begins
     if (type == "r") {
-      close(fd[READ]); // Close the READ
-      dup2(fd[WRITE], 1); // Redirect stdout to pipe
+      close(fd[READ]);     // Close the READ
+      dup2(fd[WRITE], 1);  // Redirect stdout to pipe
     } else {
-      close(fd[WRITE]); // Close the WRITE
-      dup2(fd[READ], 0); // Redirect stdin to pipe
+      close(fd[WRITE]);   // Close the WRITE
+      dup2(fd[READ], 0);  // Redirect stdin to pipe
     }
-    execl("C:\\Windows\\SysWOW64\\WindowsPowerShell\\v1.0\\Powershell.exe", "-command", "(", "Start-Job", command.c_str(), "|", "Receive-Job", "-Wait", ")", NULL); // runs it all
+    execl("C:\\Windows\\SysWOW64\\WindowsPowerShell\\v1.0\\Powershell.exe",
+          "-command", "(", "Start-Job", command.c_str(), "|", "Receive-Job",
+          "-Wait", ")", NULL);  // runs it all
     exit(0);
   } else {
     if (type == "r") {
-      close(fd[WRITE]); // Close the WRITE
+      close(fd[WRITE]);  // Close the WRITE
     } else {
-      close(fd[READ]); // Close the READ
+      close(fd[READ]);  // Close the READ
     }
   }
   pid = child_pid;
@@ -44,7 +46,7 @@ FILE *popen2(std::string command, std::string type, int &pid,
   return fdopen(fd[WRITE], "w");
 }
 
-int pclose2(FILE *fp, pid_t pid) // close it so we don't fuck outselves
+int pclose2(FILE *fp, pid_t pid)  // close it so we don't fuck outselves
 {
   int stat;
   fclose(fp);

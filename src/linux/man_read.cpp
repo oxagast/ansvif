@@ -14,16 +14,16 @@ std::vector<std::string> get_flags_man(char *cmd, std::string man_loc,
   std::string filename;
   std::vector<std::string> opt_vec;
   filename = "/usr/share/man/man" + man_loc + "/" + cmd_name + "." + man_loc +
-             ".gz"; // put the filename back together
+             ".gz";  // put the filename back together
   if (file_exists(filename) == true) {
     char *chr_fn =
-        strdup(filename.c_str()); // change the filename to a char pointer
-    igzstream in(chr_fn);         //  gunzip baby
+        strdup(filename.c_str());  // change the filename to a char pointer
+    igzstream in(chr_fn);          //  gunzip baby
     std::string gzline;
     std::regex start_of_opt_1(
         "^(\\.?\\\\?\\w{2} )*(\\\\?\\w{2} ?)*(:?\\.B "
-        ")*((?:(?:\\\\-)+\\w+)(?:\\\\-\\w+)*).*"); // hella regex... why you do
-                                                   // this to me manpage?
+        ")*((?:(?:\\\\-)+\\w+)(?:\\\\-\\w+)*).*");  // hella regex... why you do
+                                                    // this to me manpage?
     std::smatch opt_part_1;
     std::regex start_of_opt_2("^\\.Op Fl (\\w+) Ar.*");
     std::smatch opt_part_2;
@@ -31,10 +31,10 @@ std::vector<std::string> get_flags_man(char *cmd, std::string man_loc,
     std::smatch opt_part_3;
     while (std::getline(in, gzline)) {
       if (std::regex_match(gzline, opt_part_1,
-                           start_of_opt_1)) { // ring 'er out
+                           start_of_opt_1)) {  // ring 'er out
         std::string opt_1 = opt_part_1[4];
         std::string opt_release = (remove_chars(
-            opt_part_1[4], "\\")); // remove the fucking backslashes plz
+            opt_part_1[4], "\\"));  // remove the fucking backslashes plz
         opt_vec.push_back(opt_release);
       }
       if (std::regex_match(gzline, opt_part_2, start_of_opt_2)) {
@@ -55,15 +55,15 @@ std::vector<std::string> get_flags_man(char *cmd, std::string man_loc,
   if (verbose == true) {
     std::cout << "Options being used: " << std::endl;
     for (int man_ln = 0; man_ln < opt_vec.size();
-         man_ln++) {                          // loop around the options
-      std::cout << opt_vec.at(man_ln) << " "; // output options
+         man_ln++) {                           // loop around the options
+      std::cout << opt_vec.at(man_ln) << " ";  // output options
     }
     std::cout << std::endl;
   }
   if (dump_opts == true) {
     for (int man_ln = 0; man_ln < opt_vec.size();
-         man_ln++) {                                // loop around the options
-      std::cout << opt_vec.at(man_ln) << std::endl; // output options
+         man_ln++) {                                 // loop around the options
+      std::cout << opt_vec.at(man_ln) << std::endl;  // output options
     }
     std::cout << std::endl;
     exit(0);

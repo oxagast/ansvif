@@ -22,7 +22,9 @@ bool file_exists(const std::string &filen);
 void write_junk_file(std::string filename, std::vector<std::string> opt_other,
                      int buf_size, int rand_spec_one, int rand_spec_two,
                      bool never_rand, std::string other_sep, bool verbose);
-std::vector<std::string> get_out_str (std::string env_str, std::string sys_str, std::string path_str, std::string always_arg);
+std::vector<std::string> get_out_str(std::string env_str, std::string sys_str,
+                                     std::string path_str,
+                                     std::string always_arg);
 
 bool match_seg(int buf_size, std::vector<std::string> opts,
                std::vector<std::string> spec_env, std::string path_str,
@@ -31,8 +33,8 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
                std::vector<std::string> opt_other, bool is_other,
                std::string other_sep, int t_timeout, std::string low_lvl_user,
                std::string junk_file_of_args, std::string always_arg,
-               bool never_rand, std::string run_command, std::regex sf_reg, bool verbose,
-               bool debug) {
+               bool never_rand, std::string run_command, std::regex sf_reg,
+               bool verbose, bool debug) {
   bool segged = false;
   if (file_exists(path_str) == true) {
     while (segged == false) {
@@ -54,17 +56,17 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
       }
       int sep_type;
       for (int cmd_flag_l = 0; cmd_flag_l < opts.size();
-           cmd_flag_l++) {            // loop around the options
-        if (rand_me_plz(0, 1) == 1) { // roll tha die
+           cmd_flag_l++) {             // loop around the options
+        if (rand_me_plz(0, 1) == 1) {  // roll tha die
           junk_opts.push_back(
-              opts.at(cmd_flag_l)); // put the random arg in the vector
+              opts.at(cmd_flag_l));  // put the random arg in the vector
         }
       }
       for (int cmd_flag_a = 0; cmd_flag_a < spec_env.size();
-           cmd_flag_a++) {            // loop around the options
-        if (rand_me_plz(0, 1) == 1) { // roll tha die
+           cmd_flag_a++) {             // loop around the options
+        if (rand_me_plz(0, 1) == 1) {  // roll tha die
           junk_opts_env.push_back(
-              spec_env.at(cmd_flag_a)); // put the random arg in the vector
+              spec_env.at(cmd_flag_a));  // put the random arg in the vector
         }
       }
       if (is_other == true) {
@@ -72,7 +74,7 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
           for (std::vector<std::string>::const_iterator junk_opt_env =
                    junk_opts_env.begin();
                junk_opt_env != junk_opts_env.end();
-               ++junk_opt_env) { // loop through the vector of junk envs
+               ++junk_opt_env) {  // loop through the vector of junk envs
             std::string oscar_env = remove_chars(
                 make_garbage(rand_me_plz(rand_spec_one, rand_spec_two),
                              rand_me_plz(1, buf_size),
@@ -86,7 +88,7 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
           for (std::vector<std::string>::const_iterator junk_opt =
                    junk_opts.begin();
                junk_opt != junk_opts.end();
-               ++junk_opt) { // loop through the vector of junk opts
+               ++junk_opt) {  // loop through the vector of junk opts
             std::string oscar = remove_chars(
                 make_garbage(rand_me_plz(rand_spec_one, rand_spec_two),
                              rand_me_plz(1, buf_size),
@@ -108,7 +110,7 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
           for (std::vector<std::string>::const_iterator junk_opt_env =
                    junk_opts_env.begin();
                junk_opt_env != junk_opts_env.end();
-               ++junk_opt_env) { // loop through the vector of junk envs
+               ++junk_opt_env) {  // loop through the vector of junk envs
             std::string oscar_env = remove_chars(
                 make_garbage(rand_me_plz(rand_spec_one, rand_spec_two),
                              buf_size,
@@ -122,7 +124,7 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
           for (std::vector<std::string>::const_iterator junk_opt =
                    junk_opts.begin();
                junk_opt != junk_opts.end();
-               ++junk_opt) { // loop through the vector of junk opts
+               ++junk_opt) {  // loop through the vector of junk opts
             std::string oscar = remove_chars(
                 make_garbage(rand_me_plz(rand_spec_one, rand_spec_two),
                              buf_size,
@@ -147,7 +149,7 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
           for (std::vector<std::string>::const_iterator junk_opt_env =
                    junk_opts_env.begin();
                junk_opt_env != junk_opts_env.end();
-               ++junk_opt_env) { // loop through the vector of junk envs
+               ++junk_opt_env) {  // loop through the vector of junk envs
             std::string oscar_env = remove_chars(
                 make_garbage(rand_me_plz(rand_spec_one, rand_spec_two),
                              rand_me_plz(1, buf_size), "", is_other,
@@ -160,7 +162,7 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
           for (std::vector<std::string>::const_iterator junk_opt =
                    junk_opts.begin();
                junk_opt != junk_opts.end();
-               ++junk_opt) { // loop through the vector of junk opts
+               ++junk_opt) {  // loop through the vector of junk opts
             std::string oscar = remove_chars(
                 make_garbage(rand_me_plz(rand_spec_one, rand_spec_two),
                              rand_me_plz(1, buf_size), "", is_other,
@@ -181,7 +183,7 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
           for (std::vector<std::string>::const_iterator junk_opt_env =
                    junk_opts_env.begin();
                junk_opt_env != junk_opts_env.end();
-               ++junk_opt_env) { // loop through the vector of junk envs
+               ++junk_opt_env) {  // loop through the vector of junk envs
             std::string oscar_env = remove_chars(
                 make_garbage(rand_me_plz(rand_spec_one, rand_spec_two),
                              buf_size, "", is_other, never_rand),
@@ -193,7 +195,7 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
           for (std::vector<std::string>::const_iterator junk_opt =
                    junk_opts.begin();
                junk_opt != junk_opts.end();
-               ++junk_opt) { // loop through the vector of junk opts
+               ++junk_opt) {  // loop through the vector of junk opts
             std::string oscar = remove_chars(
                 make_garbage(rand_me_plz(rand_spec_one, rand_spec_two),
                              buf_size, "", is_other, never_rand),
@@ -211,7 +213,8 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
           }
         }
       }
-      std::vector<std::string> out_all = get_out_str(env_str, sys_str, path_str, always_arg);
+      std::vector<std::string> out_all =
+          get_out_str(env_str, sys_str, path_str, always_arg);
       std::string out_str = out_all[0];
       std::string out_str_p = out_all[1];
       junk_opts.clear();
@@ -223,49 +226,50 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
         w_f.open(write_file_n, std::ios::out | std::ios::app);
         w_f << out_str << std::endl << out_str_p << std::endl << std::endl;
         w_f.close();
-        std::cout << out_str << std::endl << out_str_p << std::endl << std::endl;
+        std::cout << out_str << std::endl << out_str_p << std::endl
+                  << std::endl;
       }
-      int pid; // initializes child
+      int pid;  // initializes child
       FILE *fp =
-        popen2(out_str, "r", pid, low_lvl_user); // opens child process fork
+          popen2(out_str, "r", pid, low_lvl_user);  // opens child process fork
       char command_out[4096] = {0};
       std::stringstream output;
       while (read(fileno(fp), command_out, sizeof(command_out) - 1) != 0) {
         output << std::string(command_out);
         memset(&command_out, 0, sizeof(command_out));
       }
-        pclose2(fp, pid);
-        if (run_command != "") {
-          int run_com_pid; // initializes child
-          FILE *fp = popen2(run_command, "r", run_com_pid,
-                            low_lvl_user); // opens child process fork
-          pclose2(fp, run_com_pid);
-        }
-        std::thread reaper_thread(
-            reaper, pid,
-            t_timeout); // takes care of killing it off if it takes too long
-        reaper_thread.detach();
-        std::string token;
-        while (std::getline(output, token)) {
-          std::smatch sf;
-          if (regex_search(token, sf, sf_reg)) { // match crash
-            std::cout << token << std::endl;
-            std::cout << "Crashed with command: " << std::endl
-                      << out_str_p << std::endl;
-            if (junk_file_of_args != "") {
-              std::cout << "File data left in: " << junk_file_of_args
-                        << std::endl;
-            }
-            if (write_to_file == true) {
-              write_seg(write_file_n, out_str_p);
-              std::cout << "Crash logged." << std::endl;
-              exit(0);
-            } else {
-              exit(0);
-            }
+      pclose2(fp, pid);
+      if (run_command != "") {
+        int run_com_pid;  // initializes child
+        FILE *fp = popen2(run_command, "r", run_com_pid,
+                          low_lvl_user);  // opens child process fork
+        pclose2(fp, run_com_pid);
+      }
+      std::thread reaper_thread(
+          reaper, pid,
+          t_timeout);  // takes care of killing it off if it takes too long
+      reaper_thread.detach();
+      std::string token;
+      while (std::getline(output, token)) {
+        std::smatch sf;
+        if (regex_search(token, sf, sf_reg)) {  // match crash
+          std::cout << token << std::endl;
+          std::cout << "Crashed with command: " << std::endl << out_str_p
+                    << std::endl;
+          if (junk_file_of_args != "") {
+            std::cout << "File data left in: " << junk_file_of_args
+                      << std::endl;
+          }
+          if (write_to_file == true) {
+            write_seg(write_file_n, out_str_p);
+            std::cout << "Crash logged." << std::endl;
+            exit(0);
+          } else {
+            exit(0);
           }
         }
       }
+    }
   }
 
   else {
