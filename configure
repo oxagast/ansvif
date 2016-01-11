@@ -58,13 +58,13 @@ printf "default: ansvif\n" >> Makefile
 printf "\n" >> Makefile
 printf "ansvif:\n" >> Makefile
 printf "\tcd ./include/gzstream;make;cd ../../\n" >> Makefile
-printf "\tPATH=${PATH} ${CXX} -c src/common.cpp src/linux/bin2hex.cpp src/linux/popen2.cpp src/linux/main.cpp src/linux/help.cpp src/linux/match_seg.cpp src/linux/man_read.cpp ${CFLAGS} ${LDFLAGS} ${INCLUDES}\n" >> Makefile
+printf "\tPATH=${PATH} ${CXX} -c src/common.cpp src/linux/bin2hex.cpp src/linux/popen2.cpp src/linux/main.cpp src/linux/help.cpp src/match_seg.cpp src/linux/sys_string.cpp src/linux/man_read.cpp ${CFLAGS} ${LDFLAGS} ${INCLUDES}\n" >> Makefile
 printf "\tPATH=${PATH} ${CXX} *.o -o bin/ansvif ${CFLAGS} ${LDFLAGS} ${INCLUDES}\n" >> Makefile
 printf "\tPATH=${PATH} ${CXX} ./src/linux/find_suid.cpp ${CFLAGS} ${LDFLAGS} ${INCLUDES} -O2 -o ./bin/find_suid\n" >> Makefile
 printf "\n" >> Makefile
 printf "test:\n" >> Makefile
 printf "\t${CC} ./src/faulty.c -o ./bin/faulty\n" >> Makefile
-printf "\t./bin/ansvif -t examples/space -c ./bin/faulty -b 32 -A "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"\n" >> Makefile
+printf "\t./bin/ansvif -t examples/space.txt -c ./bin/faulty -b 32 -A "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"\n" >> Makefile
 printf "\trm ./bin/faulty\n" >> Makefile
 printf "\t# Test success\n" >> Makefile
 printf "\n" >> Makefile
