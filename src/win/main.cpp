@@ -49,7 +49,7 @@ int main(int argc, char *argv[]) {
   std::string junk_file_of_args;
   std::string always_arg = "";
   std::string run_command = "";
-  std::regex sf_reg("-1073741819");
+  std::regex sf_reg("(-1073741819|-1073740791|-1073741571|-532459699)");
   bool template_opt = false;
   bool man_opt = false;
   bool rand_all = false;
