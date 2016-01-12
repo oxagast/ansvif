@@ -3,16 +3,12 @@
 #include <unistd.h>
 #include <iomanip>
 #include <thread>
-#include <cstdio>
-#include <cstdlib>
+#include <stdio.h>
 #include <iostream>
-#include <regex>
 #include <cstdlib>
+#include <regex>
 #include <fstream>
-#include <thread>
-#include <sstream>
 
-std::string binstr_to_hex(std::string bin_str);
 std::string remove_chars(const std::string &source, const std::string &chars);
 int reaper(int grim, int t_timeout);
 FILE *popen2(std::string command, std::string type, int &pid,
@@ -26,6 +22,7 @@ bool file_exists(const std::string &filen);
 void write_junk_file(std::string filename, std::vector<std::string> opt_other,
                      int buf_size, int rand_spec_one, int rand_spec_two,
                      bool never_rand, std::string other_sep, bool verbose);
+std::vector<std::string> get_out_str (std::string env_str, std::string sys_str, std::string path_str, std::string always_arg);
 
 bool match_seg(int buf_size, std::vector<std::string> opts,
                std::vector<std::string> spec_env, std::string path_str,
@@ -214,42 +211,29 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
           }
         }
       }
-      std::string out_str;
-      std::string out_str_p;
-      if (sys_str != "") {
-        if (env_str != "") {
-          out_str_p = "$(printf \"\\\\x" + binstr_to_hex(env_str) + "\") " +
-                    path_str + " $(printf \"\\\\x" + binstr_to_hex(sys_str) +
-                    "\") " + always_arg;
-        }
-        if (env_str == "") {
-          out_str_p = path_str + " $(printf \"\\\\x" + binstr_to_hex(sys_str) +
-                    "\") " + always_arg;
-        }
-        out_str = env_str + " " + path_str + " " + sys_str + " " + always_arg;
+      std::vector<std::string> out_all = get_out_str(env_str, sys_str, path_str, always_arg);
+      std::string out_str = out_all[0];
+      std::string out_str_p = out_all[1];
+      junk_opts.clear();
+      junk_opts.shrink_to_fit();
+      junk_opts_env.clear();
+      junk_opts_env.shrink_to_fit();
+      if (debug == true) {
+        std::ofstream w_f;
+        w_f.open(write_file_n, std::ios::out | std::ios::app);
+        w_f << out_str << std::endl << out_str_p << std::endl << std::endl;
+        w_f.close();
+        std::cout << out_str << std::endl << out_str_p << std::endl << std::endl;
       }
-      out_str = out_str + "; echo $?"; // get the signal
-      if (out_str != "; echo $?") {
-        junk_opts.clear();
-        junk_opts.shrink_to_fit();
-        junk_opts_env.clear();
-        junk_opts_env.shrink_to_fit();
-        if (debug == true) {
-          std::ofstream w_f;
-          w_f.open(write_file_n, std::ios::out | std::ios::app);
-          w_f << out_str << std::endl << out_str_p << std::endl << std::endl;
-          w_f.close();
-          std::cout << out_str << std::endl << out_str_p << std::endl << std::endl;
-        }
-        int pid; // initializes child
-        FILE *fp =
-            popen2(out_str, "r", pid, low_lvl_user); // opens child process fork
-        char command_out[4096] = {0};
-        std::stringstream output;
-        while (read(fileno(fp), command_out, sizeof(command_out) - 1) != 0) {
-          output << std::string(command_out);
-          memset(&command_out, 0, sizeof(command_out));
-        }
+      int pid; // initializes child
+      FILE *fp =
+        popen2(out_str, "r", pid, low_lvl_user); // opens child process fork
+      char command_out[4096] = {0};
+      std::stringstream output;
+      while (read(fileno(fp), command_out, sizeof(command_out) - 1) != 0) {
+        output << std::string(command_out);
+        memset(&command_out, 0, sizeof(command_out));
+      }
         pclose2(fp, pid);
         if (run_command != "") {
           int run_com_pid; // initializes child
@@ -264,7 +248,8 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
         std::string token;
         while (std::getline(output, token)) {
           std::smatch sf;
-          if (regex_match(token, sf, sf_reg)) { // match crash
+          if (regex_search(token, sf, sf_reg)) { // match crash
+            std::cout << token << std::endl;
             std::cout << "Crashed with command: " << std::endl
                       << out_str_p << std::endl;
             if (junk_file_of_args != "") {
@@ -281,8 +266,8 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
           }
         }
       }
-    }
   }
+
   else {
     std::cerr << "Command not found at path..." << std::endl;
     exit(1);
