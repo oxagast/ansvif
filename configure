@@ -9,7 +9,7 @@ echo -n "Removing old Makefile... "
 rm Makefile 2>/dev/null
 echo "Done."
 CFLAGS="-lstdc++ -lgzstream -lz -std=gnu++11 -lpthread -O3"
-LDFLAGS="-L./include/gzstream"
+LDFLAGS="-L../include/gzstream"
 CXX=gcc
 CC=gcc
 PATH=$PATH
@@ -57,10 +57,10 @@ printf "\n" >> Makefile
 printf "default: ansvif\n" >> Makefile
 printf "\n" >> Makefile
 printf "ansvif:\n" >> Makefile
-printf "\tcd ./include/gzstream;make;cd ../../\n" >> Makefile
-printf "\tPATH=${PATH} ${CXX} -c src/common.cpp src/linux/bin2hex.cpp src/linux/popen2.cpp src/linux/main.cpp src/linux/help.cpp src/match_seg.cpp src/linux/sys_string.cpp src/linux/man_read.cpp ${CFLAGS} ${LDFLAGS} ${INCLUDES}\n" >> Makefile
-printf "\tPATH=${PATH} ${CXX} *.o -o bin/ansvif ${CFLAGS} ${LDFLAGS} ${INCLUDES}\n" >> Makefile
-printf "\tPATH=${PATH} ${CXX} ./src/linux/find_suid.cpp ${CFLAGS} ${LDFLAGS} ${INCLUDES} -O2 -o ./bin/find_suid\n" >> Makefile
+printf "\tcd ./include/gzstream && make && cd ../../\n" >> Makefile
+printf "\tcd ./src && PATH=${PATH} ${CXX} -c common.cpp ./linux/bin2hex.cpp ./linux/popen2.cpp ./linux/main.cpp ./linux/help.cpp match_seg.cpp ./linux/sys_string.cpp ./linux/man_read.cpp ${CFLAGS} ${LDFLAGS} ${INCLUDES}\n" >> Makefile
+printf "\tcd ./src && PATH=${PATH} ${CXX} *.o -o ../bin/ansvif ${CFLAGS} ${LDFLAGS} ${INCLUDES}\n" >> Makefile
+printf "\tcd ./src && PATH=${PATH} ${CXX} ./linux/find_suid.cpp ${CFLAGS} ${LDFLAGS} ${INCLUDES} -O2 -o ../bin/find_suid\n" >> Makefile
 printf "\n" >> Makefile
 printf "test:\n" >> Makefile
 printf "\t${CC} ./src/faulty.c -o ./bin/faulty\n" >> Makefile
@@ -72,5 +72,5 @@ printf "faulty : ./src/faulty.c\n" >> Makefile
 printf "\t${CC} -o ./bin/faulty ./src/faulty.c\n" >> Makefile
 printf "\n" >> Makefile
 printf "clean:\n" >> Makefile
-printf "\trm Makefile ./bin/ansvif ./bin/find_suid ./include/gzstream/*.o ./include/gzstream/*.a ./*.o\n" >> Makefile
+printf "\trm Makefile ./bin/ansvif ./bin/find_suid ./include/gzstream/*.o ./include/gzstream/*.a ./src/*.o\n" >> Makefile
 echo "Configuration written.  Now type make."
