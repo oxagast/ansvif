@@ -48,7 +48,8 @@ int main(int argc, char *argv[]) {
   std::string other_sep = "";
   std::string low_lvl_user = "nobody";
   std::string junk_file_of_args;
-  std::string always_arg = "";
+  std::string always_arg_before = "";
+  std::string always_arg_after = "";
   std::string run_command = "";
   std::regex sf_reg("(-1073741819|-1073740791|-1073741571|-532459699)");
   bool template_opt = false;
