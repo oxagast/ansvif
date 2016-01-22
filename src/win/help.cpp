@@ -36,14 +36,16 @@ void help_me(std::string mr_me) {
          "',:-' etc." << std::endl
       << " -L [nobody]  An unprivileged user to run as if you're root.  "
          "Defaults nobody." << std::endl
-      << " -A \"foo\"     Always put this string after the command." << std::endl
-      << " -B \"bar\"     Always put this string before the command." << std::endl
-      << " -F [file]    A file with junk to be fuzzed with whole." << std::endl
-      << " -n           Never use random data in the fuzz." << std::endl
-      << " -R \"ls\"      Always run this command after the fuzz." << std::endl
+      << " -A \"foo\"     Always put this string after the command."
+      << std::endl
+      << " -B \"bar\"     Always put this string before the command."
+      << std::endl << " -F [file]    A file with junk to be fuzzed with whole."
+      << std::endl << " -n           Never use random data in the fuzz."
+      << std::endl << " -R \"ls\"      Always run this command after the fuzz."
+      << std::endl
       << " -C \"(1|13)\"  Non default crash recognition error codes."
-      << std::endl << "              Defaults are -1073741819, -1073740791, " << std::endl
-      << "              -1073741571, and -532459699." << std::endl
+      << std::endl << "              Defaults are -1073741819, -1073740791, "
+      << std::endl << "              -1073741571, and -532459699." << std::endl
       << "              Must be formatted in C++ compatible regex form."
       << std::endl << " -W [integer] Thread timeout." << std::endl
       << " -v           Verbose." << std::endl << " -d           Debug."

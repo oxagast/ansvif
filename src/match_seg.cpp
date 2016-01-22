@@ -32,9 +32,10 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
                std::string write_file_n, bool rand_buf,
                std::vector<std::string> opt_other, bool is_other,
                std::string other_sep, int t_timeout, std::string low_lvl_user,
-               std::string junk_file_of_args, std::string always_arg_before, std::string always_arg_after,
-               bool never_rand, std::string run_command, std::regex sf_reg,
-               bool verbose, bool debug) {
+               std::string junk_file_of_args, std::string always_arg_before,
+               std::string always_arg_after, bool never_rand,
+               std::string run_command, std::regex sf_reg, bool verbose,
+               bool debug) {
   bool segged = false;
   if (file_exists(path_str) == true) {
     while (segged == false) {
@@ -137,8 +138,8 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
                 sys_str = " " + sys_str + *junk_opt + " " + oscar + " ";
               }
               if (sep_type == 1) {
-                sys_str =
-                    " " + sys_str + " " + *junk_opt + other_sep + oscar + other_sep;
+                sys_str = " " + sys_str + " " + *junk_opt + other_sep + oscar +
+                          other_sep;
               }
             }
           }

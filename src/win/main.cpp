@@ -20,9 +20,10 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
                std::string write_file_n, bool rand_buf,
                std::vector<std::string> opt_other, bool is_other,
                std::string other_sep, int t_timeout, std::string low_lvl_user,
-               std::string junk_file_of_args, std::string always_arg_before, std::string always_arg_after,
-               bool never_rand, std::string run_command, std::regex sf_reg,
-               bool verbose, bool debug);
+               std::string junk_file_of_args, std::string always_arg_before,
+               std::string always_arg_after, bool never_rand,
+               std::string run_command, std::regex sf_reg, bool verbose,
+               bool debug);
 std::vector<std::string> get_flags_template(std::string filename, bool verbose,
                                             bool debug);
 std::vector<std::string> get_other(std::string filename, bool verbose,
@@ -180,8 +181,9 @@ int main(int argc, char *argv[]) {
       threads.push_back(std::thread(
           match_seg, buf_size_int, opts, spec_env, path_str, strip_shell,
           rand_all, write_to_file, write_file_n, rand_buf, opt_other, is_other,
-          other_sep, t_timeout, low_lvl_user, junk_file_of_args, always_arg_before, always_arg_after,
-          never_rand, run_command, sf_reg, verbose, debug));  // Thrift Shop
+          other_sep, t_timeout, low_lvl_user, junk_file_of_args,
+          always_arg_before, always_arg_after, never_rand, run_command, sf_reg,
+          verbose, debug));  // Thrift Shop
     for (auto &all_thread : threads)
       all_thread.join();  // is that your grandma's coat?
     exit(0);

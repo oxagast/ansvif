@@ -38,11 +38,13 @@ void help_me(std::string mr_me) {
          "',:-' etc." << std::endl
       << " -L [nobody]  An unprivileged user to run as if you're root.  "
          "Defaults nobody." << std::endl
-      << " -A \"foo\"     Always put this string after the command." << std::endl
-      << " -B \"bar\"     Always put this string before the command." << std::endl
-      << " -F [file]    A file with junk to be fuzzed with whole." << std::endl
-      << " -n           Never use random data in the fuzz." << std::endl
-      << " -R \"ls\"      Always run this command after the fuzz." << std::endl
+      << " -A \"foo\"     Always put this string after the command."
+      << std::endl
+      << " -B \"bar\"     Always put this string before the command."
+      << std::endl << " -F [file]    A file with junk to be fuzzed with whole."
+      << std::endl << " -n           Never use random data in the fuzz."
+      << std::endl << " -R \"ls\"      Always run this command after the fuzz."
+      << std::endl
       << " -C \"(1|13)\"  Non default crash recognition error codes."
       << std::endl
       << "              Defaults are 132, 136, 139, 135, 134, and 159."
