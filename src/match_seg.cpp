@@ -24,7 +24,7 @@ void write_junk_file(std::string filename, std::vector<std::string> opt_other,
                      bool never_rand, std::string other_sep, bool verbose);
 std::vector<std::string> get_out_str(std::string env_str, std::string sys_str,
                                      std::string path_str,
-                                     std::string always_arg);
+                                     std::string always_arg_after);
 
 bool match_seg(int buf_size, std::vector<std::string> opts,
                std::vector<std::string> spec_env, std::string path_str,
@@ -32,7 +32,7 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
                std::string write_file_n, bool rand_buf,
                std::vector<std::string> opt_other, bool is_other,
                std::string other_sep, int t_timeout, std::string low_lvl_user,
-               std::string junk_file_of_args, std::string always_arg,
+               std::string junk_file_of_args, std::string always_arg_before, std::string always_arg_after,
                bool never_rand, std::string run_command, std::regex sf_reg,
                bool verbose, bool debug) {
   bool segged = false;
@@ -49,7 +49,7 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
       std::vector<std::string> junk_opts_env;
       std::vector<std::string> junk_opts;
       std::string env_str;
-      std::string sys_str;
+      std::string sys_str = always_arg_before + " ";
       if (junk_file_of_args != "") {
         write_junk_file(junk_file_of_args, opt_other, buf_size, rand_spec_one,
                         rand_spec_two, never_rand, other_sep, verbose);
@@ -138,7 +138,7 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
               }
               if (sep_type == 1) {
                 sys_str =
-                    sys_str + " " + *junk_opt + other_sep + oscar + other_sep;
+                    " " + sys_str + " " + *junk_opt + other_sep + oscar + other_sep;
               }
             }
           }
@@ -214,7 +214,7 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
         }
       }
       std::vector<std::string> out_all =
-          get_out_str(env_str, sys_str, path_str, always_arg);
+          get_out_str(env_str, sys_str, path_str, always_arg_after);
       std::string out_str = out_all[0];
       std::string out_str_p = out_all[1];
       junk_opts.clear();
