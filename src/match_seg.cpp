@@ -41,11 +41,11 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
     while (segged == false) {
       int rand_spec_one, rand_spec_two;
       if (rand_all == true) {
-        rand_spec_one = 2;
-        rand_spec_two = 2;
+        rand_spec_one = 3;  // make for always random data
+        rand_spec_two = 3;  // always random too
       } else {
-        rand_spec_one = 0;
-        rand_spec_two = 12;
+        rand_spec_one = 0; // any data entered
+        rand_spec_two = 12; // any data entered
       }
       std::vector<std::string> junk_opts_env;
       std::vector<std::string> junk_opts;
