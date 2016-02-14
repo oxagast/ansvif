@@ -22,7 +22,7 @@ bool file_exists(const std::string &filen);
 void write_junk_file(std::string filename, std::vector<std::string> opt_other,
                      int buf_size, int rand_spec_one, int rand_spec_two,
                      bool never_rand, std::string other_sep, bool verbose);
-std::vector<std::string> get_out_str(std::string env_str, std::string sys_str,
+std::vector<std::string> get_out_str(std::string env_str, std::string valgrind_str, std::string sys_str,
                                      std::string path_str,
                                      std::string always_arg_after);
 
@@ -34,9 +34,16 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
                std::string other_sep, int t_timeout, std::string low_lvl_user,
                std::string junk_file_of_args, std::string always_arg_before,
                std::string always_arg_after, bool never_rand,
-               std::string run_command, std::regex sf_reg, bool verbose,
-               bool debug) {
+               std::string run_command, std::regex sf_reg, bool valgrind,
+               bool verbose, bool debug) {
   bool segged = false;
+  std::string valgrind_str;
+  if (valgrind == true) {
+    valgrind_str = "/usr/bin/valgrind --leak-check=full --xml=yes --xml-file=ansvif.valgrind.log --error-exitcode=139";
+  }
+  if (valgrind == false) {
+    valgrind_str = "";
+  }
   if (file_exists(path_str) == true) {
     while (segged == false) {
       int rand_spec_one, rand_spec_two;
@@ -215,7 +222,7 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
         }
       }
       std::vector<std::string> out_all =
-          get_out_str(env_str, sys_str, path_str, always_arg_after);
+          get_out_str(env_str, valgrind_str, sys_str, path_str, always_arg_after);
       std::string out_str = out_all[0];
       std::string out_str_p = out_all[1];
       junk_opts.clear();

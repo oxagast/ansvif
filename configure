@@ -10,7 +10,7 @@ rm Makefile 2>/dev/null
 echo "Done."
 CFLAGS="-lstdc++ -lgzstream -lz -std=gnu++11 -lpthread -O3"
 LDFLAGS="-L../include/gzstream"
-CXX=gcc
+CXX=g++
 CC=gcc
 PATH=$PATH
 INCLUDES=""
