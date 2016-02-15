@@ -22,7 +22,7 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
                std::string other_sep, int t_timeout, std::string low_lvl_user,
                std::string junk_file_of_args, std::string always_arg_before,
                std::string always_arg_after, bool never_rand,
-               std::string run_command, std::regex sf_reg, bool verbose,
+               std::string run_command, std::regex sf_reg, bool valgrind, bool verbose,
                bool debug);
 std::vector<std::string> get_flags_template(std::string filename, bool verbose,
                                             bool debug);
@@ -63,8 +63,9 @@ int main(int argc, char *argv[]) {
   bool is_other = false;
   bool dump_opts = false;
   bool never_rand = false;
+  bool valgrind = false;
   while ((opt = getopt(argc, argv,
-                       "m:p:t:e:c:f:o:b:s:x:R:A:F:S:L:W:B:C:hrzvdDn")) != -1) {
+                       "m:p:t:e:c:f:o:b:s:x:R:A:F:S:L:W:B:C:hrzvdDnV")) != -1) {
     switch (opt) {
       case 'v':
         verbose = true;
@@ -146,6 +147,9 @@ int main(int argc, char *argv[]) {
       case 'C':
         sf_reg = optarg;
         break;
+      case 'V':
+        valgrind = true;
+        break;
       default:
         help_me(argv[0]);
     }
@@ -175,18 +179,24 @@ int main(int argc, char *argv[]) {
   if (b_size >> buf_char_maybe) {
     help_me(argv[0]);
   } else {
-    int buf_size_int = toint(buf_size);
-    std::vector<std::thread> threads;
-    bool did_it_fault;
-    for (int cur_thread = 1; cur_thread <= num_threads; ++cur_thread)
-      threads.push_back(std::thread(
-          match_seg, buf_size_int, opts, spec_env, path_str, strip_shell,
-          rand_all, write_to_file, write_file_n, rand_buf, opt_other, is_other,
-          other_sep, t_timeout, low_lvl_user, junk_file_of_args,
-          always_arg_before, always_arg_after, never_rand, run_command, sf_reg,
-          verbose, debug));  // Thrift Shop
-    for (auto &all_thread : threads)
-      all_thread.join();  // is that your grandma's coat?
-    exit(0);
+    if (valgrind == true) {
+      std::cerr << "Valgrind not supported in Windows." << std::endl;
+      exit(1);
+    }
+    if (valgrind == false) {
+      int buf_size_int = toint(buf_size);
+      std::vector<std::thread> threads;
+      bool did_it_fault;
+      for (int cur_thread = 1; cur_thread <= num_threads; ++cur_thread)
+        threads.push_back(std::thread(
+            match_seg, buf_size_int, opts, spec_env, path_str, strip_shell,
+            rand_all, write_to_file, write_file_n, rand_buf, opt_other, is_other,
+            other_sep, t_timeout, low_lvl_user, junk_file_of_args,
+            always_arg_before, always_arg_after, never_rand, run_command, sf_reg,
+            valgrind, verbose, debug));  // Thrift Shop
+      for (auto &all_thread : threads)
+        all_thread.join();  // is that your grandma's coat?
+      exit(0);
+    }
   }
 }

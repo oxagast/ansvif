@@ -4,7 +4,8 @@
 #include <cstdlib>
 
 std::string binstr_to_hex(std::string bin_str);
-std::vector<std::string> get_out_str(std::string env_str, std::string sys_str,
+std::vector<std::string> get_out_str(std::string env_str, std::string valgrind, 
+                                     std::string sys_str,
                                      std::string path_str,
                                      std::string always_arg) {
   std::string out_str;
