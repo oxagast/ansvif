@@ -64,18 +64,21 @@ Options:
   -S Seperator between options.
   -v Verbose.
   -T Timeout for threads.
+  -W Timeout for threads.
   -L Unpriviledged user to run as if root.
-  -A Always put whats after this in the command to run.
+  -A Always put whats after this after command to run.
+  -B Always put whats after this before the command to run.
   -F File to feed into the program that -x along with normal fuzzing data will be put in.
   -n Never use random data in the fuzz.
   -R Run this command after each fuzz.
   -C C++ formatted regex of crash codes to detect. For example: "(139|136)"
+  -V Use Valgrind if installed.
   -d Debug data.
   -h Shows the help page.
 
 Recommendations:
   DO NOT RUN THIS CODE IN A PRODUCTION ENVIRONMENT!
-  If you try setting faulty.c's output to suid(0) then PLEASE do it in a virtual machine
+  If you try setting faulty.c's output to suid(0) then PLEASE do it in a virtual machine.
   or atleast a machine that you don't care about.
   Other than that, just play around and have fun!
 

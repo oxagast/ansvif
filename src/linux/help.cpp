@@ -51,6 +51,7 @@ void help_me(std::string mr_me) {
       << std::endl
       << "              Must be formatted in C++ compatible regex form."
       << std::endl << " -W [integer] Thread timeout." << std::endl
+      << " -V           Use Valgrind if installed." << std::endl
       << " -v           Verbose." << std::endl << " -d           Debug."
       << std::endl;
   exit(0);
