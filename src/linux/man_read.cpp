@@ -3,6 +3,7 @@
 #include <thread>
 #include <vector>
 #include <unistd.h>
+#include <cstring>
 
 std::string remove_chars(const std::string &source, const std::string &chars);
 bool file_exists(const std::string &filen);

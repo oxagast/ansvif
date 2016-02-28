@@ -8,6 +8,7 @@
 #include <cstdlib>
 #include <regex>
 #include <fstream>
+#include <cstring>
 
 std::string remove_chars(const std::string &source, const std::string &chars);
 int reaper(int grim, int t_timeout);
