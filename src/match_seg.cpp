@@ -64,14 +64,16 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
                         rand_spec_two, never_rand, other_sep, verbose);
       }
       int sep_type;
-      for (int cmd_flag_l = 0; cmd_flag_l < opts.size();
+      int opts_size = opts.size();
+      int my_penis_size = spec_env.size();
+      for (int cmd_flag_l = 0; cmd_flag_l < opts_size;
            cmd_flag_l++) {             // loop around the options
         if (rand_me_plz(0, 1) == 1) {  // roll tha die
           junk_opts.push_back(
               opts.at(cmd_flag_l));  // put the random arg in the vector
         }
       }
-      for (int cmd_flag_a = 0; cmd_flag_a < spec_env.size();
+      for (int cmd_flag_a = 0; cmd_flag_a < my_penis_size;
            cmd_flag_a++) {             // loop around the options
         if (rand_me_plz(0, 1) == 1) {  // roll tha die
           junk_opts_env.push_back(

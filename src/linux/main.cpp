@@ -11,7 +11,7 @@
 
 int toint(std::string ints);
 void help_me(std::string mr_me);
-std::vector<std::string> get_flags_man(char *cmd, std::string man_loc,
+std::vector<std::string> get_flags_man(std::string man_page, std::string man_loc,
                                        bool verbose, bool debug,
                                        bool dump_opts);
 bool match_seg(int buf_size, std::vector<std::string> opts,
@@ -30,7 +30,7 @@ std::vector<std::string> get_other(std::string filename, bool verbose,
                                    bool debug);
 
 int main(int argc, char *argv[]) {
-  char *man_chr;
+//  char *man_chr;
   int opt;
   int num_threads = 2;
   int t_timeout = 3;
@@ -51,6 +51,7 @@ int main(int argc, char *argv[]) {
   std::string always_arg_before = "";
   std::string always_arg_after = "";
   std::string run_command = "";
+  std::string man_page = "";
   std::regex sf_reg("(132|136|139|135|134|159)");
   bool template_opt = false;
   bool man_opt = false;
@@ -92,7 +93,7 @@ int main(int argc, char *argv[]) {
         break;
       case 'm':
         man_opt = true;
-        man_chr = optarg;
+        man_page = optarg;
         break;
       case 'f':
         num_threads = std::atoi(optarg);
@@ -162,7 +163,7 @@ int main(int argc, char *argv[]) {
     strip_shell = u_strip_shell + ">\n";
   }
   if ((man_opt == true) && (template_opt == false)) {
-    opts = get_flags_man(man_chr, man_loc, verbose, debug, dump_opts);
+    opts = get_flags_man(man_page, man_loc, verbose, debug, dump_opts);
   } else if ((man_opt == false) && (template_opt == true)) {
     opts = get_flags_template(template_file, verbose, debug);
   } else if ((man_opt == true) && (template_opt == true)) {

@@ -8,13 +8,12 @@
 std::string remove_chars(const std::string &source, const std::string &chars);
 bool file_exists(const std::string &filen);
 
-std::vector<std::string> get_flags_man(char *cmd, std::string man_loc,
+std::vector<std::string> get_flags_man(std::string man_page, std::string man_loc,
                                        bool verbose, bool debug,
                                        bool dump_opts) {
-  std::string cmd_name(cmd);
   std::string filename;
   std::vector<std::string> opt_vec;
-  filename = "/usr/share/man/man" + man_loc + "/" + cmd_name + "." + man_loc +
+  filename = "/usr/share/man/man" + man_loc + "/" + man_page + "." + man_loc +
              ".gz";  // put the filename back together
   if (file_exists(filename) == true) {
     char *chr_fn =
@@ -53,16 +52,17 @@ std::vector<std::string> get_flags_man(char *cmd, std::string man_loc,
   }
   std::sort(opt_vec.begin(), opt_vec.end());
   opt_vec.erase(unique(opt_vec.begin(), opt_vec.end()), opt_vec.end());
+  int opt_vec_size = opt_vec.size();
   if (verbose == true) {
     std::cout << "Options being used: " << std::endl;
-    for (int man_ln = 0; man_ln < opt_vec.size();
+    for (int man_ln = 0; man_ln < opt_vec_size;
          man_ln++) {                           // loop around the options
       std::cout << opt_vec.at(man_ln) << " ";  // output options
     }
     std::cout << std::endl;
   }
   if (dump_opts == true) {
-    for (int man_ln = 0; man_ln < opt_vec.size();
+    for (int man_ln = 0; man_ln < opt_vec_size;
          man_ln++) {                                 // loop around the options
       std::cout << opt_vec.at(man_ln) << std::endl;  // output options
     }

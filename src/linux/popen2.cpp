@@ -11,7 +11,7 @@
 FILE *popen2(std::string command, std::string type, int &pid,
              std::string low_lvl_user) {
   pid_t child_pid;
-  int fd[1];
+  int fd[2];
   pipe(fd);
   if ((child_pid = fork()) == -1) {
     perror("fork");

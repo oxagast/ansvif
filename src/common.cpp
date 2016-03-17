@@ -30,7 +30,7 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
                std::string run_command, std::regex sf_reg, bool single_try,
                bool verbose, bool debug);
 void help_me(std::string mr_me);
-std::vector<std::string> get_flags_man(char *cmd, std::string man_loc,
+std::vector<std::string> get_flags_man(std::string man_page, std::string man_loc,
                                        bool verbose, bool debug,
                                        bool dump_opts);
 
