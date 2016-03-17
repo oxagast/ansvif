@@ -29,14 +29,14 @@
     <div class="container">
       <section id="main_content">
         <h3>
-<a id="intro" class="anchor" href="#intro" aria-hidden="true"><span class="octicon octicon-link"></span></a>Intro</h3>
+<a id="intro" class="anchor" href="#intro" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Intro</h3>
 
 <p><strong>A Not So Very Intelligent Fuzzer</strong></p>
 
 <p>ansvif, written primarily in C++, is designed to find code bugs by throwing garbage input at programs to see how they react.  This is great for finding bugs, because not every type of input is always handled, and buffers are not always checked, etc.  It also comes in handy when writing (and protecting against), buffer overflow exploitation.</p>
 
 <h3>
-<a id="checkout-and-compliation" class="anchor" href="#checkout-and-compliation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Checkout and compliation</h3>
+<a id="checkout-and-compliation" class="anchor" href="#checkout-and-compliation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Checkout and compliation</h3>
 
 <pre><code>$ git clone https://github.com/oxagast/ansvif
 $ cd ansvif
@@ -50,27 +50,109 @@ $ make test
 </code></pre>
 
 <h3>
-<a id="usage" class="anchor" href="#usage" aria-hidden="true"><span class="octicon octicon-link"></span></a>Usage</h3>
+<a id="readme" class="anchor" href="#readme" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>README</h3>
 
-<p>The most simplistic usage is:</p>
+<pre><code>Compliation:
+ Linux:
+  You can compile the code with:
+  $ make &amp;&amp; make test
+  OpenBSD:
+  $ make &amp;&amp; make test
+  Windows:
+  Precompiled binaries are left in a zip file in ./bin.
+  Use cygwin, install g++ and gcc.
+  (In cygwin)
+  $ mv include/gzstream/gzstream.h-win include/gzstream.h
+  $ g++ src/common.cpp src/win/bin2hex.cpp src/match_seg.cpp src/win/main.cpp src/win/help.cpp src/win/popen2.cpp src/win/man_read.cpp src/win/sys_string.cpp -lstdc++ -std=gnu++11 -O3 -o bin/ansvif_win/ansvif.exe -lpthread
+  $ gcc src/win/printf.c -o bin/printf
+  $ cp /bin/cyggcc_s-seh-1.dll /bin/cygstdc++-6.dll /bin/cygwin1.dll bin/
+  Make sure cyggcc_s-seh-1.dll, cygstdc++-6.dll and cygwin1.dll are in the same directory as ansvif.exe.
 
-<pre><code>$ echo "Marshall" ./ansvif -t examples/template -c ./faulty -b 64
-$ ./ansvif -m mount -c /usr/sbin/mount -e examples/template_env -x examples/template_other -f 8 -b 2048
-$ ./ansvif -t examples/blank -F tmp/tmphtml -x examples/htmltags -c /usr/bin/iceweasel -b 128 -A "file:///home/username/src/ansvif/tmp/tmphtml"  -f 2 -n -R "sleep 3 &amp;&amp; killall iceweasel" -S "&gt;"
+  If you would like to try out the example code, you can compile faulty.c with:
+  $ gcc faulty.c -o faulty
+
+
+Using the example code:
+  You can point the memory back at address \xff\x05\x40\x00\x00\x00\x00\x00 (the
+  subroutine containing the code that spawns bash) with:
+  $ ./faulty -a $(perl -e 'print "A"x24;print "\x00\xff\x05\x40\x00\x00\x00\x00\x00"')
+  The address may be a little different under your distro, check gdb if you really
+  want to try it out.  The code above /should/ drop you at a bash prompt.
+  If the code is set to a mode where all are able to execute as another user, it will
+  attempt to spawn a root shell.
+
+
+Useage:
+  Important note: Windows users will have to run ansvif.exe from Powershell for it to work!
+
+  $ ./find_suid /usr/bin/ /bin/ /sbin/
+  $ ./ansvif -[tm] [template/manpage] -c /path/to/executable -b buffersize
+
+  Examples:
+   Linux/BSD:
+  $ echo "Marshall" ./ansvif -t examples/template -c ./faulty -b 64
+  $ ./ansvif -m mount -c /usr/sbin/mount -e examples/template_env -x examples/template_other -f 8 -b 2048
+  $ ./ansvif -t examples/blank -F tmp/tmphtml -x examples/htmltags -c /usr/bin/iceweasel -b 128 -A "file:///home/username/src/ansvif/tmp/tmphtml"  -f 2 -n -R "sleep 3 &amp;&amp; killall iceweasel" -S "&gt;"
+  Windows:
+  PS C:\ansvif\bin\ansvif_win&gt; .\ansvif -t ..\..\examples\space -F ..\..\tmp\tmphtml -x ..\..\examples\htmltags -c 'C:\Program Files (x86)\Google\Chrome\Application\chrome.exe' -b 128 -A "file:///C:\\Users\marsh\OneDrive\Documents\Code\ansvif\tmp\tmphtml" -f 2 -n -S "&gt;" -R "sleep 2 ; Stop-Process -Name chrome"
+
+
+README:
+
+  -t This file should hold line by line command arguments as shown in the example file.
+  -e This file should hold line by line environment variables as shown in the example
+     file.  You can usually get these by doing something like:
+     $ strings /bin/mount | perl -ne 'print if /[A-Z]=$/' &gt; mount_envs
+  -c Specifies the command path.
+  -p Specifies the manpage location (as an integer, usually 1 or 8)
+  -m Specifies the commands manpage.
+  -D Dumps whats found in the manpage.
+  -f Number of threads to use.  Default is 2.
+  -b Specifies the buffer size to fuzz with.  256-2048 Is usually sufficient.
+  -r Uses only random garbage data.  (note: this is buggy)
+  -o Writes output to log file.
+  -z Randomize the buffer size from 1 to what is specified by -b.
+  -x Other junk to put in.  Usernames and such can go here.
+  -S Seperator between options.
+  -v Verbose.
+  -T Timeout for threads.
+  -W Timeout for threads.
+  -L Unpriviledged user to run as if root.
+  -A Always put whats after this after command to run.
+  -B Always put whats after this before the command to run.
+  -F File to feed into the program that -x along with normal fuzzing data will be put in.
+  -n Never use random data in the fuzz.
+  -R Run this command after each fuzz.
+  -C C++ formatted regex of crash codes to detect. For example: "(139|136)"
+  -V Use Valgrind if installed.
+  -1 Try to make it fault once, if it doesn't happen, throw error code 64.  Useful for scripting.
+  -d Debug data.
+  -h Shows the help page.
+
+Recommendations:
+  DO NOT RUN THIS CODE IN A PRODUCTION ENVIRONMENT!
+  If you try setting faulty.c's output to suid(0) then PLEASE do it in a virtual machine.
+  or atleast a machine that you don't care about.
+  Other than that, just play around and have fun!
+
+
+Notes:
+  Windows users must have ansvif running from Powershell.  Windows code is in an experimental state.
+  Linux code should be relatively stable.
 </code></pre>
 
 <h3>
-<a id="other" class="anchor" href="#other" aria-hidden="true"><span class="octicon octicon-link"></span></a>Other</h3>
+<a id="other" class="anchor" href="#other" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Other</h3>
 
 <p>Included is a file, bad_input.tar.xz.  This has some pregenerated semi-psudorandom data in it.  You can try it out by piping it to ansvif.  You may want some more specific data to be piped in, if so, create a file line by line and pipe it in.</p>
 
 <h3>
-<a id="authors-and-contributors" class="anchor" href="#authors-and-contributors" aria-hidden="true"><span class="octicon octicon-link"></span></a>Authors and Contributors</h3>
+<a id="authors-and-contributors" class="anchor" href="#authors-and-contributors" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Authors and Contributors</h3>
 
 <p>Marshall Whittaker (<a href="https://github.com/oxagast" class="user-mention">@oxagast</a>), with some help from other sources such as stackexchanges, and IRC.  Thanks!</p>
 
 <h3>
-<a id="support-or-contact" class="anchor" href="#support-or-contact" aria-hidden="true"><span class="octicon octicon-link"></span></a>Support or Contact</h3>
+<a id="support-or-contact" class="anchor" href="#support-or-contact" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Support or Contact</h3>
 
 <p>You can contact me at <a href="mailto:marshall@wtyw.net">marshall@wtyw.net</a> and I will try to respond in a timely manner!</p>
       </section>
