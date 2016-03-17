@@ -36,7 +36,7 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
                std::string junk_file_of_args, std::string always_arg_before,
                std::string always_arg_after, bool never_rand,
                std::string run_command, std::regex sf_reg, bool valgrind,
-               bool verbose, bool debug) {
+               bool single_try, bool verbose, bool debug) {
   bool segged = false;
   std::string valgrind_str;
   if (valgrind == true) {
@@ -278,7 +278,14 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
           }
         }
       }
+if (single_try == true) {
+if ((verbose == true) || (debug == true)) {
+ std::cout << "No fault of mine!" << std::endl;
+}
+  exit(64);
+}
     }
+exit (0);
   }
 
   else {

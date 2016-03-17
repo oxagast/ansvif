@@ -52,7 +52,9 @@ void help_me(std::string mr_me) {
       << "              Must be formatted in C++ compatible regex form."
       << std::endl << " -W [integer] Thread timeout." << std::endl
       << " -V           Use Valgrind if installed." << std::endl
-      << " -v           Verbose." << std::endl << " -d           Debug."
+      << " -1           Try to induce a crash once, and if a crash is not induced,"
+      << std::endl << "              throw error code 64."
+      << std::endl << " -v           Verbose." << std::endl << " -d           Debug."
       << std::endl;
-  exit(0);
+  exit(1);
 }

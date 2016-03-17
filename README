@@ -73,6 +73,7 @@ Options:
   -R Run this command after each fuzz.
   -C C++ formatted regex of crash codes to detect. For example: "(139|136)"
   -V Use Valgrind if installed.
+  -1 Try to make it fault once, if it doesn't happen, throw error code 64.  Useful for scripting.
   -d Debug data.
   -h Shows the help page.
 

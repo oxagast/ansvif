@@ -40,7 +40,6 @@ int main(int argc, char **argv) {
         std::cout << path_to_file << std::endl;
     }
     file_list.clear();
-    file_list.shrink_to_fit();
   }
   exit(0);
 }

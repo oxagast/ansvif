@@ -27,8 +27,8 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
                std::string other_sep, int t_timeout, std::string low_lvl_user,
                std::string junk_file_of_args, std::string always_arg_before,
                std::string always_arg_after, bool never_rand,
-               std::string run_command, std::regex sf_reg, bool verbose,
-               bool debug);
+               std::string run_command, std::regex sf_reg, bool single_try,
+               bool verbose, bool debug);
 void help_me(std::string mr_me);
 std::vector<std::string> get_flags_man(char *cmd, std::string man_loc,
                                        bool verbose, bool debug,
