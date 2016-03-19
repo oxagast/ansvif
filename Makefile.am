@@ -1,4 +1,5 @@
 AUTOMAKE_OPTIONS = foreign
+ACLOCAL_AMFLAGS = ${ACLOCAL_FLAGS}
 bin_PROGRAMS = ansvif find_suid faulty
 noinst_LIBRARIES = libgzstream.a
 libgzstream_a_SOURCES = includes/gzstream/gzstream.h
@@ -9,4 +10,4 @@ find_suid_SOURCES = src/linux/find_suid.cpp
 faulty_SOURCES = src/faulty.c
 faulty_CFLAGS = -ansi
 ansvifdir = bin
-AM_CXXFLAGS = -std=gnu++11
+AM_CXXFLAGS = -Wall

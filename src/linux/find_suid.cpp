@@ -30,10 +30,11 @@ int main(int argc, char **argv) {
     struct dirent *this_dir;
     the_dir = opendir(path);
     if (the_dir != NULL)
-      while (this_dir = readdir(the_dir))
+      while ((this_dir = readdir(the_dir)))
         file_list.push_back(std::string(this_dir->d_name));
     std::string name;
-    for (int file_num = 0; file_num != file_list.size(); file_num++) {
+    int file_list_size = file_list.size();
+    for (int file_num = 0; file_num != file_list_size; file_num++) {
       name = file_list[file_num];
       std::string path_to_file = std::string(path) + file_list[file_num];
       if (is_suid(path_to_file.c_str()) == true)
