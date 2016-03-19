@@ -4,9 +4,9 @@ A Not So Very Intelligent Fuzzer.
 Compliation:
  Linux:
   You can compile the code with:
-  $ make && make test
+  $ aclocal && autoconf && automake --add-missing && ./configure && make
   OpenBSD:
-  $ make && make test
+  $ aclocal && autoconf && automake --add-missing && ./configure && make
   Windows:
   Precompiled binaries are left in a zip file in ./bin.
   Use cygwin, install g++ and gcc.

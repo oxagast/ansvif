@@ -1,6 +1,10 @@
 *.l[ao]
 *~
 *.o
-ansvif
-faulty
-find_suid
+./ansvif
+./faulty
+./find_suid
+./compile
+./install-sh
+./depcomp
+./missing
