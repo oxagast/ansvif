@@ -1,10 +1,12 @@
 AUTOMAKE_OPTIONS = foreign
-bin_PROGRAMS = ansvif find_suid
+bin_PROGRAMS = ansvif find_suid faulty
 noinst_LIBRARIES = libgzstream.a
 libgzstream_a_SOURCES = includes/gzstream/gzstream.h
 ansvif_SOURCES = src/common.cpp src/linux/bin2hex.cpp src/linux/popen2.cpp src/linux/main.cpp src/linux/help.cpp src/match_seg.cpp src/linux/sys_string.cpp src/linux/man_read.cpp
-#ansvif_HEADERS = gzstream.h
 ansvif_LDADD = -lstdc++ -lgzstream -lz -lpthread -L./include/gzstream
+ansvif_CPPFLAGS = -O3
 find_suid_SOURCES = src/linux/find_suid.cpp
+faulty_SOURCES = src/faulty.c
+faulty_CFLAGS = -ansi
 ansvifdir = bin
 AM_CXXFLAGS = -std=gnu++11
