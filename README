@@ -2,6 +2,10 @@
 A Not So Very Intelligent Fuzzer.
 
 Compliation:
+
+ Dependancies:
+  automake autoconf-archive zlib1g-dev
+
  Linux:
   You can compile the code with:
   $ aclocal && autoconf && automake --add-missing && ./configure && make

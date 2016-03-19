@@ -2332,8 +2332,8 @@ test "$program_suffix" != NONE &&
 ac_script='s/[\\$]/&&/g;s/;s,x,x,$//'
 program_transform_name=`$as_echo "$program_transform_name" | sed "$ac_script"`
 
-# Expand $ac_aux_dir to an absolute path.
-am_aux_dir=`cd "$ac_aux_dir" && pwd`
+# expand $ac_aux_dir to an absolute path
+am_aux_dir=`cd $ac_aux_dir && pwd`
 
 if test x"${MISSING+set}" != xset; then
   case $am_aux_dir in
@@ -2738,7 +2738,6 @@ END
     as_fn_error $? "Your 'rm' program is bad, sorry." "$LINENO" 5
   fi
 fi
-
 ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'
 ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -4779,7 +4778,8 @@ $as_echo "#define STDC_HEADERS 1" >>confdefs.h
 
 fi
 
-    ax_cxx_compile_cxx11_required=true
+#AX_CXX_COMPILE_STDCXX_11([noext],[mandatory])
+    ax_cxx_compile_cxx11_required=truednl
   ac_ext=cpp
 ac_cpp='$CXXCPP $CPPFLAGS'
 ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -4800,13 +4800,6 @@ else
       static_assert(sizeof(int) <= sizeof(T), "not big enough");
     };
 
-    struct Base {
-    virtual void f() {}
-    };
-    struct Child : public Base {
-    virtual void f() override {}
-    };
-
     typedef check<check<bool>> right_angle_brackets;
 
     int a;
@@ -4817,7 +4810,6 @@ else
     check_type&& cr = static_cast<check_type&&>(c);
 
     auto d = a;
-    auto l = [](){};
 
 _ACEOF
 if ac_fn_cxx_try_compile "$LINENO"; then :
@@ -4833,7 +4825,55 @@ $as_echo "$ax_cv_cxx_compile_cxx11" >&6; }
     ac_success=yes
   fi
 
+    if test x$ac_success = xno; then
+    for switch in -std=gnu++11 -std=gnu++0x; do
+      cachevar=`$as_echo "ax_cv_cxx_compile_cxx11_$switch" | $as_tr_sh`
+      { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether $CXX supports C++11 features with $switch" >&5
+$as_echo_n "checking whether $CXX supports C++11 features with $switch... " >&6; }
+if eval \${$cachevar+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_save_CXXFLAGS="$CXXFLAGS"
+         CXXFLAGS="$CXXFLAGS $switch"
+         cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
 
+  template <typename T>
+    struct check
+    {
+      static_assert(sizeof(int) <= sizeof(T), "not big enough");
+    };
+
+    typedef check<check<bool>> right_angle_brackets;
+
+    int a;
+    decltype(a) b;
+
+    typedef check<int> check_type;
+    check_type c;
+    check_type&& cr = static_cast<check_type&&>(c);
+
+    auto d = a;
+
+_ACEOF
+if ac_fn_cxx_try_compile "$LINENO"; then :
+  eval $cachevar=yes
+else
+  eval $cachevar=no
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+         CXXFLAGS="$ac_save_CXXFLAGS"
+fi
+eval ac_res=\$$cachevar
+	       { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_res" >&5
+$as_echo "$ac_res" >&6; }
+      if eval test x\$$cachevar = xyes; then
+        CXXFLAGS="$CXXFLAGS $switch"
+        ac_success=yes
+        break
+      fi
+    done
+  fi
 
     if test x$ac_success = xno; then
     for switch in -std=c++11 -std=c++0x; do
@@ -4854,13 +4894,6 @@ else
       static_assert(sizeof(int) <= sizeof(T), "not big enough");
     };
 
-    struct Base {
-    virtual void f() {}
-    };
-    struct Child : public Base {
-    virtual void f() override {}
-    };
-
     typedef check<check<bool>> right_angle_brackets;
 
     int a;
@@ -4871,7 +4904,6 @@ else
     check_type&& cr = static_cast<check_type&&>(c);
 
     auto d = a;
-    auto l = [](){};
 
 _ACEOF
 if ac_fn_cxx_try_compile "$LINENO"; then :
@@ -5325,7 +5357,6 @@ END
     as_fn_error $? "Your 'rm' program is bad, sorry." "$LINENO" 5
   fi
 fi
-
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
 # tests run on this system so they can be shared between configure
