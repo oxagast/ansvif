@@ -4,7 +4,7 @@ A Not So Very Intelligent Fuzzer.
 Compliation:
 
  Dependancies:
-  automake autoconf-archive zlib1g-dev
+  automake autoconf-archive zlib1g-dev g++ gcc
 
  Linux:
   You can compile the code with:
