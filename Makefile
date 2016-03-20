@@ -100,11 +100,11 @@ am__v_AR_0 = @echo "  AR      " $@;
 am__v_AR_1 = 
 libgzstream_a_AR = $(AR) $(ARFLAGS)
 libgzstream_a_LIBADD =
-am_libgzstream_a_OBJECTS =
+am__dirstamp = $(am__leading_dot)dirstamp
+am_libgzstream_a_OBJECTS = include/gzstream/gzstream.$(OBJEXT)
 libgzstream_a_OBJECTS = $(am_libgzstream_a_OBJECTS)
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
-am__dirstamp = $(am__leading_dot)dirstamp
 am_ansvif_OBJECTS = src/ansvif-common.$(OBJEXT) \
 	src/linux/ansvif-bin2hex.$(OBJEXT) \
 	src/linux/ansvif-popen2.$(OBJEXT) \
@@ -114,6 +114,8 @@ am_ansvif_OBJECTS = src/ansvif-common.$(OBJEXT) \
 	src/linux/ansvif-man_read.$(OBJEXT)
 ansvif_OBJECTS = $(am_ansvif_OBJECTS)
 ansvif_DEPENDENCIES =
+ansvif_LINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(ansvif_LDFLAGS) \
+	$(LDFLAGS) -o $@
 am_faulty_OBJECTS = src/faulty-faulty.$(OBJEXT)
 faulty_OBJECTS = $(am_faulty_OBJECTS)
 faulty_LDADD = $(LDADD)
@@ -142,18 +144,6 @@ AM_V_lt = $(am__v_lt_$(V))
 am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
 am__v_lt_0 = --silent
 am__v_lt_1 = 
-COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
-	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-AM_V_CC = $(am__v_CC_$(V))
-am__v_CC_ = $(am__v_CC_$(AM_DEFAULT_VERBOSITY))
-am__v_CC_0 = @echo "  CC      " $@;
-am__v_CC_1 = 
-CCLD = $(CC)
-LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-AM_V_CCLD = $(am__v_CCLD_$(V))
-am__v_CCLD_ = $(am__v_CCLD_$(AM_DEFAULT_VERBOSITY))
-am__v_CCLD_0 = @echo "  CCLD    " $@;
-am__v_CCLD_1 = 
 CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
 AM_V_CXX = $(am__v_CXX_$(V))
@@ -167,6 +157,18 @@ AM_V_CXXLD = $(am__v_CXXLD_$(V))
 am__v_CXXLD_ = $(am__v_CXXLD_$(AM_DEFAULT_VERBOSITY))
 am__v_CXXLD_0 = @echo "  CXXLD   " $@;
 am__v_CXXLD_1 = 
+COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
+	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+AM_V_CC = $(am__v_CC_$(V))
+am__v_CC_ = $(am__v_CC_$(AM_DEFAULT_VERBOSITY))
+am__v_CC_0 = @echo "  CC      " $@;
+am__v_CC_1 = 
+CCLD = $(CC)
+LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
+AM_V_CCLD = $(am__v_CCLD_$(V))
+am__v_CCLD_ = $(am__v_CCLD_$(AM_DEFAULT_VERBOSITY))
+am__v_CCLD_0 = @echo "  CCLD    " $@;
+am__v_CCLD_1 = 
 SOURCES = $(libgzstream_a_SOURCES) $(ansvif_SOURCES) $(faulty_SOURCES) \
 	$(find_suid_SOURCES)
 DIST_SOURCES = $(libgzstream_a_SOURCES) $(ansvif_SOURCES) \
@@ -214,13 +216,13 @@ distuninstallcheck_listfiles = find . -type f -print
 am__distuninstallcheck_listfiles = $(distuninstallcheck_listfiles) \
   | sed 's|^\./|$(prefix)/|' | grep -v '$(infodir)/dir$$'
 distcleancheck_listfiles = find . -type f -print
-ACLOCAL = ${SHELL} /home/marshall/Code/ansvif/missing aclocal-1.14
+ACLOCAL = ${SHELL} /home/marshall/Code/blah/ansvif/missing aclocal-1.14
 AMTAR = $${TAR-tar}
 AM_DEFAULT_VERBOSITY = 1
-AUTOCONF = ${SHELL} /home/marshall/Code/ansvif/missing autoconf
-AUTOHEADER = ${SHELL} /home/marshall/Code/ansvif/missing autoheader
-AUTOMAKE = ${SHELL} /home/marshall/Code/ansvif/missing automake-1.14
-AWK = mawk
+AUTOCONF = ${SHELL} /home/marshall/Code/blah/ansvif/missing autoconf
+AUTOHEADER = ${SHELL} /home/marshall/Code/blah/ansvif/missing autoheader
+AUTOMAKE = ${SHELL} /home/marshall/Code/blah/ansvif/missing automake-1.14
+AWK = gawk
 CC = gcc
 CCDEPMODE = depmode=gcc3
 CFLAGS = -g -O2
@@ -230,7 +232,7 @@ CXXCPP = g++ -E
 CXXDEPMODE = depmode=gcc3
 CXXFLAGS = -g -O2 -std=gnu++11
 CYGPATH_W = echo
-DEFS = -DPACKAGE_NAME=\"ansvif\" -DPACKAGE_TARNAME=\"ansvif\" -DPACKAGE_VERSION=\"1.3.1\" -DPACKAGE_STRING=\"ansvif\ 1.3.1\" -DPACKAGE_BUGREPORT=\"marshall@wtyw.net\" -DPACKAGE_URL=\"\" -DPACKAGE=\"ansvif\" -DVERSION=\"1.3.1\" -DSTDC_HEADERS=1 -DHAVE_SYS_TYPES_H=1 -DHAVE_SYS_STAT_H=1 -DHAVE_STDLIB_H=1 -DHAVE_STRING_H=1 -DHAVE_MEMORY_H=1 -DHAVE_STRINGS_H=1 -DHAVE_INTTYPES_H=1 -DHAVE_STDINT_H=1 -DHAVE_UNISTD_H=1 -DSTDC_HEADERS=1 -DHAVE_CXX11=1 -DHAVE_STRING=1 -DPACKAGE=\"ansvif\" -DVERSION=\"1.3.1\"
+DEFS = -DPACKAGE_NAME=\"ansvif\" -DPACKAGE_TARNAME=\"ansvif\" -DPACKAGE_VERSION=\"1.3.1\" -DPACKAGE_STRING=\"ansvif\ 1.3.1\" -DPACKAGE_BUGREPORT=\"marshall@wtyw.net\" -DPACKAGE_URL=\"\" -DPACKAGE=\"ansvif\" -DVERSION=\"1.3.1\" -DSTDC_HEADERS=1 -DHAVE_SYS_TYPES_H=1 -DHAVE_SYS_STAT_H=1 -DHAVE_STDLIB_H=1 -DHAVE_STRING_H=1 -DHAVE_MEMORY_H=1 -DHAVE_STRINGS_H=1 -DHAVE_INTTYPES_H=1 -DHAVE_STDINT_H=1 -DHAVE_UNISTD_H=1 -DSTDC_HEADERS=1 -DHAVE_STRING=1 -DPACKAGE=\"ansvif\" -DVERSION=\"1.3.1\"
 DEPDIR = .deps
 ECHO_C = 
 ECHO_N = -n
@@ -238,7 +240,7 @@ ECHO_T =
 EGREP = /bin/grep -E
 EXEEXT = 
 GREP = /bin/grep
-HAVE_CXX11 = 1
+HAVE_CXX11 = 
 INSTALL = /usr/bin/install -c
 INSTALL_DATA = ${INSTALL} -m 644
 INSTALL_PROGRAM = ${INSTALL}
@@ -248,7 +250,7 @@ LDFLAGS =
 LIBOBJS = 
 LIBS = 
 LTLIBOBJS = 
-MAKEINFO = ${SHELL} /home/marshall/Code/ansvif/missing makeinfo
+MAKEINFO = ${SHELL} /home/marshall/Code/blah/ansvif/missing makeinfo
 MKDIR_P = /bin/mkdir -p
 OBJEXT = o
 PACKAGE = ansvif
@@ -264,10 +266,10 @@ SET_MAKE =
 SHELL = /bin/bash
 STRIP = 
 VERSION = 1.3.1
-abs_builddir = /home/marshall/Code/ansvif
-abs_srcdir = /home/marshall/Code/ansvif
-abs_top_builddir = /home/marshall/Code/ansvif
-abs_top_srcdir = /home/marshall/Code/ansvif
+abs_builddir = /home/marshall/Code/blah/ansvif
+abs_srcdir = /home/marshall/Code/blah/ansvif
+abs_top_builddir = /home/marshall/Code/blah/ansvif
+abs_top_srcdir = /home/marshall/Code/blah/ansvif
 ac_ct_CC = gcc
 ac_ct_CXX = g++
 am__include = include
@@ -287,7 +289,7 @@ host_alias =
 htmldir = ${docdir}
 includedir = ${prefix}/include
 infodir = ${datarootdir}/info
-install_sh = ${SHELL} /home/marshall/Code/ansvif/install-sh
+install_sh = ${SHELL} /home/marshall/Code/blah/ansvif/install-sh
 libdir = ${exec_prefix}/lib
 libexecdir = ${exec_prefix}/libexec
 localedir = ${datarootdir}/locale
@@ -310,10 +312,12 @@ top_srcdir = .
 AUTOMAKE_OPTIONS = foreign
 ACLOCAL_AMFLAGS = ${ACLOCAL_FLAGS}
 noinst_LIBRARIES = libgzstream.a
-libgzstream_a_SOURCES = includes/gzstream/gzstream.h
-ansvif_SOURCES = src/common.cpp src/linux/bin2hex.cpp src/linux/popen2.cpp src/linux/main.cpp src/linux/help.cpp src/match_seg.cpp src/linux/sys_string.cpp src/linux/man_read.cpp
-ansvif_LDADD = -lstdc++ -lgzstream -lz -lpthread -L./include/gzstream
+#gzstream_SOURCES = include/gzstream/gzstream.C
+libgzstream_a_SOURCES = include/gzstream/gzstream.h include/gzstream/gzstream.C
+ansvif_SOURCES = src/common.cpp src/linux/bin2hex.cpp src/linux/popen2.cpp src/linux/main.cpp src/linux/help.cpp src/match_seg.cpp src/linux/sys_string.cpp src/linux/man_read.cpp include/gzstream/gzstream.h
+ansvif_LDADD = -lgzstream -lstdc++ -lpthread -lz -L.
 ansvif_CPPFLAGS = -O3
+ansvif_LDFLAGS = -I./include/gzstream
 find_suid_SOURCES = src/linux/find_suid.cpp
 faulty_SOURCES = src/faulty.c
 faulty_CFLAGS = -ansi
@@ -322,7 +326,7 @@ AM_CXXFLAGS = -Wall
 all: all-am
 
 .SUFFIXES:
-.SUFFIXES: .c .cpp .o .obj
+.SUFFIXES: .C .c .cpp .o .obj
 am--refresh: Makefile
 	@:
 $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
@@ -360,6 +364,14 @@ $(am__aclocal_m4_deps):
 
 clean-noinstLIBRARIES:
 	-test -z "$(noinst_LIBRARIES)" || rm -f $(noinst_LIBRARIES)
+include/gzstream/$(am__dirstamp):
+	@$(MKDIR_P) include/gzstream
+	@: > include/gzstream/$(am__dirstamp)
+include/gzstream/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) include/gzstream/$(DEPDIR)
+	@: > include/gzstream/$(DEPDIR)/$(am__dirstamp)
+include/gzstream/gzstream.$(OBJEXT): include/gzstream/$(am__dirstamp) \
+	include/gzstream/$(DEPDIR)/$(am__dirstamp)
 
 libgzstream.a: $(libgzstream_a_OBJECTS) $(libgzstream_a_DEPENDENCIES) $(EXTRA_libgzstream_a_DEPENDENCIES) 
 	$(AM_V_at)-rm -f libgzstream.a
@@ -438,7 +450,7 @@ src/linux/ansvif-man_read.$(OBJEXT): src/linux/$(am__dirstamp) \
 
 ansvif$(EXEEXT): $(ansvif_OBJECTS) $(ansvif_DEPENDENCIES) $(EXTRA_ansvif_DEPENDENCIES) 
 	@rm -f ansvif$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(ansvif_OBJECTS) $(ansvif_LDADD) $(LIBS)
+	$(AM_V_CXXLD)$(ansvif_LINK) $(ansvif_OBJECTS) $(ansvif_LDADD) $(LIBS)
 src/faulty-faulty.$(OBJEXT): src/$(am__dirstamp) \
 	src/$(DEPDIR)/$(am__dirstamp)
 
@@ -454,12 +466,14 @@ find_suid$(EXEEXT): $(find_suid_OBJECTS) $(find_suid_DEPENDENCIES) $(EXTRA_find_
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
+	-rm -f include/gzstream/*.$(OBJEXT)
 	-rm -f src/*.$(OBJEXT)
 	-rm -f src/linux/*.$(OBJEXT)
 
 distclean-compile:
 	-rm -f *.tab.c
 
+include include/gzstream/$(DEPDIR)/gzstream.Po
 include src/$(DEPDIR)/ansvif-common.Po
 include src/$(DEPDIR)/ansvif-match_seg.Po
 include src/$(DEPDIR)/faulty-faulty.Po
@@ -471,37 +485,7 @@ include src/linux/$(DEPDIR)/ansvif-popen2.Po
 include src/linux/$(DEPDIR)/ansvif-sys_string.Po
 include src/linux/$(DEPDIR)/find_suid.Po
 
-.c.o:
-	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
-	$(COMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
-	$(am__mv) $$depbase.Tpo $$depbase.Po
-#	$(AM_V_CC)source='$<' object='$@' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
-#	$(AM_V_CC_no)$(COMPILE) -c -o $@ $<
-
-.c.obj:
-	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.obj$$||'`;\
-	$(COMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ `$(CYGPATH_W) '$<'` &&\
-	$(am__mv) $$depbase.Tpo $$depbase.Po
-#	$(AM_V_CC)source='$<' object='$@' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
-#	$(AM_V_CC_no)$(COMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
-
-src/faulty-faulty.o: src/faulty.c
-	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(faulty_CFLAGS) $(CFLAGS) -MT src/faulty-faulty.o -MD -MP -MF src/$(DEPDIR)/faulty-faulty.Tpo -c -o src/faulty-faulty.o `test -f 'src/faulty.c' || echo '$(srcdir)/'`src/faulty.c
-	$(AM_V_at)$(am__mv) src/$(DEPDIR)/faulty-faulty.Tpo src/$(DEPDIR)/faulty-faulty.Po
-#	$(AM_V_CC)source='src/faulty.c' object='src/faulty-faulty.o' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
-#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(faulty_CFLAGS) $(CFLAGS) -c -o src/faulty-faulty.o `test -f 'src/faulty.c' || echo '$(srcdir)/'`src/faulty.c
-
-src/faulty-faulty.obj: src/faulty.c
-	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(faulty_CFLAGS) $(CFLAGS) -MT src/faulty-faulty.obj -MD -MP -MF src/$(DEPDIR)/faulty-faulty.Tpo -c -o src/faulty-faulty.obj `if test -f 'src/faulty.c'; then $(CYGPATH_W) 'src/faulty.c'; else $(CYGPATH_W) '$(srcdir)/src/faulty.c'; fi`
-	$(AM_V_at)$(am__mv) src/$(DEPDIR)/faulty-faulty.Tpo src/$(DEPDIR)/faulty-faulty.Po
-#	$(AM_V_CC)source='src/faulty.c' object='src/faulty-faulty.obj' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
-#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(faulty_CFLAGS) $(CFLAGS) -c -o src/faulty-faulty.obj `if test -f 'src/faulty.c'; then $(CYGPATH_W) 'src/faulty.c'; else $(CYGPATH_W) '$(srcdir)/src/faulty.c'; fi`
-
-.cpp.o:
+.C.o:
 	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
 	$(CXXCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
 	$(am__mv) $$depbase.Tpo $$depbase.Po
@@ -509,7 +493,7 @@ src/faulty-faulty.obj: src/faulty.c
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(CXXCOMPILE) -c -o $@ $<
 
-.cpp.obj:
+.C.obj:
 	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.obj$$||'`;\
 	$(CXXCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ `$(CYGPATH_W) '$<'` &&\
 	$(am__mv) $$depbase.Tpo $$depbase.Po
@@ -628,6 +612,52 @@ src/linux/ansvif-man_read.obj: src/linux/man_read.cpp
 #	$(AM_V_CXX)source='src/linux/man_read.cpp' object='src/linux/ansvif-man_read.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ansvif_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o src/linux/ansvif-man_read.obj `if test -f 'src/linux/man_read.cpp'; then $(CYGPATH_W) 'src/linux/man_read.cpp'; else $(CYGPATH_W) '$(srcdir)/src/linux/man_read.cpp'; fi`
+
+.c.o:
+	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
+	$(COMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
+	$(am__mv) $$depbase.Tpo $$depbase.Po
+#	$(AM_V_CC)source='$<' object='$@' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(COMPILE) -c -o $@ $<
+
+.c.obj:
+	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.obj$$||'`;\
+	$(COMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ `$(CYGPATH_W) '$<'` &&\
+	$(am__mv) $$depbase.Tpo $$depbase.Po
+#	$(AM_V_CC)source='$<' object='$@' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(COMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
+
+src/faulty-faulty.o: src/faulty.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(faulty_CFLAGS) $(CFLAGS) -MT src/faulty-faulty.o -MD -MP -MF src/$(DEPDIR)/faulty-faulty.Tpo -c -o src/faulty-faulty.o `test -f 'src/faulty.c' || echo '$(srcdir)/'`src/faulty.c
+	$(AM_V_at)$(am__mv) src/$(DEPDIR)/faulty-faulty.Tpo src/$(DEPDIR)/faulty-faulty.Po
+#	$(AM_V_CC)source='src/faulty.c' object='src/faulty-faulty.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(faulty_CFLAGS) $(CFLAGS) -c -o src/faulty-faulty.o `test -f 'src/faulty.c' || echo '$(srcdir)/'`src/faulty.c
+
+src/faulty-faulty.obj: src/faulty.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(faulty_CFLAGS) $(CFLAGS) -MT src/faulty-faulty.obj -MD -MP -MF src/$(DEPDIR)/faulty-faulty.Tpo -c -o src/faulty-faulty.obj `if test -f 'src/faulty.c'; then $(CYGPATH_W) 'src/faulty.c'; else $(CYGPATH_W) '$(srcdir)/src/faulty.c'; fi`
+	$(AM_V_at)$(am__mv) src/$(DEPDIR)/faulty-faulty.Tpo src/$(DEPDIR)/faulty-faulty.Po
+#	$(AM_V_CC)source='src/faulty.c' object='src/faulty-faulty.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(faulty_CFLAGS) $(CFLAGS) -c -o src/faulty-faulty.obj `if test -f 'src/faulty.c'; then $(CYGPATH_W) 'src/faulty.c'; else $(CYGPATH_W) '$(srcdir)/src/faulty.c'; fi`
+
+.cpp.o:
+	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
+	$(CXXCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
+	$(am__mv) $$depbase.Tpo $$depbase.Po
+#	$(AM_V_CXX)source='$<' object='$@' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXXCOMPILE) -c -o $@ $<
+
+.cpp.obj:
+	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.obj$$||'`;\
+	$(CXXCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ `$(CYGPATH_W) '$<'` &&\
+	$(am__mv) $$depbase.Tpo $$depbase.Po
+#	$(AM_V_CXX)source='$<' object='$@' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXXCOMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
 
 ID: $(am__tagged_files)
 	$(am__define_uniq_tagged_files); mkid -fID $$unique
@@ -884,6 +914,8 @@ clean-generic:
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
 	-test . = "$(srcdir)" || test -z "$(CONFIG_CLEAN_VPATH_FILES)" || rm -f $(CONFIG_CLEAN_VPATH_FILES)
+	-rm -f include/gzstream/$(DEPDIR)/$(am__dirstamp)
+	-rm -f include/gzstream/$(am__dirstamp)
 	-rm -f src/$(DEPDIR)/$(am__dirstamp)
 	-rm -f src/$(am__dirstamp)
 	-rm -f src/linux/$(DEPDIR)/$(am__dirstamp)
@@ -899,7 +931,7 @@ clean-am: clean-binPROGRAMS clean-generic clean-noinstLIBRARIES \
 
 distclean: distclean-am
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
-	-rm -rf src/$(DEPDIR) src/linux/$(DEPDIR)
+	-rm -rf include/gzstream/$(DEPDIR) src/$(DEPDIR) src/linux/$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-tags
@@ -947,7 +979,7 @@ installcheck-am:
 maintainer-clean: maintainer-clean-am
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
 	-rm -rf $(top_srcdir)/autom4te.cache
-	-rm -rf src/$(DEPDIR) src/linux/$(DEPDIR)
+	-rm -rf include/gzstream/$(DEPDIR) src/$(DEPDIR) src/linux/$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 
