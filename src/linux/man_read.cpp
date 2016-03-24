@@ -8,9 +8,9 @@
 std::string remove_chars(const std::string &source, const std::string &chars);
 bool file_exists(const std::string &filen);
 
-std::vector<std::string> get_flags_man(std::string man_page, std::string man_loc,
-                                       bool verbose, bool debug,
-                                       bool dump_opts) {
+std::vector<std::string> get_flags_man(std::string man_page,
+                                       std::string man_loc, bool verbose,
+                                       bool debug, bool dump_opts) {
   std::string filename;
   std::vector<std::string> opt_vec;
   filename = "/usr/share/man/man" + man_loc + "/" + man_page + "." + man_loc +

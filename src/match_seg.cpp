@@ -23,8 +23,9 @@ bool file_exists(const std::string &filen);
 void write_junk_file(std::string filename, std::vector<std::string> opt_other,
                      int buf_size, int rand_spec_one, int rand_spec_two,
                      bool never_rand, std::string other_sep, bool verbose);
-std::vector<std::string> get_out_str(std::string env_str, std::string valgrind_str, std::string sys_str,
-                                     std::string path_str,
+std::vector<std::string> get_out_str(std::string env_str,
+                                     std::string valgrind_str,
+                                     std::string sys_str, std::string path_str,
                                      std::string always_arg_after);
 
 bool match_seg(int buf_size, std::vector<std::string> opts,
@@ -40,32 +41,49 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
   bool segged = false;
   std::string valgrind_str;
   if (valgrind == true) {
-    valgrind_str = "/usr/bin/valgrind --leak-check=full --xml=yes --xml-file=ansvif.valgrind.log --error-exitcode=139";
+    valgrind_str =
+        "/usr/bin/valgrind --leak-check=full --xml=yes "
+        "--xml-file=ansvif.valgrind.log --error-exitcode=139";  // if valgrind
+                                                                // is activated
+                                                                // we use exit
+                                                                // code 139 to
+                                                                // wrap around
+                                                                // and match
+                                                                // faults
   }
   if (valgrind == false) {
-    valgrind_str = "";
+    valgrind_str = "";  // nada if valgrinds out
   }
-  if (file_exists(path_str) == true) {
+  if (file_exists(path_str) == true) {  // check to make sure that the command
+                                        // we are looking for actually is a
+                                        // executable file
     while (segged == false) {
-      int rand_spec_one, rand_spec_two;
+      int rand_spec_one, rand_spec_two;  // initialize the two random 'pieces'
       if (rand_all == true) {
         rand_spec_one = 3;  // make for always random data
         rand_spec_two = 3;  // always random too
       } else {
-        rand_spec_one = 0; // any data entered
-        rand_spec_two = 12; // any data entered
+        rand_spec_one = 0;   // any data entered
+        rand_spec_two = 12;  // any data entered
       }
-      std::vector<std::string> junk_opts_env;
-      std::vector<std::string> junk_opts;
-      std::string env_str;
-      std::string sys_str = always_arg_before + " ";
+      std::vector<std::string>
+          junk_opts_env;  // options for the environment in a vector
+      std::vector<std::string> junk_opts;  // other options
+      std::string env_str;                 // initialize the environment string
+      std::string sys_str = always_arg_before + " ";  // the string to execute,
+                                                      // with the argument thats
+                                                      // always before it first
       if (junk_file_of_args != "") {
         write_junk_file(junk_file_of_args, opt_other, buf_size, rand_spec_one,
-                        rand_spec_two, never_rand, other_sep, verbose);
+                        rand_spec_two, never_rand, other_sep,
+                        verbose);  // write the file full of arguments
       }
-      int sep_type;
-      int opts_size = opts.size();
-      int my_penis_size = spec_env.size();
+      int sep_type;                 // the type of separator, as an integer
+      int opts_size = opts.size();  // so that we don't have a warning about
+                                    // unsigned with -Wall
+      int my_penis_size = spec_env.size();  // also so we have a don't have
+                                            // warning about my penis being very
+                                            // large
       for (int cmd_flag_l = 0; cmd_flag_l < opts_size;
            cmd_flag_l++) {             // loop around the options
         if (rand_me_plz(0, 1) == 1) {  // roll tha die
@@ -92,7 +110,7 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
                              opt_other.at(rand_me_plz(0, opt_other.size() - 1)),
                              is_other, never_rand),
                 " ");
-            if (oscar_env != "OOR") {
+            if (oscar_env != "OOR") {  // if not out of range then do that
               env_str = env_str + *junk_opt_env + oscar_env + " ";
             }
           }
@@ -106,7 +124,7 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
                              opt_other.at(rand_me_plz(0, opt_other.size() - 1)),
                              is_other, never_rand),
                 strip_shell);
-            if (oscar != "OOR") {
+            if (oscar != "OOR") {  // ditto
               sep_type = rand_me_plz(0, 1);
               if (sep_type == 0) {
                 sys_str = " " + sys_str + *junk_opt + " " + oscar + " ";
@@ -128,7 +146,7 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
                              opt_other.at(rand_me_plz(0, opt_other.size() - 1)),
                              is_other, never_rand),
                 " ");
-            if (oscar_env != "OOR") {
+            if (oscar_env != "OOR") {  // this is getting really repetative
               env_str = env_str + *junk_opt_env + oscar_env + " ";
             }
           }
@@ -142,12 +160,13 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
                              opt_other.at(rand_me_plz(0, opt_other.size() - 1)),
                              is_other, never_rand),
                 strip_shell);
-            if (oscar != "OOR") {
-              sep_type = rand_me_plz(0, 1);
-              if (sep_type == 0) {
+            if (oscar != "OOR") {  // if not out of range
+              sep_type = rand_me_plz(
+                  0, 1);  // randomize weather we have a space or not...
+              if (sep_type == 0) {  // if we don't have a space...
                 sys_str = " " + sys_str + *junk_opt + " " + oscar + " ";
               }
-              if (sep_type == 1) {
+              if (sep_type == 1) {  // if we have a space...
                 sys_str = " " + sys_str + " " + *junk_opt + other_sep + oscar +
                           other_sep;
               }
@@ -224,74 +243,94 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
           }
         }
       }
-      std::vector<std::string> out_all =
-          get_out_str(env_str, valgrind_str, sys_str, path_str, always_arg_after);
-      std::string out_str = out_all[0];
-      std::string out_str_p = out_all[1];
-      junk_opts.clear();
-      junk_opts.shrink_to_fit();
-      junk_opts_env.clear();
-      junk_opts_env.shrink_to_fit();
-      if (debug == true) {
+      std::vector<std::string> out_all = get_out_str(
+          env_str, valgrind_str, sys_str, path_str,
+          always_arg_after);  // all the stuff put together to send out (aside
+                              // from echo $? which is done in sys_string
+      std::string out_str = out_all[0];    // first one in vector is the string
+                                           // without the printf stuff
+      std::string out_str_p = out_all[1];  // second one in vector has the
+                                           // printf stuff (for reproduction)
+      junk_opts.clear();                   // clear the vector
+      junk_opts.shrink_to_fit();           // shrink it to save mem, hope we mem
+                                           // manage... mirite?
+      junk_opts_env.clear();               // clear env vector
+      junk_opts_env.shrink_to_fit();       // shrink env vector
+      if (debug == true) {                 // if we are debugging...
         std::ofstream w_f;
-        w_f.open(write_file_n, std::ios::out | std::ios::app);
-        w_f << out_str << std::endl << out_str_p << std::endl << std::endl;
-        w_f.close();
+        w_f.open(write_file_n, std::ios::out | std::ios::app);  // open...
+        w_f << out_str << std::endl << out_str_p << std::endl
+            << std::endl;  // write...
+        w_f.close();  // then close if we have a file then write all the junk
+                      // out to that too
         std::cout << out_str << std::endl << out_str_p << std::endl
-                  << std::endl;
+                  << std::endl;  // write ALL the junk out to stdout
       }
       int pid;  // initializes child
       FILE *fp =
           popen2(out_str, "r", pid, low_lvl_user);  // opens child process fork
-      char command_out[4096] = {0};
-      std::stringstream output;
-      while (read(fileno(fp), command_out, sizeof(command_out) - 1) != 0) {
-        output << std::string(command_out);
-        memset(&command_out, 0, sizeof(command_out));
+      char command_out[4096] = {0};  // 4096 bytes should be enough to handle
+                                     // whatever pops out where we match
+      std::stringstream output;      // we use stringstream to get the output
+      while (read(fileno(fp), command_out, sizeof(command_out) - 1) !=
+             0) {  // while the commands being run read it
+        output << std::string(
+            command_out);  // out its content into output stringstream
+        memset(&command_out, 0,
+               sizeof(command_out));  // make sure we don't overflow
       }
-      pclose2(fp, pid);
+      pclose2(fp, pid);  // close out the command cleanly
       if (run_command != "") {
         int run_com_pid;  // initializes child
         FILE *fp = popen2(run_command, "r", run_com_pid,
                           low_lvl_user);  // opens child process fork
-        pclose2(fp, run_com_pid);
+        pclose2(fp, run_com_pid);         // close out the command cleanly
       }
-      std::thread reaper_thread(
-          reaper, pid,
-          t_timeout);  // takes care of killing it off if it takes too long
-      reaper_thread.detach();
-      std::string token;
+      std::thread reaper_thread(reaper, pid,
+                                t_timeout);  // takes care of killing it off if
+                                             // it takes too long... this is
+                                             // unclean
+      reaper_thread.detach();                // takes care of the reaper thread
+      std::string token;  // the initializse token that comes out...
       while (std::getline(output, token)) {
-        std::smatch sf;
+        std::smatch sf;  // this is the segfault we're looking for... it's regex
+                         // to catch it is decleared in main
         if (regex_search(token, sf, sf_reg)) {  // match crash
           std::cout << token << std::endl;
           std::cout << "Crashed with command: " << std::endl << out_str_p
-                    << std::endl;
+                    << std::endl;  // write out that we crashed with command x
           if (junk_file_of_args != "") {
             std::cout << "File data left in: " << junk_file_of_args
-                      << std::endl;
+                      << std::endl;  // ...make sure to log the file data too
           }
-          if (write_to_file == true) {
-            write_seg(write_file_n, out_str_p);
-            std::cout << "Crash logged." << std::endl;
-            exit(0);
+          if (write_to_file == true) {  // if we are writing to a file...
+            write_seg(write_file_n, out_str_p);  // call the subroutine to write
+                                                 // the fault to a log (comes
+                                                 // from common)
+            std::cout << "Crash logged."
+                      << std::endl;  //  tells us that we crashed.
+            exit(0);  // exit with a clean/dirty code (haha, get it? clean
+                      // because it crashed?)
           } else {
-            exit(0);
+            exit(0);  // same as above
           }
         }
       }
-if (single_try == true) {
-if ((verbose == true) || (debug == true)) {
- std::cout << "No fault of mine!" << std::endl;
-}
-  exit(64);
-}
+      if (single_try == true) {  // do all that shit but ONLY once
+        if ((verbose == true) || (debug == true)) {
+          std::cout << "No fault of mine!" << std::endl;  // if we're talking
+                                                          // alot then tell us
+                                                          // that we're done.
+        }
+        exit(64);  // send a non standard error code to tell a wrapper that we
+                   // didn't hit a fault
+      }
     }
-exit (0);
+    exit(0);  // exit cleanly
   }
 
   else {
-    std::cerr << "Command not found at path..." << std::endl;
-    exit(1);
+    std::cerr << "Command not found at path..." << std::endl;  // er wut???
+    exit(1);                                                   // sorry guize
   }
 }

@@ -8,3 +8,6 @@
 ./install-sh
 ./depcomp
 ./missing
+src/.clang-format
+src/linux/.clang-format
+src/win/.clang-format
