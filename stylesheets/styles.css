@@ -836,7 +836,7 @@ section #title .credits.right {
     display: block;
   }
 }
-@media print, screen and (max-width: 480px) {
+@media print, screen and (max-width: 1000px) {
   #header {
     margin-top: -20px;
   }
