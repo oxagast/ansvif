@@ -16,7 +16,7 @@
     <header>
       <div class="container">
         <h1>ansvif</h1>
-        <h2>Feeds garbage arguments and data into programs trying to induce a segmentation fault.  Good for finding bugs.</h2>
+        <h2>Feeds garbage arguments and data into programs trying to induce a fault.  Good for finding bugs.</h2>
 
         <section id="downloads">
           <a href="https://github.com/oxagast/ansvif/zipball/master" class="btn">Download as .zip</a>
@@ -33,20 +33,18 @@
 
 <p><strong>A Not So Very Intelligent Fuzzer</strong></p>
 
-<p>ansvif, written primarily in C++, is designed to find code bugs by throwing garbage input at programs to see how they react.  This is great for finding bugs, because not every type of input is always handled, and buffers are not always checked, etc.  It also comes in handy when writing (and protecting against), buffer overflow exploitation.</p>
+<p>ansvif, written primarily in C++, is designed to find code bugs by throwing garbage input at programs to see how they react.  This is great for finding bugs, because not every type of input is always handled, and buffers are not always checked, etc.  It also comes in handy when writing (and protecting against), buffer overflow exploitation, as well as string input validation vulnerabilities (the %s bug).</p>
 
 <h3>
 <a id="checkout-and-compliation" class="anchor" href="#checkout-and-compliation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Checkout and compliation</h3>
 
 <pre><code>$ git clone https://github.com/oxagast/ansvif
 $ cd ansvif
+$ aclocal
+$ autoconf
+$ automake -a
+$ ./configure
 $ make
-$ make test
-</code></pre>
-
-<p>If you would like to play with faulty.c you can compile it with </p>
-
-<pre><code>$ gcc faulty.c -o faulty
 </code></pre>
 
 <h3>
