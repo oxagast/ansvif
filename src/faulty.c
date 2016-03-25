@@ -1,3 +1,9 @@
+/*
+ * ansvif
+ * A Not So Very Intelligent Fuzzer
+ * Marshall Whittaker / oxagast
+ */
+
 #define _GNU_SOURCE
 #include <stdio.h>
 #include <stdlib.h>

@@ -1,3 +1,9 @@
+/*
+ * ansvif
+ * A Not So Very Intelligent Fuzzer
+ * Marshall Whittaker / oxagast
+ */
+
 #include <stdio.h>
 #include <string>
 #include <iostream>
@@ -55,6 +61,8 @@ void help_me(std::string mr_me) {
       << " -1           Try to induce a crash once, and if a crash is not "
          "induced," << std::endl << "              throw error code 64."
       << std::endl << " -v           Verbose." << std::endl
-      << " -d           Debug." << std::endl;
-  exit(1);
+      << " -d           Debug."
+      << std::endl;  // write all this help file shit out to STDOUT
+  exit(1);  // exit with error 1 because we didn't really do anything but print
+            // help...
 }

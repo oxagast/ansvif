@@ -1,3 +1,9 @@
+/*
+ * ansvif
+ * A Not So Very Intelligent Fuzzer
+ * Marshall Whittaker / oxagast
+ */
+
 #include <string>
 #include <vector>
 #include <unistd.h>
