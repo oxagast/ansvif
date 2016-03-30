@@ -42,7 +42,7 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
                std::string other_sep, int t_timeout, std::string low_lvl_user,
                std::string junk_file_of_args, std::string always_arg_before,
                std::string always_arg_after, bool never_rand,
-               std::string run_command, std::regex sf_reg, bool valgrind,
+               std::string run_command, std::string fault_code, bool valgrind,
                bool single_try, bool verbose, bool debug) {
   bool segged = false;
   std::string valgrind_str;
@@ -297,12 +297,10 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
                                              // it takes too long... this is
                                              // unclean
       reaper_thread.detach();                // takes care of the reaper thread
-      std::string token;  // the initializse token that comes out...
-      while (std::getline(output, token)) {
-        std::smatch sf;  // this is the segfault we're looking for... it's regex
-                         // to catch it is decleared in main
-        if (regex_search(token, sf, sf_reg)) {  // match crash
-          std::cout << token << std::endl;
+      std::ifstream cfile("./.ansvif_tmp_code");  // start to read the code from the file
+      std::string cmd_output;  // the initializse thing that will have our cmd output string in it that comes out...
+      while (std::getline(cfile, cmd_output)) {
+          if ((cmd_output == "132") || (cmd_output == "139") || (cmd_output == "135") || (cmd_output == "136") || (cmd_output == "159") || (cmd_output == fault_code)) { // default fault codes
           std::cout << "Crashed with command: " << std::endl << out_str_p
                     << std::endl;  // write out that we crashed with command x
           if (junk_file_of_args != "") {

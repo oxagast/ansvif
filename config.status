@@ -431,11 +431,11 @@ Copyright (C) 2012 Free Software Foundation, Inc.
 This config.status script is free software; the Free Software Foundation
 gives unlimited permission to copy, distribute and modify it."
 
-ac_pwd='/home/marshall/Code/blah/ansvif'
+ac_pwd='/home/marshall/Code/ansvif'
 srcdir='.'
 INSTALL='/usr/bin/install -c'
 MKDIR_P='/bin/mkdir -p'
-AWK='gawk'
+AWK='mawk'
 test -n "$AWK" || AWK=awk
 # The default lists apply if the user does not specify any file.
 ac_need_defaults=:
@@ -599,7 +599,7 @@ S["am__EXEEXT_FALSE"]=""
 S["am__EXEEXT_TRUE"]="#"
 S["LTLIBOBJS"]=""
 S["LIBOBJS"]=""
-S["HAVE_CXX11"]=""
+S["HAVE_CXX11"]="1"
 S["RANLIB"]="ranlib"
 S["EGREP"]="/bin/grep -E"
 S["GREP"]="/bin/grep"
@@ -636,17 +636,17 @@ S["am__tar"]="$${TAR-tar} chof - \"$$tardir\""
 S["AMTAR"]="$${TAR-tar}"
 S["am__leading_dot"]="."
 S["SET_MAKE"]=""
-S["AWK"]="gawk"
+S["AWK"]="mawk"
 S["mkdir_p"]="$(MKDIR_P)"
 S["MKDIR_P"]="/bin/mkdir -p"
 S["INSTALL_STRIP_PROGRAM"]="$(install_sh) -c -s"
 S["STRIP"]=""
-S["install_sh"]="${SHELL} /home/marshall/Code/blah/ansvif/install-sh"
-S["MAKEINFO"]="${SHELL} /home/marshall/Code/blah/ansvif/missing makeinfo"
-S["AUTOHEADER"]="${SHELL} /home/marshall/Code/blah/ansvif/missing autoheader"
-S["AUTOMAKE"]="${SHELL} /home/marshall/Code/blah/ansvif/missing automake-1.14"
-S["AUTOCONF"]="${SHELL} /home/marshall/Code/blah/ansvif/missing autoconf"
-S["ACLOCAL"]="${SHELL} /home/marshall/Code/blah/ansvif/missing aclocal-1.14"
+S["install_sh"]="${SHELL} /home/marshall/Code/ansvif/install-sh"
+S["MAKEINFO"]="${SHELL} /home/marshall/Code/ansvif/missing makeinfo"
+S["AUTOHEADER"]="${SHELL} /home/marshall/Code/ansvif/missing autoheader"
+S["AUTOMAKE"]="${SHELL} /home/marshall/Code/ansvif/missing automake-1.14"
+S["AUTOCONF"]="${SHELL} /home/marshall/Code/ansvif/missing autoconf"
+S["ACLOCAL"]="${SHELL} /home/marshall/Code/ansvif/missing aclocal-1.14"
 S["VERSION"]="1.3.1"
 S["PACKAGE"]="ansvif"
 S["CYGPATH_W"]="echo"
@@ -663,8 +663,8 @@ S["ECHO_N"]="-n"
 S["ECHO_C"]=""
 S["DEFS"]="-DPACKAGE_NAME=\\\"ansvif\\\" -DPACKAGE_TARNAME=\\\"ansvif\\\" -DPACKAGE_VERSION=\\\"1.3.1\\\" -DPACKAGE_STRING=\\\"ansvif\\ 1.3.1\\\" -DPACKAGE_BUGREPORT=\\\"marshall"\
 "@wtyw.net\\\" -DPACKAGE_URL=\\\"\\\" -DPACKAGE=\\\"ansvif\\\" -DVERSION=\\\"1.3.1\\\" -DSTDC_HEADERS=1 -DHAVE_SYS_TYPES_H=1 -DHAVE_SYS_STAT_H=1 -DHAVE_STDLIB_H=1 "\
-"-DHAVE_STRING_H=1 -DHAVE_MEMORY_H=1 -DHAVE_STRINGS_H=1 -DHAVE_INTTYPES_H=1 -DHAVE_STDINT_H=1 -DHAVE_UNISTD_H=1 -DSTDC_HEADERS=1 -DHAVE_STRING=1 -DPA"\
-"CKAGE=\\\"ansvif\\\" -DVERSION=\\\"1.3.1\\\""
+"-DHAVE_STRING_H=1 -DHAVE_MEMORY_H=1 -DHAVE_STRINGS_H=1 -DHAVE_INTTYPES_H=1 -DHAVE_STDINT_H=1 -DHAVE_UNISTD_H=1 -DSTDC_HEADERS=1 -DHAVE_CXX11=1 -DHAV"\
+"E_STRING=1 -DPACKAGE=\\\"ansvif\\\" -DVERSION=\\\"1.3.1\\\""
 S["mandir"]="${datarootdir}/man"
 S["localedir"]="${datarootdir}/locale"
 S["libdir"]="${exec_prefix}/lib"

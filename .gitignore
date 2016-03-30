@@ -11,3 +11,4 @@
 src/.clang-format
 src/linux/.clang-format
 src/win/.clang-format
+.ansvif_tmp_code

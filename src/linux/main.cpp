@@ -28,7 +28,7 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
                std::string other_sep, int t_timeout, std::string low_lvl_user,
                std::string junk_file_of_args, std::string always_arg_before,
                std::string always_arg_after, bool never_rand,
-               std::string run_command, std::regex sf_reg, bool valgrind,
+               std::string run_command, std::string fault_code, bool valgrind,
                bool single_try, bool verbose, bool debug);
 std::vector<std::string> get_flags_template(std::string filename, bool verbose,
                                             bool debug);
@@ -70,7 +70,7 @@ int main(int argc, char *argv[]) {  // initialize our main
       "";                        // the argument to be supplied after the fuzz
   std::string run_command = "";  // the command name to be run
   std::string man_page = "";     // the man page name
-  std::regex sf_reg("(132|136|139|135|134|159)");  // the list of faults that
+  std::string fault_code = "134";  // default dummy fault code
                                                    // we're going to trap, this
                                                    // can be user selected
   bool template_opt = false;                       // default is false
@@ -175,7 +175,7 @@ int main(int argc, char *argv[]) {  // initialize our main
         t_timeout = std::atoi(optarg);
         break;
       case 'C':
-        sf_reg = optarg;
+        fault_code = optarg;
         break;
       case 'V':
         valgrind = true;
@@ -226,6 +226,7 @@ int main(int argc, char *argv[]) {  // initialize our main
   } else {
     int buf_size_int = toint(buf_size);  // otherwise we're going to turn the
                                          // buf size into an integar
+    std::remove("./.ansvif_tmp_code");
     if (single_try ==
         false) {  // if single try isn't turned on then we're going to use...
       std::vector<std::thread> threads;  // DING DING DING! threading!
@@ -235,7 +236,7 @@ int main(int argc, char *argv[]) {  // initialize our main
             rand_all, write_to_file, write_file_n, rand_buf, opt_other,
             is_other, other_sep, t_timeout, low_lvl_user, junk_file_of_args,
             always_arg_before, always_arg_after, never_rand, run_command,
-            sf_reg, valgrind, single_try, verbose, debug));  // Thrift Shop
+            fault_code, valgrind, single_try, verbose, debug));  // Thrift Shop
       for (auto &all_thread : threads)
         all_thread.join();  // is that your grandma's coat?
     }
@@ -244,7 +245,7 @@ int main(int argc, char *argv[]) {  // initialize our main
                 write_to_file, write_file_n, rand_buf, opt_other, is_other,
                 other_sep, t_timeout, low_lvl_user, junk_file_of_args,
                 always_arg_before, always_arg_after, never_rand, run_command,
-                sf_reg, valgrind, single_try, verbose,
+                fault_code, valgrind, single_try, verbose,
                 debug);  // if we're only doing a single run then we'll just
                          // directly call the match_seg subroutine
     }
