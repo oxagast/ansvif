@@ -51,11 +51,9 @@ void help_me(std::string mr_me) {
       << std::endl << " -n           Never use random data in the fuzz."
       << std::endl << " -R \"ls\"      Always run this command after the fuzz."
       << std::endl
-      << " -C \"(1|13)\"  Non default crash recognition error codes."
+      << " -C \"13\"      Non default crash recognition error codes."
       << std::endl
       << "              Defaults are 132, 136, 139, 135, 134, and 159."
-      << std::endl
-      << "              Must be formatted in C++ compatible regex form."
       << std::endl << " -W [integer] Thread timeout." << std::endl
       << " -V           Use Valgrind if installed." << std::endl
       << " -1           Try to induce a crash once, and if a crash is not "

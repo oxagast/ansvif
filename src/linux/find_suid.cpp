@@ -29,8 +29,8 @@ void help_me(char *me) {
 
 int main(int argc, char **argv) {
   if (argc < 2)
-    help_me(argv[0]);  // if there is less than one argument, then go to the
-                       // help page
+    help_me(argv[0]);    // if there is less than one argument, then go to the
+                         // help page
   std::string file_str;  // initialize the string for the file
   std::vector<std::string> file_list;  // initialize the file list vector
   for (int path_num = 1; path_num != argc;

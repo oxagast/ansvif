@@ -297,10 +297,18 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
                                              // it takes too long... this is
                                              // unclean
       reaper_thread.detach();                // takes care of the reaper thread
-      std::ifstream cfile("./.ansvif_tmp_code");  // start to read the code from the file
-      std::string cmd_output;  // the initializse thing that will have our cmd output string in it that comes out...
+      std::ifstream cfile(
+          "./.ansvif_tmp_code");  // start to read the code from the file
+      std::string cmd_output;  // the initializse thing that will have our cmd
+                               // output string in it that comes out...
       while (std::getline(cfile, cmd_output)) {
-          if ((cmd_output == "132") || (cmd_output == "139") || (cmd_output == "135") || (cmd_output == "136") || (cmd_output == "159") || (cmd_output == fault_code)) { // default fault codes
+        if ((cmd_output == "132") || (cmd_output == "134") ||
+            (cmd_output == "139") || (cmd_output == "135") ||
+            (cmd_output == "136") || (cmd_output == "159") ||
+            (cmd_output ==
+             fault_code)) {  // default fault codes, plus the fault
+                             // code the user specified (or dummy
+                             // code)
           std::cout << "Crashed with command: " << std::endl << out_str_p
                     << std::endl;  // write out that we crashed with command x
           if (junk_file_of_args != "") {

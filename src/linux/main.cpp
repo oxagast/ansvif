@@ -67,15 +67,15 @@ int main(int argc, char *argv[]) {  // initialize our main
                                        // command, but before the rest of the
                                        // fuzz
   std::string always_arg_after =
-      "";                        // the argument to be supplied after the fuzz
-  std::string run_command = "";  // the command name to be run
-  std::string man_page = "";     // the man page name
+      "";                          // the argument to be supplied after the fuzz
+  std::string run_command = "";    // the command name to be run
+  std::string man_page = "";       // the man page name
   std::string fault_code = "134";  // default dummy fault code
-                                                   // we're going to trap, this
-                                                   // can be user selected
-  bool template_opt = false;                       // default is false
-  bool man_opt = false;                            // default is false
-  bool rand_all = false;       // default for randomize all the fuzz is off
+                                   // we're going to trap, this
+                                   // can be user selected
+  bool template_opt = false;       // default is false
+  bool man_opt = false;            // default is false
+  bool rand_all = false;           // default for randomize all the fuzz is off
   bool rand_buf = false;       // default for randomizing the buffer size is off
   bool write_to_file = false;  // logging is off by default
   bool u_strip_shell_set = false;  // the user hasn't set a strip option yet
