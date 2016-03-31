@@ -16,7 +16,7 @@
 #include <fstream>
 
 int toint(std::string ints);
-void help_me(std::string mr_me);
+void help_me(std::string mr_me, std::string ver);
 std::vector<std::string> get_flags_man(std::string man_page,
                                        std::string man_loc, bool verbose,
                                        bool debug, bool dump_opts);
@@ -90,6 +90,7 @@ int main(int argc, char *argv[]) {  // initialize our main
                           // the user wants to use it it's off by default
   bool single_try = false;  // this is off by default because it's usually only
                             // used with wrappers like xargs
+  std::string ver = "1.3.3";
   while ((opt = getopt(
               argc, argv,
               "m:p:t:e:c:f:o:b:s:x:R:A:F:S:L:W:B:C:1hrzvdDnV")) !=  // these are
@@ -131,7 +132,7 @@ int main(int argc, char *argv[]) {  // initialize our main
         write_file_n = optarg;
         break;
       case 'h':
-        help_me(argv[0]);
+        help_me(argv[0], ver);
         break;
       case 'r':
         rand_all = true;
@@ -184,7 +185,7 @@ int main(int argc, char *argv[]) {  // initialize our main
         single_try = true;
         break;
       default:
-        help_me(argv[0]);
+        help_me(argv[0], ver);
     }
   }
   if (u_strip_shell_set == true) {
@@ -201,28 +202,28 @@ int main(int argc, char *argv[]) {  // initialize our main
         template_file, verbose,
         debug);  // we'll be getting stuff from a template file this time
   } else if ((man_opt == true) && (template_opt == true)) {
-    help_me(argv[0]);  // give the help file is they supply both the template
+    help_me(argv[0], ver);  // give the help file is they supply both the template
                        // and manpage because they are mutually exclusive
   } else if ((man_opt == false) && (template_opt == false)) {
-    help_me(argv[0]);  // if they supply neither a template or manpage then we
+    help_me(argv[0], ver);  // if they supply neither a template or manpage then we
                        // can't fuzz, if you wanna fuzz blank then just fuzz
                        // with a template made with touch, or make a file and
                        // only put a space in it
   } else if (path_str == "") {
-    help_me(argv[0]);  // if they didn't specify the command, error out
+    help_me(argv[0], ver);  // if they didn't specify the command, error out
   } else {
-    help_me(argv[0]);  // if theres any other errors uncaught then error out, or
+    help_me(argv[0], ver);  // if theres any other errors uncaught then error out, or
                        // if they supplied a option thats not listed
   }
   std::istringstream b_size(buf_size);  // we're going to now make sure the buf
                                         // size is an integer only
   int is_int;                           // declare
   if (!(b_size >> is_int)) {            // and if it's not an integar then...
-    help_me(argv[0]);                   // send them to get mental help
+    help_me(argv[0], ver);                   // send them to get mental help
   }
   char buf_char_maybe;             // if it's a char in the buf size...
   if (b_size >> buf_char_maybe) {  // then also...
-    help_me(argv[0]);              // send them to the nuthouse
+    help_me(argv[0], ver);              // send them to the nuthouse
   } else {
     int buf_size_int = toint(buf_size);  // otherwise we're going to turn the
                                          // buf size into an integar

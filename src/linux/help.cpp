@@ -9,8 +9,9 @@
 #include <iostream>
 #include <cstdlib>
 
-void help_me(std::string mr_me) {
+void help_me(std::string mr_me, std::string ver) {
   std::cout
+      << "ansvif v" << ver << "-- A Not So Very Intelligent Fuzzer" << std::endl
       << "Usage:" << std::endl << " " << mr_me
       << " -t template -c ./faulty -b 2048" << std::endl
       << "Options:" << std::endl
