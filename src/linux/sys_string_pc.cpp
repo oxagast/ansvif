@@ -10,7 +10,8 @@
 #include <cstdlib>
 
 std::string binstr_to_hex(std::string bin_str);
-std::vector<std::string> get_out_str(std::string env_str,
+std::string binstr_to_hex_pc(std::string bin_str_pc);
+std::vector<std::string> get_out_str_pc(std::string env_str,
                                      std::string valgrind_str,
                                      std::string sys_str, std::string path_str,
                                      std::string always_arg, std::string fuzz_after) {
@@ -23,9 +24,9 @@ std::vector<std::string> get_out_str(std::string env_str,
     if (env_str != "") {  // if we're not blank on the env side
       out_str_p =
           "$(printf \"" + binstr_to_hex(env_str) + "\") " + valgrind_str +
-          " " + path_str + " $(printf \"" + binstr_to_hex(sys_str) +
+          " " + path_str + " $(printf \"" + binstr_to_hex(binstr_to_hex_pc(sys_str)) +
           "\") " +
-          always_arg + fuzz_after;  // put the printf in first but with a $( for running in
+          always_arg + binstr_to_hex(binstr_to_hex_pc(fuzz_after));  // put the printf in first but with a $( for running in
                        // bash, then a hex space (space is added auto here
                        // because it's 'blank') then turn the environment string
                        // into hex, then close that out, then we'll put the
@@ -36,13 +37,13 @@ std::vector<std::string> get_out_str(std::string env_str,
     }
     if (env_str == "") {  // if we have no environment string
       out_str_p = valgrind_str + " " + path_str + " $(printf \"" +
-                  binstr_to_hex(sys_str) + "\") " +
-                  always_arg + " $(printf \"" + binstr_to_hex(fuzz_after) + "\") ";  // this is all the same, but without the
+                  binstr_to_hex(binstr_to_hex_pc(sys_str)) + "\") " +
+                  always_arg + " $(printf \"" + binstr_to_hex(binstr_to_hex_pc(fuzz_after)) + "\") ";  // this is all the same, but without the
                                // environment string
     }
     out_str =
-        env_str + " " + valgrind_str + " " + path_str + " " + sys_str + " " +
-        always_arg + fuzz_after;  // this is just normal characters, pretty easy, we have the
+        env_str + " " + valgrind_str + " " + path_str + " " + binstr_to_hex_pc(sys_str) + " " +
+        always_arg + binstr_to_hex_pc(fuzz_after);  // this is just normal characters, pretty easy, we have the
                      // out_str being environment, valgrind if there is one
                      // (which is handled elsewhere and just passed here), the
                      // path string next, the system string, then whatever

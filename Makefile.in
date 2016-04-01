@@ -107,10 +107,12 @@ am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
 am_ansvif_OBJECTS = src/ansvif-common.$(OBJEXT) \
 	src/linux/ansvif-bin2hex.$(OBJEXT) \
+	src/linux/ansvif-bin2hex_pc.$(OBJEXT) \
 	src/linux/ansvif-popen2.$(OBJEXT) \
 	src/linux/ansvif-main.$(OBJEXT) \
 	src/linux/ansvif-help.$(OBJEXT) src/ansvif-match_seg.$(OBJEXT) \
 	src/linux/ansvif-sys_string.$(OBJEXT) \
+	src/linux/ansvif-sys_string_pc.$(OBJEXT) \
 	src/linux/ansvif-man_read.$(OBJEXT)
 ansvif_OBJECTS = $(am_ansvif_OBJECTS)
 ansvif_DEPENDENCIES =
@@ -314,7 +316,7 @@ ACLOCAL_AMFLAGS = ${ACLOCAL_FLAGS}
 noinst_LIBRARIES = libgzstream.a
 #gzstream_SOURCES = include/gzstream/gzstream.C
 libgzstream_a_SOURCES = include/gzstream/gzstream.h include/gzstream/gzstream.C
-ansvif_SOURCES = src/common.cpp src/linux/bin2hex.cpp src/linux/popen2.cpp src/linux/main.cpp src/linux/help.cpp src/match_seg.cpp src/linux/sys_string.cpp src/linux/man_read.cpp include/gzstream/gzstream.h
+ansvif_SOURCES = src/common.cpp src/linux/bin2hex.cpp src/linux/bin2hex_pc.cpp src/linux/popen2.cpp src/linux/main.cpp src/linux/help.cpp src/match_seg.cpp src/linux/sys_string.cpp src/linux/sys_string_pc.cpp src/linux/man_read.cpp include/gzstream/gzstream.h
 ansvif_LDADD = -lgzstream -lstdc++ -lpthread -lz -L.
 ansvif_CPPFLAGS = -O3
 ansvif_LDFLAGS = -I./include/gzstream
@@ -435,6 +437,8 @@ src/linux/$(DEPDIR)/$(am__dirstamp):
 	@: > src/linux/$(DEPDIR)/$(am__dirstamp)
 src/linux/ansvif-bin2hex.$(OBJEXT): src/linux/$(am__dirstamp) \
 	src/linux/$(DEPDIR)/$(am__dirstamp)
+src/linux/ansvif-bin2hex_pc.$(OBJEXT): src/linux/$(am__dirstamp) \
+	src/linux/$(DEPDIR)/$(am__dirstamp)
 src/linux/ansvif-popen2.$(OBJEXT): src/linux/$(am__dirstamp) \
 	src/linux/$(DEPDIR)/$(am__dirstamp)
 src/linux/ansvif-main.$(OBJEXT): src/linux/$(am__dirstamp) \
@@ -444,6 +448,8 @@ src/linux/ansvif-help.$(OBJEXT): src/linux/$(am__dirstamp) \
 src/ansvif-match_seg.$(OBJEXT): src/$(am__dirstamp) \
 	src/$(DEPDIR)/$(am__dirstamp)
 src/linux/ansvif-sys_string.$(OBJEXT): src/linux/$(am__dirstamp) \
+	src/linux/$(DEPDIR)/$(am__dirstamp)
+src/linux/ansvif-sys_string_pc.$(OBJEXT): src/linux/$(am__dirstamp) \
 	src/linux/$(DEPDIR)/$(am__dirstamp)
 src/linux/ansvif-man_read.$(OBJEXT): src/linux/$(am__dirstamp) \
 	src/linux/$(DEPDIR)/$(am__dirstamp)
@@ -478,11 +484,13 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/ansvif-match_seg.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/faulty-faulty.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/linux/$(DEPDIR)/ansvif-bin2hex.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@src/linux/$(DEPDIR)/ansvif-bin2hex_pc.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/linux/$(DEPDIR)/ansvif-help.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/linux/$(DEPDIR)/ansvif-main.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/linux/$(DEPDIR)/ansvif-man_read.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/linux/$(DEPDIR)/ansvif-popen2.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/linux/$(DEPDIR)/ansvif-sys_string.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@src/linux/$(DEPDIR)/ansvif-sys_string_pc.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/linux/$(DEPDIR)/find_suid.Po@am__quote@
 
 .C.o:
@@ -528,6 +536,20 @@ src/linux/ansvif-bin2hex.obj: src/linux/bin2hex.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='src/linux/bin2hex.cpp' object='src/linux/ansvif-bin2hex.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ansvif_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o src/linux/ansvif-bin2hex.obj `if test -f 'src/linux/bin2hex.cpp'; then $(CYGPATH_W) 'src/linux/bin2hex.cpp'; else $(CYGPATH_W) '$(srcdir)/src/linux/bin2hex.cpp'; fi`
+
+src/linux/ansvif-bin2hex_pc.o: src/linux/bin2hex_pc.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ansvif_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT src/linux/ansvif-bin2hex_pc.o -MD -MP -MF src/linux/$(DEPDIR)/ansvif-bin2hex_pc.Tpo -c -o src/linux/ansvif-bin2hex_pc.o `test -f 'src/linux/bin2hex_pc.cpp' || echo '$(srcdir)/'`src/linux/bin2hex_pc.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) src/linux/$(DEPDIR)/ansvif-bin2hex_pc.Tpo src/linux/$(DEPDIR)/ansvif-bin2hex_pc.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='src/linux/bin2hex_pc.cpp' object='src/linux/ansvif-bin2hex_pc.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ansvif_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o src/linux/ansvif-bin2hex_pc.o `test -f 'src/linux/bin2hex_pc.cpp' || echo '$(srcdir)/'`src/linux/bin2hex_pc.cpp
+
+src/linux/ansvif-bin2hex_pc.obj: src/linux/bin2hex_pc.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ansvif_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT src/linux/ansvif-bin2hex_pc.obj -MD -MP -MF src/linux/$(DEPDIR)/ansvif-bin2hex_pc.Tpo -c -o src/linux/ansvif-bin2hex_pc.obj `if test -f 'src/linux/bin2hex_pc.cpp'; then $(CYGPATH_W) 'src/linux/bin2hex_pc.cpp'; else $(CYGPATH_W) '$(srcdir)/src/linux/bin2hex_pc.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) src/linux/$(DEPDIR)/ansvif-bin2hex_pc.Tpo src/linux/$(DEPDIR)/ansvif-bin2hex_pc.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='src/linux/bin2hex_pc.cpp' object='src/linux/ansvif-bin2hex_pc.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ansvif_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o src/linux/ansvif-bin2hex_pc.obj `if test -f 'src/linux/bin2hex_pc.cpp'; then $(CYGPATH_W) 'src/linux/bin2hex_pc.cpp'; else $(CYGPATH_W) '$(srcdir)/src/linux/bin2hex_pc.cpp'; fi`
 
 src/linux/ansvif-popen2.o: src/linux/popen2.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ansvif_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT src/linux/ansvif-popen2.o -MD -MP -MF src/linux/$(DEPDIR)/ansvif-popen2.Tpo -c -o src/linux/ansvif-popen2.o `test -f 'src/linux/popen2.cpp' || echo '$(srcdir)/'`src/linux/popen2.cpp
@@ -598,6 +620,20 @@ src/linux/ansvif-sys_string.obj: src/linux/sys_string.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='src/linux/sys_string.cpp' object='src/linux/ansvif-sys_string.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ansvif_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o src/linux/ansvif-sys_string.obj `if test -f 'src/linux/sys_string.cpp'; then $(CYGPATH_W) 'src/linux/sys_string.cpp'; else $(CYGPATH_W) '$(srcdir)/src/linux/sys_string.cpp'; fi`
+
+src/linux/ansvif-sys_string_pc.o: src/linux/sys_string_pc.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ansvif_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT src/linux/ansvif-sys_string_pc.o -MD -MP -MF src/linux/$(DEPDIR)/ansvif-sys_string_pc.Tpo -c -o src/linux/ansvif-sys_string_pc.o `test -f 'src/linux/sys_string_pc.cpp' || echo '$(srcdir)/'`src/linux/sys_string_pc.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) src/linux/$(DEPDIR)/ansvif-sys_string_pc.Tpo src/linux/$(DEPDIR)/ansvif-sys_string_pc.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='src/linux/sys_string_pc.cpp' object='src/linux/ansvif-sys_string_pc.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ansvif_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o src/linux/ansvif-sys_string_pc.o `test -f 'src/linux/sys_string_pc.cpp' || echo '$(srcdir)/'`src/linux/sys_string_pc.cpp
+
+src/linux/ansvif-sys_string_pc.obj: src/linux/sys_string_pc.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ansvif_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT src/linux/ansvif-sys_string_pc.obj -MD -MP -MF src/linux/$(DEPDIR)/ansvif-sys_string_pc.Tpo -c -o src/linux/ansvif-sys_string_pc.obj `if test -f 'src/linux/sys_string_pc.cpp'; then $(CYGPATH_W) 'src/linux/sys_string_pc.cpp'; else $(CYGPATH_W) '$(srcdir)/src/linux/sys_string_pc.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) src/linux/$(DEPDIR)/ansvif-sys_string_pc.Tpo src/linux/$(DEPDIR)/ansvif-sys_string_pc.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='src/linux/sys_string_pc.cpp' object='src/linux/ansvif-sys_string_pc.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ansvif_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o src/linux/ansvif-sys_string_pc.obj `if test -f 'src/linux/sys_string_pc.cpp'; then $(CYGPATH_W) 'src/linux/sys_string_pc.cpp'; else $(CYGPATH_W) '$(srcdir)/src/linux/sys_string_pc.cpp'; fi`
 
 src/linux/ansvif-man_read.o: src/linux/man_read.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ansvif_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT src/linux/ansvif-man_read.o -MD -MP -MF src/linux/$(DEPDIR)/ansvif-man_read.Tpo -c -o src/linux/ansvif-man_read.o `test -f 'src/linux/man_read.cpp' || echo '$(srcdir)/'`src/linux/man_read.cpp

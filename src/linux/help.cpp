@@ -59,6 +59,7 @@ void help_me(std::string mr_me, std::string ver) {
       << " -V           Use Valgrind if installed." << std::endl
       << " -1           Try to induce a crash once, and if a crash is not "
          "induced," << std::endl << "              throw error code 64."
+      << std::endl << " -P           Use % to represent binary in fuzz."
       << std::endl << " -v           Verbose." << std::endl
       << " -d           Debug."
       << std::endl;  // write all this help file shit out to STDOUT

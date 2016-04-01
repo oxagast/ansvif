@@ -29,7 +29,7 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
                std::string junk_file_of_args, std::string always_arg_before,
                std::string always_arg_after, bool never_rand,
                std::string run_command, std::string fault_code, bool valgrind,
-               bool single_try, bool verbose, bool debug);
+               bool single_try, bool percent_sign, bool verbose, bool debug);
 std::vector<std::string> get_flags_template(std::string filename, bool verbose,
                                             bool debug);
 std::vector<std::string> get_other(std::string filename, bool verbose,
@@ -90,10 +90,11 @@ int main(int argc, char *argv[]) {  // initialize our main
                           // the user wants to use it it's off by default
   bool single_try = false;  // this is off by default because it's usually only
                             // used with wrappers like xargs
+  bool percent_sign = false; // percent sign stuff, default is off
   std::string ver = "1.3.3";
   while ((opt = getopt(
               argc, argv,
-              "m:p:t:e:c:f:o:b:s:x:R:A:F:S:L:W:B:C:1hrzvdDnV")) !=  // these are
+              "m:p:t:e:c:f:o:b:s:x:R:A:F:S:L:W:B:C:1hrzvdDnVP")) !=  // these are
                                                                     // all the
                                                                     // flags
          -1) {
@@ -184,6 +185,9 @@ int main(int argc, char *argv[]) {  // initialize our main
       case '1':
         single_try = true;
         break;
+      case 'P':
+        percent_sign = true;
+        break;
       default:
         help_me(argv[0], ver);
     }
@@ -237,7 +241,7 @@ int main(int argc, char *argv[]) {  // initialize our main
             rand_all, write_to_file, write_file_n, rand_buf, opt_other,
             is_other, other_sep, t_timeout, low_lvl_user, junk_file_of_args,
             always_arg_before, always_arg_after, never_rand, run_command,
-            fault_code, valgrind, single_try, verbose, debug));  // Thrift Shop
+            fault_code, valgrind, single_try, percent_sign, verbose, debug));  // Thrift Shop
       for (auto &all_thread : threads)
         all_thread.join();  // is that your grandma's coat?
     }
@@ -246,7 +250,7 @@ int main(int argc, char *argv[]) {  // initialize our main
                 write_to_file, write_file_n, rand_buf, opt_other, is_other,
                 other_sep, t_timeout, low_lvl_user, junk_file_of_args,
                 always_arg_before, always_arg_after, never_rand, run_command,
-                fault_code, valgrind, single_try, verbose,
+                fault_code, valgrind, single_try, percent_sign, verbose,
                 debug);  // if we're only doing a single run then we'll just
                          // directly call the match_seg subroutine
     }

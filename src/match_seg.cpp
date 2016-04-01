@@ -32,8 +32,11 @@ void write_junk_file(std::string filename, std::vector<std::string> opt_other,
 std::vector<std::string> get_out_str(std::string env_str,
                                      std::string valgrind_str,
                                      std::string sys_str, std::string path_str,
-                                     std::string always_arg_after);
-
+                                     std::string always_arg_after, std::string fuzz_after);
+std::vector<std::string> get_out_str_pc(std::string env_str,
+                                     std::string valgrind_str,
+                                     std::string sys_str, std::string path_str,
+                                     std::string always_arg_after, std::string fuzz_after);
 bool match_seg(int buf_size, std::vector<std::string> opts,
                std::vector<std::string> spec_env, std::string path_str,
                std::string strip_shell, bool rand_all, bool write_to_file,
@@ -43,7 +46,7 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
                std::string junk_file_of_args, std::string always_arg_before,
                std::string always_arg_after, bool never_rand,
                std::string run_command, std::string fault_code, bool valgrind,
-               bool single_try, bool verbose, bool debug) {
+               bool single_try, bool percent_sign, bool verbose, bool debug) {
   bool segged = false;
   std::string valgrind_str;
   if (valgrind == true) {
@@ -249,10 +252,20 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
           }
         }
       }
-      std::vector<std::string> out_all = get_out_str(
+      std::string fuzz_after = remove_chars(make_garbage(rand_me_plz(rand_spec_one, rand_spec_two), buf_size, "", is_other, never_rand), strip_shell);
+      std::vector<std::string> out_all;
+      if (percent_sign == true) {
+        out_all = get_out_str_pc(
           env_str, valgrind_str, sys_str, path_str,
-          always_arg_after);  // all the stuff put together to send out (aside
+          always_arg_after, fuzz_after);  // all the stuff put together to send out (aside
                               // from echo $? which is done in sys_string
+      }
+      if (percent_sign == false) {
+        out_all = get_out_str(
+          env_str, valgrind_str, sys_str, path_str,
+          always_arg_after, fuzz_after);  // all the stuff put together to send out (aside
+                              // from echo $? which is done in sys_string
+      }
       std::string out_str = out_all[0];    // first one in vector is the string
                                            // without the printf stuff
       std::string out_str_p = out_all[1];  // second one in vector has the
