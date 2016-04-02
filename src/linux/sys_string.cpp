@@ -48,7 +48,7 @@ std::vector<std::string> get_out_str(std::string env_str,
                      // path string next, the system string, then whatever
                      // argument is always meant to go after the fuzz
   }
-  out_str = out_str + "; echo $? > ./.ansvif_tmp_code";  // get the signal
+  out_str = out_str + "; echo $? > .ansvif_tmp_code";  // get the signal
   std::vector<std::string> out_all;  // initialize the vector to put out_str and
                                      // out_str_p (regular and printf version)
                                      // in

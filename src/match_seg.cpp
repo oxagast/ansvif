@@ -311,7 +311,7 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
                                              // unclean
       reaper_thread.detach();                // takes care of the reaper thread
       std::ifstream cfile(
-          "./.ansvif_tmp_code");  // start to read the code from the file
+          ".ansvif_tmp_code");  // start to read the code from the file
       std::string cmd_output;  // the initializse thing that will have our cmd
                                // output string in it that comes out...
       while (std::getline(cfile, cmd_output)) {
@@ -334,9 +334,11 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
                                                  // from common)
             std::cout << "Crash logged."
                       << std::endl;  //  tells us that we crashed.
+            std::remove(".ansvif_tmp_code");
             exit(0);  // exit with a clean/dirty code (haha, get it? clean
                       // because it crashed?)
           } else {
+            std::remove(".ansvif_tmp_code");
             exit(0);  // same as above
           }
         }

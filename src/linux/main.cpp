@@ -192,6 +192,9 @@ int main(int argc, char *argv[]) {  // initialize our main
         help_me(argv[0], ver);
     }
   }
+  std::fstream fs; // create a blank file
+  fs.open(".ansvif_tmp_code", std::ios::out);
+  fs.close();
   if (u_strip_shell_set == true) {
     strip_shell =
         u_strip_shell +
@@ -231,7 +234,7 @@ int main(int argc, char *argv[]) {  // initialize our main
   } else {
     int buf_size_int = toint(buf_size);  // otherwise we're going to turn the
                                          // buf size into an integar
-    std::remove("./.ansvif_tmp_code");
+    std::remove(".ansvif_tmp_code");
     if (single_try ==
         false) {  // if single try isn't turned on then we're going to use...
       std::vector<std::thread> threads;  // DING DING DING! threading!
