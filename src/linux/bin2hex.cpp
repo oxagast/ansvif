@@ -23,5 +23,10 @@ std::string binstr_to_hex(std::string bin_str) {
     hexxy = hex_out.str() + "20";    // put a space
   }
   hexxy = "\\\\x" + hexxy;
-  return (hexxy);  // return to sys_string in hex to be put into printf
+  if (hexxy == "\\\\x20\\\\x20") {
+    return "";
+  }
+  else {
+    return (hexxy);  // return to sys_string in hex to be put into printf
+  }
 }

@@ -23,5 +23,11 @@ std::string binstr_to_hex_pc(std::string bin_str) {
     hexxy = hex_out.str() + "20";    // put a space
   }
   hexxy = "%" + hexxy;
-  return (hexxy);  // return to sys_string in hex to be put into printf
+  if (hexxy == "%20%20") {
+    return "";
+  }
+  else {
+    return (hexxy);  // return to sys_string in hex to be put into printf
+  }
+
 }

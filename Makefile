@@ -234,7 +234,7 @@ CXXCPP = g++ -E
 CXXDEPMODE = depmode=gcc3
 CXXFLAGS = -g -O2 -std=gnu++11
 CYGPATH_W = echo
-DEFS = -DPACKAGE_NAME=\"ansvif\" -DPACKAGE_TARNAME=\"ansvif\" -DPACKAGE_VERSION=\"1.3.3\" -DPACKAGE_STRING=\"ansvif\ 1.3.3\" -DPACKAGE_BUGREPORT=\"marshall@wtyw.net\" -DPACKAGE_URL=\"\" -DPACKAGE=\"ansvif\" -DVERSION=\"1.3.3\" -DSTDC_HEADERS=1 -DHAVE_SYS_TYPES_H=1 -DHAVE_SYS_STAT_H=1 -DHAVE_STDLIB_H=1 -DHAVE_STRING_H=1 -DHAVE_MEMORY_H=1 -DHAVE_STRINGS_H=1 -DHAVE_INTTYPES_H=1 -DHAVE_STDINT_H=1 -DHAVE_UNISTD_H=1 -DSTDC_HEADERS=1 -DHAVE_CXX11=1 -DHAVE_STRING=1 -DPACKAGE=\"ansvif\" -DVERSION=\"1.3.3\"
+DEFS = -DPACKAGE_NAME=\"ansvif\" -DPACKAGE_TARNAME=\"ansvif\" -DPACKAGE_VERSION=\"1.3.4\" -DPACKAGE_STRING=\"ansvif\ 1.3.4\" -DPACKAGE_BUGREPORT=\"marshallwhittaker@gmail.com\" -DPACKAGE_URL=\"\" -DPACKAGE=\"ansvif\" -DVERSION=\"1.3.4\" -DSTDC_HEADERS=1 -DHAVE_SYS_TYPES_H=1 -DHAVE_SYS_STAT_H=1 -DHAVE_STDLIB_H=1 -DHAVE_STRING_H=1 -DHAVE_MEMORY_H=1 -DHAVE_STRINGS_H=1 -DHAVE_INTTYPES_H=1 -DHAVE_STDINT_H=1 -DHAVE_UNISTD_H=1 -DSTDC_HEADERS=1 -DHAVE_CXX11=1 -DHAVE_STRING=1 -DPACKAGE=\"ansvif\" -DVERSION=\"1.3.4\"
 DEPDIR = .deps
 ECHO_C = 
 ECHO_N = -n
@@ -256,18 +256,18 @@ MAKEINFO = ${SHELL} /home/marshall/Code/ansvif/missing makeinfo
 MKDIR_P = /bin/mkdir -p
 OBJEXT = o
 PACKAGE = ansvif
-PACKAGE_BUGREPORT = marshall@wtyw.net
+PACKAGE_BUGREPORT = marshallwhittaker@gmail.com
 PACKAGE_NAME = ansvif
-PACKAGE_STRING = ansvif 1.3.3
+PACKAGE_STRING = ansvif 1.3.4
 PACKAGE_TARNAME = ansvif
 PACKAGE_URL = 
-PACKAGE_VERSION = 1.3.3
+PACKAGE_VERSION = 1.3.4
 PATH_SEPARATOR = :
 RANLIB = ranlib
 SET_MAKE = 
 SHELL = /bin/bash
 STRIP = 
-VERSION = 1.3.3
+VERSION = 1.3.4
 abs_builddir = /home/marshall/Code/ansvif
 abs_srcdir = /home/marshall/Code/ansvif
 abs_top_builddir = /home/marshall/Code/ansvif

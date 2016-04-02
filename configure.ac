@@ -1,4 +1,4 @@
-AC_INIT([ansvif], [1.3.3], [marshall@wtyw.net])
+AC_INIT([ansvif], [1.3.4], [marshallwhittaker@gmail.com])
 AM_INIT_AUTOMAKE
 AC_PROG_CC
 AC_PROG_CXX
