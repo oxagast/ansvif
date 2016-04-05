@@ -36,7 +36,7 @@ void help_me(std::string mr_me, std::string ver) {
          "option." << std::endl
       << " -s \"@#^$CE\"  Characters to omit from randomization.  Default "
          "omitted" << std::endl
-      << "              characters are: <>\\n |&\[]\()\{}:; and mandatory "
+      << "              characters are: <>\\n |&\[]\()\{}:;\\ and mandatory "
          "omitted" << std::endl << "              characters are: >\\n"
       << std::endl << " -o [file]    Log to this file." << std::endl
       << " -x [file]    Other opts to put in, such as usernames, etc."

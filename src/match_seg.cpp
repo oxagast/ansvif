@@ -311,10 +311,6 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
                                              // it takes too long... this is
                                              // unclean
       reaper_thread.detach();                // takes care of the reaper thread
-/*
-      std::ifstream cfile(
-          ".ansvif_tmp_code_" + std::to_string(pid));  // start to read the code from the file
-*/
       std::string cmd_output;  // the initializse thing that will have our cmd
                                // output string in it that comes out...
       while (std::getline(output, cmd_output)) {
@@ -333,16 +329,15 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
                       << std::endl;  // ...make sure to log the file data too
           }
           if (write_to_file == true) {  // if we are writing to a file...
+            write_seg(write_file_n, "pid: " + std::to_string(pid) + "\n" + "Crashed with command: ");  // write the pid if we're logging
             write_seg(write_file_n, out_str_p);  // call the subroutine to write
                                                  // the fault to a log (comes
                                                  // from common)
             std::cout << "Crash logged."
                       << std::endl;  //  tells us that we crashed.
-            std::remove(".ansvif_tmp_code");
             exit(0);  // exit with a clean/dirty code (haha, get it? clean
                       // because it crashed?)
           } else {
-            std::remove(".ansvif_tmp_code");
             exit(0);  // same as above
           }
         }

@@ -267,10 +267,10 @@ std::string make_garbage(int trash, int buf, std::string opt_other_str,
   return (all_junk);  // return the 'junk' that the trash generator made
 }
 
-void write_seg(std::string filename, std::string seg_line) {
+void write_seg(std::string filename, std::string line) {
   std::ofstream w_f;                                  // call it w_f
   w_f.open(filename, std::ios::out | std::ios::app);  // open it for writing
-  w_f << seg_line << std::endl;                       // write the fault
+  w_f << line << std::endl;                       // write the fault
   w_f.close();                                        // close it
 }
 

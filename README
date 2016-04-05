@@ -61,12 +61,12 @@ Options:
   -D Dumps whats found in the manpage.
   -f Number of threads to use.  Default is 2.
   -b Specifies the buffer size to fuzz with.  256-2048 Is usually sufficient.
-  -r Uses only random garbage data.  (note: this is buggy)
+  -r Uses only random garbage data.
   -o Writes output to log file.
   -z Randomize the buffer size from 1 to what is specified by -b.
   -x Other junk to put in.  Usernames and such can go here.
   -S Seperator between options.
-  -v Verbose.
+  -s Omitted character specification.  Defaults are <>\\n |&\[]\()\{}:;\ and newline is mandatory.
   -T Timeout for threads.
   -W Timeout for threads.
   -L Unpriviledged user to run as if root.
@@ -75,9 +75,10 @@ Options:
   -F File to feed into the program that -x along with normal fuzzing data will be put in.
   -n Never use random data in the fuzz.
   -R Run this command after each fuzz.
-  -C C++ formatted regex of crash codes to detect. For example: "(139|136)"
+  -C A Non standard error code to detect.
   -V Use Valgrind if installed.
   -1 Try to make it fault once, if it doesn't happen, throw error code 64.  Useful for scripting.
+  -v Verbose.
   -d Debug data.
   -h Shows the help page.
 

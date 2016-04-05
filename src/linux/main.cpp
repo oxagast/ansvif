@@ -34,6 +34,7 @@ std::vector<std::string> get_flags_template(std::string filename, bool verbose,
                                             bool debug);
 std::vector<std::string> get_other(std::string filename, bool verbose,
                                    bool debug);
+void write_seg(std::string filename, std::string seg_line);
 
 int main(int argc, char *argv[]) {  // initialize our main
   int opt;                          // initialize opt for how many options
@@ -52,7 +53,7 @@ int main(int argc, char *argv[]) {  // initialize our main
                          // has to be an integar)
   std::string mp;        // the string that holds the manpage
   std::string template_file;  // the location of the template file
-  std::string strip_shell = "`<>\n|&\[]\()\{}:;\\\\";  // what characters not to use
+  std::string strip_shell = "`<>\n|&\[]\()\{}:;\\";  // what characters not to use
                                                    // in the command that goes
                                                    // to /bin/sh
   std::string u_strip_shell;  // if the user supplied extra characters to strip
@@ -91,7 +92,7 @@ int main(int argc, char *argv[]) {  // initialize our main
   bool single_try = false;  // this is off by default because it's usually only
                             // used with wrappers like xargs
   bool percent_sign = false; // percent sign stuff, default is off
-  std::string ver = "1.3.4";
+  std::string ver = "1.3.5"; // the version
   while ((opt = getopt(
               argc, argv,
               "m:p:t:e:c:f:o:b:s:x:R:A:F:S:L:W:B:C:1hrzvdDnVP")) !=  // these are
@@ -192,9 +193,10 @@ int main(int argc, char *argv[]) {  // initialize our main
         help_me(argv[0], ver);
     }
   }
-  std::fstream fs; // create a blank file
-  fs.open(".ansvif_tmp_code", std::ios::out);
-  fs.close();
+  if (write_to_file == true) {
+    std::remove(write_file_n.c_str());
+    write_seg(write_file_n, "ansvif -- v " + ver + "\n");
+  }
   if (u_strip_shell_set == true) {
     strip_shell =
         u_strip_shell +
@@ -234,7 +236,6 @@ int main(int argc, char *argv[]) {  // initialize our main
   } else {
     int buf_size_int = toint(buf_size);  // otherwise we're going to turn the
                                          // buf size into an integar
-    std::remove(".ansvif_tmp_code");
     if (single_try ==
         false) {  // if single try isn't turned on then we're going to use...
       std::vector<std::thread> threads;  // DING DING DING! threading!
