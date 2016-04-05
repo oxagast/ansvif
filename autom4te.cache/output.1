@@ -2332,8 +2332,8 @@ test "$program_suffix" != NONE &&
 ac_script='s/[\\$]/&&/g;s/;s,x,x,$//'
 program_transform_name=`$as_echo "$program_transform_name" | sed "$ac_script"`
 
-# expand $ac_aux_dir to an absolute path
-am_aux_dir=`cd $ac_aux_dir && pwd`
+# Expand $ac_aux_dir to an absolute path.
+am_aux_dir=`cd "$ac_aux_dir" && pwd`
 
 if test x"${MISSING+set}" != xset; then
   case $am_aux_dir in
@@ -2738,6 +2738,7 @@ END
     as_fn_error $? "Your 'rm' program is bad, sorry." "$LINENO" 5
   fi
 fi
+
 ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'
 ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -4779,7 +4780,7 @@ $as_echo "@%:@define STDC_HEADERS 1" >>confdefs.h
 fi
 
 #AX_CXX_COMPILE_STDCXX_11([noext],[mandatory])
-    ax_cxx_compile_cxx11_required=truednl
+    ax_cxx_compile_cxx11_required=true
   ac_ext=cpp
 ac_cpp='$CXXCPP $CPPFLAGS'
 ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -4800,6 +4801,13 @@ else
       static_assert(sizeof(int) <= sizeof(T), "not big enough");
     };
 
+    struct Base {
+    virtual void f() {}
+    };
+    struct Child : public Base {
+    virtual void f() override {}
+    };
+
     typedef check<check<bool>> right_angle_brackets;
 
     int a;
@@ -4810,6 +4818,7 @@ else
     check_type&& cr = static_cast<check_type&&>(c);
 
     auto d = a;
+    auto l = [](){};
 
 _ACEOF
 if ac_fn_cxx_try_compile "$LINENO"; then :
@@ -4844,6 +4853,13 @@ else
       static_assert(sizeof(int) <= sizeof(T), "not big enough");
     };
 
+    struct Base {
+    virtual void f() {}
+    };
+    struct Child : public Base {
+    virtual void f() override {}
+    };
+
     typedef check<check<bool>> right_angle_brackets;
 
     int a;
@@ -4854,6 +4870,7 @@ else
     check_type&& cr = static_cast<check_type&&>(c);
 
     auto d = a;
+    auto l = [](){};
 
 _ACEOF
 if ac_fn_cxx_try_compile "$LINENO"; then :
@@ -4894,6 +4911,13 @@ else
       static_assert(sizeof(int) <= sizeof(T), "not big enough");
     };
 
+    struct Base {
+    virtual void f() {}
+    };
+    struct Child : public Base {
+    virtual void f() override {}
+    };
+
     typedef check<check<bool>> right_angle_brackets;
 
     int a;
@@ -4904,6 +4928,7 @@ else
     check_type&& cr = static_cast<check_type&&>(c);
 
     auto d = a;
+    auto l = [](){};
 
 _ACEOF
 if ac_fn_cxx_try_compile "$LINENO"; then :
@@ -5357,6 +5382,7 @@ END
     as_fn_error $? "Your 'rm' program is bad, sorry." "$LINENO" 5
   fi
 fi
+
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
 # tests run on this system so they can be shared between configure

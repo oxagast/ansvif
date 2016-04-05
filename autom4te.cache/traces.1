@@ -1,4 +1,4 @@
-m4trace:/usr/share/aclocal/ax_cxx_compile_stdcxx_11.m4:57: -1- AC_DEFUN([AX_CXX_COMPILE_STDCXX_11], [dnl
+m4trace:/usr/share/aclocal/ax_cxx_compile_stdcxx_11.m4:66: -1- AC_DEFUN([AX_CXX_COMPILE_STDCXX_11], [dnl
   m4_if([$1], [], [],
         [$1], [ext], [],
         [$1], [noext], [],
@@ -6,7 +6,7 @@ m4trace:/usr/share/aclocal/ax_cxx_compile_stdcxx_11.m4:57: -1- AC_DEFUN([AX_CXX_
   m4_if([$2], [], [ax_cxx_compile_cxx11_required=true],
         [$2], [mandatory], [ax_cxx_compile_cxx11_required=true],
         [$2], [optional], [ax_cxx_compile_cxx11_required=false],
-        [m4_fatal([invalid second argument `$2' to AX_CXX_COMPILE_STDCXX_11])])dnl
+        [m4_fatal([invalid second argument `$2' to AX_CXX_COMPILE_STDCXX_11])])
   AC_LANG_PUSH([C++])dnl
   ac_success=no
   AC_CACHE_CHECK(whether $CXX supports C++11 features by default,
@@ -85,10 +85,9 @@ m4trace:/usr/share/aclocal-1.14/amversion.m4:33: -1- AC_DEFUN([AM_SET_CURRENT_AU
 m4_ifndef([AC_AUTOCONF_VERSION],
   [m4_copy([m4_PACKAGE_VERSION], [AC_AUTOCONF_VERSION])])dnl
 _AM_AUTOCONF_VERSION(m4_defn([AC_AUTOCONF_VERSION]))])
-m4trace:/usr/share/aclocal-1.14/auxdir.m4:47: -1- AC_DEFUN([AM_AUX_DIR_EXPAND], [dnl Rely on autoconf to set up CDPATH properly.
-AC_PREREQ([2.50])dnl
-# expand $ac_aux_dir to an absolute path
-am_aux_dir=`cd $ac_aux_dir && pwd`
+m4trace:/usr/share/aclocal-1.14/auxdir.m4:47: -1- AC_DEFUN([AM_AUX_DIR_EXPAND], [AC_REQUIRE([AC_CONFIG_AUX_DIR_DEFAULT])dnl
+# Expand $ac_aux_dir to an absolute path.
+am_aux_dir=`cd "$ac_aux_dir" && pwd`
 ])
 m4trace:/usr/share/aclocal-1.14/cond.m4:12: -1- AC_DEFUN([AM_CONDITIONAL], [AC_PREREQ([2.52])dnl
  m4_if([$1], [TRUE],  [AC_FATAL([$0: invalid condition: $1])],
@@ -451,8 +450,9 @@ to "yes", and re-run configure.
 END
     AC_MSG_ERROR([Your 'rm' program is bad, sorry.])
   fi
-fi])
-m4trace:/usr/share/aclocal-1.14/init.m4:182: -1- AC_DEFUN([_AC_AM_CONFIG_HEADER_HOOK], [# Compute $1's index in $config_headers.
+fi
+])
+m4trace:/usr/share/aclocal-1.14/init.m4:183: -1- AC_DEFUN([_AC_AM_CONFIG_HEADER_HOOK], [# Compute $1's index in $config_headers.
 _am_arg=$1
 _am_stamp_count=1
 for _am_header in $config_headers :; do
