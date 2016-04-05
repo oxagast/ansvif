@@ -285,6 +285,7 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
         std::cout << out_str << std::endl << out_str_p << std::endl
                   << std::endl;  // write ALL the junk out to stdout
       }
+
       int pid;  // initializes child
       FILE *fp =
           popen2(out_str, "r", pid, low_lvl_user);  // opens child process fork
@@ -299,9 +300,9 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
                sizeof(command_out));  // make sure we don't overflow
       }
       pclose2(fp, pid);  // close out the command cleanly
+      int run_com_pid;  // initializes child
       if (run_command != "") {
-        int run_com_pid;  // initializes child
-        FILE *fp = popen2(run_command, "r", run_com_pid,
+        FILE *fp = popen2(out_str, "r", run_com_pid,
                           low_lvl_user);  // opens child process fork
         pclose2(fp, run_com_pid);         // close out the command cleanly
       }
@@ -310,18 +311,21 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
                                              // it takes too long... this is
                                              // unclean
       reaper_thread.detach();                // takes care of the reaper thread
+/*
       std::ifstream cfile(
-          ".ansvif_tmp_code");  // start to read the code from the file
+          ".ansvif_tmp_code_" + std::to_string(pid));  // start to read the code from the file
+*/
       std::string cmd_output;  // the initializse thing that will have our cmd
                                // output string in it that comes out...
-      while (std::getline(cfile, cmd_output)) {
-        if ((cmd_output == "132") || (cmd_output == "134") ||
+      while (std::getline(output, cmd_output)) {
+       if ((cmd_output == "132") || (cmd_output == "134") ||
             (cmd_output == "139") || (cmd_output == "135") ||
             (cmd_output == "136") || (cmd_output == "159") ||
             (cmd_output ==
              fault_code)) {  // default fault codes, plus the fault
                              // code the user specified (or dummy
                              // code)
+          std::cout << "pid: " << pid << "\n";
           std::cout << "Crashed with command: " << std::endl << out_str_p
                     << std::endl;  // write out that we crashed with command x
           if (junk_file_of_args != "") {
