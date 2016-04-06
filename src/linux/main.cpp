@@ -194,8 +194,9 @@ int main(int argc, char *argv[]) {  // initialize our main
     }
   }
   if (write_to_file == true) {
-    std::remove(write_file_n.c_str());
-    write_seg(write_file_n, "ansvif -- v " + ver + "\n");
+    std::string crash_file = write_file_n + ".crash.ansvif.log";
+    std::remove(crash_file.c_str());
+    write_seg(write_file_n + ".crash.ansvif.log", "ansvif -- v " + ver + "\n");
   }
   if (u_strip_shell_set == true) {
     strip_shell =

@@ -13,7 +13,7 @@ std::string binstr_to_hex(std::string bin_str);
 std::vector<std::string> get_out_str(std::string env_str,
                                      std::string valgrind_str,
                                      std::string sys_str, std::string path_str,
-                                     std::string always_arg, std::string fuzz_after) {
+                                     std::string always_arg, std::string fuzz_after, std::string log_prefix) {
   std::string out_str;  // this is for normal output (lots of garbage will show
                         // up, but normal characters)
   std::string out_str_p;  // this is to be fed into printf on linux machines, a
@@ -48,7 +48,7 @@ std::vector<std::string> get_out_str(std::string env_str,
                      // path string next, the system string, then whatever
                      // argument is always meant to go after the fuzz
   }
-  out_str = out_str + ">output.log 2>&1; echo $?";  // get the signal
+  out_str = out_str + ">" + log_prefix + ".output.ansvif.log 2>&1; echo $?";  // get the signal
   std::vector<std::string> out_all;  // initialize the vector to put out_str and
                                      // out_str_p (regular and printf version)
                                      // in

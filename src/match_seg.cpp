@@ -32,11 +32,11 @@ void write_junk_file(std::string filename, std::vector<std::string> opt_other,
 std::vector<std::string> get_out_str(std::string env_str,
                                      std::string valgrind_str,
                                      std::string sys_str, std::string path_str,
-                                     std::string always_arg_after, std::string fuzz_after);
+                                     std::string always_arg_after, std::string fuzz_after, std::string log_prefix);
 std::vector<std::string> get_out_str_pc(std::string env_str,
                                      std::string valgrind_str,
                                      std::string sys_str, std::string path_str,
-                                     std::string always_arg_after, std::string fuzz_after);
+                                     std::string always_arg_after, std::string fuzz_after, std::string log_prefix);
 bool match_seg(int buf_size, std::vector<std::string> opts,
                std::vector<std::string> spec_env, std::string path_str,
                std::string strip_shell, bool rand_all, bool write_to_file,
@@ -52,7 +52,7 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
   if (valgrind == true) {
     valgrind_str =
         "/usr/bin/valgrind --leak-check=full --xml=yes "
-        "--xml-file=ansvif.valgrind.log --error-exitcode=139";  // if valgrind
+        "--xml-file=" + write_file_n + ".valgrind.ansvif.log --error-exitcode=139";  // if valgrind
                                                                 // is activated
                                                                 // we use exit
                                                                 // code 139 to
@@ -257,13 +257,13 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
       if (percent_sign == true) {
         out_all = get_out_str_pc(
           env_str, valgrind_str, sys_str, path_str,
-          always_arg_after, fuzz_after);  // all the stuff put together to send out (aside
+          always_arg_after, fuzz_after, write_file_n);  // all the stuff put together to send out (aside
                               // from echo $? which is done in sys_string
       }
       if (percent_sign == false) {
         out_all = get_out_str(
           env_str, valgrind_str, sys_str, path_str,
-          always_arg_after, fuzz_after);  // all the stuff put together to send out (aside
+          always_arg_after, fuzz_after, write_file_n);  // all the stuff put together to send out (aside
                               // from echo $? which is done in sys_string
       }
       std::string out_str = out_all[0];    // first one in vector is the string
@@ -277,7 +277,7 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
       junk_opts_env.shrink_to_fit();       // shrink env vector
       if (debug == true) {                 // if we are debugging...
         std::ofstream w_f;
-        w_f.open(write_file_n, std::ios::out | std::ios::app);  // open...
+        w_f.open(write_file_n + ".crash.ansvif.log", std::ios::out | std::ios::app);  // open...
         w_f << out_str << std::endl << out_str_p << std::endl
             << std::endl;  // write...
         w_f.close();  // then close if we have a file then write all the junk
@@ -329,8 +329,8 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
                       << std::endl;  // ...make sure to log the file data too
           }
           if (write_to_file == true) {  // if we are writing to a file...
-            write_seg(write_file_n, "pid: " + std::to_string(pid) + "\n" + "Crashed with command: ");  // write the pid if we're logging
-            write_seg(write_file_n, out_str_p);  // call the subroutine to write
+            write_seg(write_file_n + ".crash.ansvif.log", "pid: " + std::to_string(pid) + "\n" + "Crashed with command: ");  // write the pid if we're logging
+            write_seg(write_file_n + ".crash.ansvif.log", out_str_p);  // call the subroutine to write
                                                  // the fault to a log (comes
                                                  // from common)
             std::cout << "Crash logged."
