@@ -8,9 +8,9 @@ Compliation:
 
  Linux:
   You can compile the code with:
-  $ aclocal && autoconf && automake --add-missing && ./configure && make
+  $ aclocal && autoconf && automake -a && ./configure && make
   OpenBSD:
-  $ aclocal && autoconf && automake --add-missing && ./configure && make
+  $ AUTOMAKE_VERSION=`ls /usr/local/bin/automake-* | head -n 1 | sed -e 's/.*-//'` AUTOCONF_VERSION=`ls /usr/local/bin/autoconf-* | head -n 1 | sed -e 's/.*-//'` aclocal && AUTOMAKE_VERSION=`ls /usr/local/bin/automake-* | head -n 1 | sed -e 's/.*-//'` AUTOCONF_VERSION=`ls /usr/local/bin/autoconf-* | head -n 1 | sed -e 's/.*-//'` autoconf && AUTOMAKE_VERSION=`ls /usr/local/bin/automake-* | head -n 1 | sed -e 's/.*-//'` AUTOCONF_VERSION=`ls /usr/local/bin/autoconf-* | head -n 1 | sed -e 's/.*-//'` automake -a && CXX=eg++ ./configure && make
   Windows:
   Precompiled binaries are left in a zip file in ./bin.
   Use cygwin, install g++ and gcc.

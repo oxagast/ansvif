@@ -14,6 +14,7 @@
 #include <iostream>
 #include <stdio.h>
 #include <fstream>
+#include <signal.h>
 
 #define READ 0
 #define WRITE 1
