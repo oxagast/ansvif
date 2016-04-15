@@ -1,28 +1,4 @@
-AC_INIT([ansvif], [1.3.5], [marshallwhittaker@gmail.com])
-AM_INIT_AUTOMAKE
-
-AC_CANONICAL_HOST
-case "$host" in
-     *-cygwin*)
-     if test "$with_cygwin" != 'no'; then
-       AC_DEFINE(HAVE_CYGWIN,,Define if compiling under cygwin)
-       have_cygwin='yes'
-       separator="\\\\\\\\"
-       mv include/gzstream/gzstream.h include/gzstream/gzstream-linux.h
-       mv include/gzstream/gzstream-win.h include/gzstream/gzstream.h
-       
-     fi
-     ;;
-     *-apple-darwin*)
-     have_aqua='yes'
-     ;;
-     i686-pc-linux-gnu)
-     ;;
-esac
-
-
-AM_CONDITIONAL(HAVE_CYGWIN, test "$have_cygwin" = "yes")
-AM_CONDITIONAL(USE_AR, test $use_ar = 'yes')
+AC_INIT([ansvif], [1.4], [marshallwhittaker@gmail.com])
 AC_PROG_CC
 AC_PROG_CXX
 AC_LANG([C++])
