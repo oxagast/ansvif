@@ -301,10 +301,10 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
       }
       pclose2(fp, pid);  // close out the command cleanly
       int run_com_pid;  // initializes child
-      if (run_command != "") {
-        FILE *fp = popen2(out_str, "r", run_com_pid,
+      if (run_command != "") {  // this is for the sub command to be run
+        FILE *fp = popen2(run_command, "r", run_com_pid,
                           low_lvl_user);  // opens child process fork
-        pclose2(fp, run_com_pid);         // close out the command cleanly
+        pclose2(fp, run_com_pid);         // close out the sub command cleanly
       }
       std::thread reaper_thread(reaper, pid,
                                 t_timeout);  // takes care of killing it off if
