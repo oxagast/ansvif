@@ -254,6 +254,9 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
       }
       std::string fuzz_after = remove_chars(make_garbage(rand_me_plz(rand_spec_one, rand_spec_two), buf_size, "", is_other, never_rand), strip_shell);
       std::vector<std::string> out_all;
+      if (fuzz_after == "OOR") {
+        fuzz_after = "";
+      }
       if (percent_sign == true) {
         out_all = get_out_str_pc(
           env_str, valgrind_str, sys_str, path_str,
