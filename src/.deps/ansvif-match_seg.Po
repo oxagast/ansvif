@@ -181,7 +181,8 @@ src/ansvif-match_seg.o: src/match_seg.cpp /usr/include/stdc-predef.h \
  /usr/include/x86_64-linux-gnu/c++/4.8/bits/basic_file.h \
  /usr/include/x86_64-linux-gnu/c++/4.8/bits/c++io.h \
  /usr/include/c++/4.8/bits/fstream.tcc /usr/include/c++/4.8/cstring \
- /usr/include/string.h /usr/include/x86_64-linux-gnu/bits/string3.h
+ /usr/include/string.h /usr/include/x86_64-linux-gnu/bits/string3.h \
+ include/xmlwriter/xml_writer.hpp
 
 /usr/include/stdc-predef.h:
 
@@ -654,3 +655,5 @@ src/ansvif-match_seg.o: src/match_seg.cpp /usr/include/stdc-predef.h \
 /usr/include/string.h:
 
 /usr/include/x86_64-linux-gnu/bits/string3.h:
+
+include/xmlwriter/xml_writer.hpp:

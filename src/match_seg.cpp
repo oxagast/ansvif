@@ -15,6 +15,7 @@
 #include <regex>
 #include <fstream>
 #include <cstring>
+#include "include/xmlwriter/xml_writer.hpp"
 
 std::string remove_chars(const std::string &source, const std::string &chars);
 int reaper(int grim, int t_timeout);
@@ -46,7 +47,7 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
                std::string junk_file_of_args, std::string always_arg_before,
                std::string always_arg_after, bool never_rand,
                std::string run_command, std::string fault_code, bool valgrind,
-               bool single_try, bool percent_sign, bool verbose, bool debug) {
+               bool single_try, bool percent_sign, bool verbose, bool debug, std::string ver) {
   bool segged = false;
   std::string valgrind_str;
   if (valgrind == true) {
@@ -279,11 +280,11 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
       junk_opts_env.clear();               // clear env vector
       junk_opts_env.shrink_to_fit();       // shrink env vector
       if (debug == true) {                 // if we are debugging...
-        std::ofstream w_f;
-        w_f.open(write_file_n + ".crash.ansvif.log", std::ios::out | std::ios::app);  // open...
-        w_f << out_str << std::endl << out_str_p << std::endl
-            << std::endl;  // write...
-        w_f.close();  // then close if we have a file then write all the junk
+//        std::ofstream w_f;
+//        w_f.open(write_file_n + ".crash.ansvif.log", std::ios::out | std::ios::app);  // open...
+//        w_f << out_str << std::endl << out_str_p << std::endl
+//            << std::endl;  // write...
+//        w_f.close();  // then close if we have a file then write all the junk
                       // out to that too
         std::cout << out_str << std::endl << out_str_p << std::endl
                   << std::endl;  // write ALL the junk out to stdout
@@ -324,7 +325,8 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
              fault_code)) {  // default fault codes, plus the fault
                              // code the user specified (or dummy
                              // code)
-          std::cout << "pid: " << pid << "\n";
+          std::cout << "PID: " << pid << std::endl;
+          std::cout << "Exit Code: " << cmd_output << std::endl;
           std::cout << "Crashed with command: " << std::endl << out_str_p
                     << std::endl;  // write out that we crashed with command x
           if (junk_file_of_args != "") {
@@ -332,8 +334,20 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
                       << std::endl;  // ...make sure to log the file data too
           }
           if (write_to_file == true) {  // if we are writing to a file...
-            write_seg(write_file_n + ".crash.ansvif.log", "pid: " + std::to_string(pid) + "\n" + "Crashed with command: ");  // write the pid if we're logging
-            write_seg(write_file_n + ".crash.ansvif.log", out_str_p);  // call the subroutine to write
+//            write_seg(write_file_n + ".crash.ansvif.log", "PID: " + std::to_string(pid) + "\n" + "Exit Code: " + cmd_output + "\n" + "Crashed with command: ");  // write the pid if we're logging
+  std::ofstream xml_output;
+  xml_output.open (write_file_n + ".crash.ansvif.log");
+  Writer writer(xml_output);
+  writer.openElt("ansvif");
+  writer.openElt("Version").attr("ver", ver).content("The ansvif version to fuzzing with").closeElt();
+  writer.openElt("Program").attr("path", path_str).content("Path of the file fuzzed").closeElt();
+  writer.openElt("Process").attr("PID", std::to_string(pid)).content("The process ID of the crashed program").closeElt();
+  writer.openElt("Crash");
+  writer.openElt("Exit Code").attr("code", cmd_output).content("The programs exit code").closeElt();
+  writer.openElt("Command").attr("run", out_str_p).content("What the command crashed with").closeElt();
+  writer.openElt("File data").attr("file", junk_file_of_args).content("File data used left here").closeAll();
+  xml_output.close();
+//            write_seg(write_file_n + ".crash.ansvif.log", out_str_p);  // call the subroutine to write
                                                  // the fault to a log (comes
                                                  // from common)
             std::cout << "Crash logged."

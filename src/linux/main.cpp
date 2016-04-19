@@ -29,7 +29,7 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
                std::string junk_file_of_args, std::string always_arg_before,
                std::string always_arg_after, bool never_rand,
                std::string run_command, std::string fault_code, bool valgrind,
-               bool single_try, bool percent_sign, bool verbose, bool debug);
+               bool single_try, bool percent_sign, bool verbose, bool debug, std::string ver);
 std::vector<std::string> get_flags_template(std::string filename, bool verbose,
                                             bool debug);
 std::vector<std::string> get_other(std::string filename, bool verbose,
@@ -193,11 +193,6 @@ int main(int argc, char *argv[]) {  // initialize our main
         help_me(argv[0], ver);
     }
   }
-  if (write_to_file == true) {
-    std::string crash_file = write_file_n + ".crash.ansvif.log";
-    std::remove(crash_file.c_str());
-    write_seg(write_file_n + ".crash.ansvif.log", "ansvif -- v " + ver + "\n");
-  }
   if (u_strip_shell_set == true) {
     strip_shell =
         u_strip_shell +
@@ -246,7 +241,7 @@ int main(int argc, char *argv[]) {  // initialize our main
             rand_all, write_to_file, write_file_n, rand_buf, opt_other,
             is_other, other_sep, t_timeout, low_lvl_user, junk_file_of_args,
             always_arg_before, always_arg_after, never_rand, run_command,
-            fault_code, valgrind, single_try, percent_sign, verbose, debug));  // Thrift Shop
+            fault_code, valgrind, single_try, percent_sign, verbose, debug, ver));  // Thrift Shop
       for (auto &all_thread : threads)
         all_thread.join();  // is that your grandma's coat?
     }
@@ -256,7 +251,7 @@ int main(int argc, char *argv[]) {  // initialize our main
                 other_sep, t_timeout, low_lvl_user, junk_file_of_args,
                 always_arg_before, always_arg_after, never_rand, run_command,
                 fault_code, valgrind, single_try, percent_sign, verbose,
-                debug);  // if we're only doing a single run then we'll just
+                debug, ver);  // if we're only doing a single run then we'll just
                          // directly call the match_seg subroutine
     }
     exit(0);  // exit cleanly now.
