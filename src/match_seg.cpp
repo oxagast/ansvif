@@ -4,6 +4,7 @@
  * Marshall Whittaker / oxagast
  */
 
+#include <sstream>
 #include <string>
 #include <vector>
 #include <unistd.h>
@@ -334,14 +335,16 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
                       << std::endl;  // ...make sure to log the file data too
           }
           if (write_to_file == true) {  // if we are writing to a file...
-//            write_seg(write_file_n + ".crash.ansvif.log", "PID: " + std::to_string(pid) + "\n" + "Exit Code: " + cmd_output + "\n" + "Crashed with command: ");  // write the pid if we're logging
+//            write_seg(write_file_n + ".crash.ansvif.log", "PID: " + pid.str() + "\n" + "Exit Code: " + cmd_output + "\n" + "Crashed with command: ");  // write the pid if we're logging
+  std::ostringstream pid_as_s;
+  pid_as_s << pid;
   std::ofstream xml_output;
   xml_output.open (write_file_n + ".crash.ansvif.log");
   Writer writer(xml_output);
   writer.openElt("ansvif");
   writer.openElt("Version").attr("ver", ver).content("The ansvif version to fuzzing with").closeElt();
   writer.openElt("Program").attr("path", path_str).content("Path of the file fuzzed").closeElt();
-  writer.openElt("Process").attr("PID", std::to_string(pid)).content("The process ID of the crashed program").closeElt();
+  writer.openElt("Process").attr("PID", pid_as_s.str()).content("The process ID of the crashed program").closeElt();
   writer.openElt("Crash");
   writer.openElt("Exit Code").attr("code", cmd_output).content("The programs exit code").closeElt();
   writer.openElt("Command").attr("run", out_str_p).content("What the command crashed with").closeElt();
