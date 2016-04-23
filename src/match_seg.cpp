@@ -318,11 +318,16 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
       reaper_thread.detach();                // takes care of the reaper thread
       std::string cmd_output;  // the initializse thing that will have our cmd
                                // output string in it that comes out...
+
       while (std::getline(output, cmd_output)) {
-       if ((cmd_output == "132") || (cmd_output == "134") ||
+        cmd_output.erase(cmd_output.find_last_not_of(" \n\r\t")+1); // trim it
+        if (verbose == true) {
+          std::cout << std::endl << "Code :" << cmd_output << ":" << std::endl;
+        }
+        if ((cmd_output == "132") || (cmd_output == "134") ||
             (cmd_output == "139") || (cmd_output == "135") ||
             (cmd_output == "136") || (cmd_output == "159") ||
-            (cmd_output ==
+            (cmd_output == "-1073741819") || (cmd_output ==
              fault_code)) {  // default fault codes, plus the fault
                              // code the user specified (or dummy
                              // code)

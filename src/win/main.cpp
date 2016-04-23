@@ -71,7 +71,7 @@ int main(int argc, char *argv[]) {  // initialize our main
       "";                          // the argument to be supplied after the fuzz
   std::string run_command = "";    // the command name to be run
   std::string man_page = "";       // the man page name
-  std::string fault_code = "-1073741819";  // default dummy fault code
+  std::string fault_code = "\n-1073741819";  // default dummy fault code
                                    // we're going to trap, this
                                    // can be user selected
   bool template_opt = false;       // default is false
