@@ -45,7 +45,8 @@ public:
   Writer& closeAll() {
     while (elt_stack.size())
       this->closeElt();
-  }
+    return *this;
+}
 
   Writer& attr(const char* key, const char* val) {
     this->os << " " << key << "=\"";
@@ -79,7 +80,8 @@ private:
   }
 
   inline void indent() {
-    for (int i = 0; i < elt_stack.size(); i++)
+    int elt_stack_size = elt_stack.size();
+    for (int i = 0; i < elt_stack_size; i++)
       os << (INDENT);
   }
 

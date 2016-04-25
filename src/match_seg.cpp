@@ -347,13 +347,13 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
   xml_output.open (write_file_n + ".crash.ansvif.log");
   Writer writer(xml_output);
   writer.openElt("ansvif");
-  writer.openElt("Version").attr("ver", ver).content("The ansvif version to fuzzing with").closeElt();
-  writer.openElt("Program").attr("path", path_str).content("Path of the file fuzzed").closeElt();
-  writer.openElt("Process").attr("PID", pid_as_s.str()).content("The process ID of the crashed program").closeElt();
+  writer.openElt("Version").attr("ver", "The ansvif version to fuzzing with").content(ver.c_str()).closeElt();
+  writer.openElt("Program").attr("path", "Path of the file fuzzed").content(path_str.c_str()).closeElt();
+  writer.openElt("Process").attr("PID", "The process ID of the crashed program").content(pid_as_s.str().c_str()).closeElt();
   writer.openElt("Crash");
-  writer.openElt("Exit Code").attr("code", cmd_output).content("The programs exit code").closeElt();
-  writer.openElt("Command").attr("run", out_str_p).content("What the command crashed with").closeElt();
-  writer.openElt("File data").attr("file", junk_file_of_args).content("File data used left here").closeAll();
+  writer.openElt("Exit Code").attr("code", "The programs exit code").content(cmd_output.c_str()).closeElt();
+  writer.openElt("Command").attr("run", "What the command crashed with").content(out_str_p.c_str()).closeElt();
+  writer.openElt("File data").attr("file", "File data used left here").content(junk_file_of_args.c_str()).closeAll();
   xml_output.close();
 //            write_seg(write_file_n + ".crash.ansvif.log", out_str_p);  // call the subroutine to write
                                                  // the fault to a log (comes
