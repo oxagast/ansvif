@@ -53,7 +53,7 @@ int main(int argc, char *argv[]) {  // initialize our main
                          // has to be an integar)
   std::string mp;        // the string that holds the manpage
   std::string template_file;  // the location of the template file
-  std::string strip_shell = "`<>\n|&\[]\()\{}:;\\";  // what characters not to use
+  std::string strip_shell = "`<>\n|&\[]\()\{}:;\\'\"$";  // what characters not to use
                                                    // in the command that goes
                                                    // to /bin/sh
   std::string u_strip_shell;  // if the user supplied extra characters to strip
