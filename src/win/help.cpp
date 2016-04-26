@@ -54,9 +54,10 @@ void help_me(std::string mr_me, std::string ver) {
       << std::endl
       << " -C \"13\"      Non default crash recognition error codes."
       << std::endl
-      << "              Defaults are 132, 136, 139, 135, 134, and 159."
+      << "              Defaults are -1073741819, -1073740791, -1073741571, and"
+      << std::endl << " -532459699."
       << std::endl << " -W [integer] Thread timeout." << std::endl
-      << " -V           Use Valgrind if installed." << std::endl
+      << " -V           Valgrind is not supported under Windows." << std::endl
       << " -1           Try to induce a crash once, and if a crash is not "
          "induced," << std::endl << "              throw error code 64."
       << std::endl << " -P           Use % to represent binary in fuzz."

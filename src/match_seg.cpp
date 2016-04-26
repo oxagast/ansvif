@@ -327,8 +327,7 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
         if ((cmd_output == "132") || (cmd_output == "134") ||
             (cmd_output == "139") || (cmd_output == "135") ||
             (cmd_output == "136") || (cmd_output == "159") ||
-            (cmd_output == "-1073741819") || (cmd_output ==
-             fault_code)) {  // default fault codes, plus the fault
+            (cmd_output == "-1073741819") || (cmd_output == "-1073740791") || (cmd_output == "-1073741571") || (cmd_output == "-532459699") || (cmd_output == fault_code)) {  // default fault codes, plus the fault
                              // code the user specified (or dummy
                              // code)
           std::cout << "PID: " << pid << std::endl;
