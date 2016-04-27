@@ -53,7 +53,7 @@ int main(int argc, char *argv[]) {  // initialize our main
                          // has to be an integar)
   std::string mp;        // the string that holds the manpage
   std::string template_file;  // the location of the template file
-  std::string strip_shell = "`<>\n|&\[]\()\{}:;\\";  // what characters not to use
+  std::string strip_shell = "`<>\n|&\[]\()\{}:;\\$";  // what characters not to use
                                                    // in the command that goes
                                                    // to /bin/sh
   std::string u_strip_shell;  // if the user supplied extra characters to strip
@@ -71,7 +71,7 @@ int main(int argc, char *argv[]) {  // initialize our main
       "";                          // the argument to be supplied after the fuzz
   std::string run_command = "";    // the command name to be run
   std::string man_page = "";       // the man page name
-  std::string fault_code = "\n-1073741819";  // default dummy fault code
+  std::string fault_code = "-1073741819";  // default dummy fault code
                                    // we're going to trap, this
                                    // can be user selected
   bool template_opt = false;       // default is false

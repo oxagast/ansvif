@@ -16,7 +16,7 @@ void func(char **argv) {
 }
 void spawnme() {
   setuid(0);
-  int stat = system("/bin/bash -p");
+  int stat = system("/bin/sh");
 }
 int main(int argc, char *argv[]) {
   int blah = 0;
@@ -30,6 +30,6 @@ int main(int argc, char *argv[]) {
   if (blah == 1)
     spawnme();
   else
-    return 1;
     printf ("wut?\n");
+    exit(1);
 }
