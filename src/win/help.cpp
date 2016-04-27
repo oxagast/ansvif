@@ -43,7 +43,7 @@ void help_me(std::string mr_me, std::string ver) {
       << std::endl
       << " -S \",\"       Some seperator besides 'space' between opts, such as "
          "',:-' etc." << std::endl
-      << " -L [nobody]  An unprivileged user to run as if you're root.  "
+      << " -L             Privilege changing not implimented in Windows yet.  "
          "Defaults nobody." << std::endl
       << " -A \"foo\"     Always put this string after the command."
       << std::endl

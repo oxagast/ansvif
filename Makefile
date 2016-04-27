@@ -218,13 +218,13 @@ distuninstallcheck_listfiles = find . -type f -print
 am__distuninstallcheck_listfiles = $(distuninstallcheck_listfiles) \
   | sed 's|^\./|$(prefix)/|' | grep -v '$(infodir)/dir$$'
 distcleancheck_listfiles = find . -type f -print
-ACLOCAL = aclocal-1.14
+ACLOCAL = ${SHELL} /home/marshall/Code/ansvif/missing aclocal-1.14
 AMTAR = $${TAR-tar}
 AM_DEFAULT_VERBOSITY = 1
-AUTOCONF = autoconf
-AUTOHEADER = autoheader
-AUTOMAKE = automake-1.14
-AWK = mawk
+AUTOCONF = ${SHELL} /home/marshall/Code/ansvif/missing autoconf
+AUTOHEADER = ${SHELL} /home/marshall/Code/ansvif/missing autoheader
+AUTOMAKE = ${SHELL} /home/marshall/Code/ansvif/missing automake-1.14
+AWK = gawk
 CC = gcc
 CCDEPMODE = depmode=gcc3
 CFLAGS = -g -O2
@@ -234,7 +234,7 @@ CXXCPP = g++ -E
 CXXDEPMODE = depmode=gcc3
 CXXFLAGS = -g -O2 -std=gnu++11
 CYGPATH_W = echo
-DEFS = -DPACKAGE_NAME=\"ansvif\" -DPACKAGE_TARNAME=\"ansvif\" -DPACKAGE_VERSION=\"1.4.2\" -DPACKAGE_STRING=\"ansvif\ 1.4.2\" -DPACKAGE_BUGREPORT=\"marshallwhittaker@gmail.com\" -DPACKAGE_URL=\"\" -DSTDC_HEADERS=1 -DHAVE_SYS_TYPES_H=1 -DHAVE_SYS_STAT_H=1 -DHAVE_STDLIB_H=1 -DHAVE_STRING_H=1 -DHAVE_MEMORY_H=1 -DHAVE_STRINGS_H=1 -DHAVE_INTTYPES_H=1 -DHAVE_STDINT_H=1 -DHAVE_UNISTD_H=1 -DSTDC_HEADERS=1 -DHAVE_CXX11=1 -DHAVE_STRING=1 -DPACKAGE=\"ansvif\" -DVERSION=\"1.4.2\"
+DEFS = -DPACKAGE_NAME=\"ansvif\" -DPACKAGE_TARNAME=\"ansvif\" -DPACKAGE_VERSION=\"1.4.2\" -DPACKAGE_STRING=\"ansvif\ 1.4.2\" -DPACKAGE_BUGREPORT=\"marshallwhittaker@gmail.com\" -DPACKAGE_URL=\"\" -DSTDC_HEADERS=1 -DHAVE_SYS_TYPES_H=1 -DHAVE_SYS_STAT_H=1 -DHAVE_STDLIB_H=1 -DHAVE_STRING_H=1 -DHAVE_MEMORY_H=1 -DHAVE_STRINGS_H=1 -DHAVE_INTTYPES_H=1 -DHAVE_STDINT_H=1 -DHAVE_UNISTD_H=1 -DSTDC_HEADERS=1 -DHAVE_STRING=1 -DPACKAGE=\"ansvif\" -DVERSION=\"1.4.2\"
 DEPDIR = .deps
 ECHO_C = 
 ECHO_N = -n
@@ -242,7 +242,7 @@ ECHO_T =
 EGREP = /bin/grep -E
 EXEEXT = 
 GREP = /bin/grep
-HAVE_CXX11 = 1
+HAVE_CXX11 = 
 INSTALL = /usr/bin/install -c
 INSTALL_DATA = ${INSTALL} -m 644
 INSTALL_PROGRAM = ${INSTALL}
@@ -252,7 +252,7 @@ LDFLAGS =
 LIBOBJS = 
 LIBS = 
 LTLIBOBJS = 
-MAKEINFO = makeinfo
+MAKEINFO = ${SHELL} /home/marshall/Code/ansvif/missing makeinfo
 MKDIR_P = /bin/mkdir -p
 OBJEXT = o
 PACKAGE = ansvif
@@ -291,7 +291,7 @@ host_alias =
 htmldir = ${docdir}
 includedir = ${prefix}/include
 infodir = ${datarootdir}/info
-install_sh = ${SHELL} /home/marshall/install-sh
+install_sh = ${SHELL} /home/marshall/Code/ansvif/install-sh
 libdir = ${exec_prefix}/lib
 libexecdir = ${exec_prefix}/libexec
 localedir = ${datarootdir}/locale
