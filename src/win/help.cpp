@@ -43,7 +43,7 @@ void help_me(std::string mr_me, std::string ver) {
       << std::endl
       << " -S \",\"       Some seperator besides 'space' between opts, such as "
          "',:-' etc." << std::endl
-      << " -L             Privilege changing not implimented in Windows yet.  "
+      << " -L           Privilege changing not implimented in Windows yet.  "
          "Defaults nobody." << std::endl
       << " -A \"foo\"     Always put this string after the command."
       << std::endl
@@ -55,7 +55,8 @@ void help_me(std::string mr_me, std::string ver) {
       << " -C \"13\"      Non default crash recognition error codes."
       << std::endl
       << "              Defaults are -1073741819, -1073740791, -1073741571, and"
-      << std::endl << " -532459699."
+      << std::endl
+	  << "              -532459699."
       << std::endl << " -W [integer] Thread timeout." << std::endl
       << " -V           Valgrind is not supported under Windows." << std::endl
       << " -1           Try to induce a crash once, and if a crash is not "
