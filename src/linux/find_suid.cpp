@@ -35,10 +35,20 @@ int main(int argc, char **argv) {
   std::vector<std::string> file_list;  // initialize the file list vector
   for (int path_num = 1; path_num != argc;
        path_num++) {                    // for each file in the list...
-    const char *path = argv[path_num];  // do for  the current path
+//    const char *path = argv[path_num];  // do for  the current path
+    // char *path2;
+    std::string check_path = argv[path_num];
+    std::string path_str;
+    if(check_path.substr(check_path.length()-1) != "/") { // so that we have '/'
+     path_str = argv[path_num];
+    path_str = path_str + "/"; // '/'
+    }
+    else {
+      path_str = argv[path_num];  // otherwise just that
+    }
     DIR *the_dir;                       // the dir to use
     struct dirent *this_dir;            // we're using dirent.h for 'this_dir'
-    the_dir = opendir(path);            // open the path to check the files
+    the_dir = opendir(path_str.c_str());            // open the path to check the files
     if (the_dir != NULL)                // if it's not nothing...
       while ((this_dir = readdir(the_dir)))  // and while we're reading...
         file_list.push_back(std::string(
@@ -52,8 +62,9 @@ int main(int argc, char **argv) {
       name = file_list[file_num];  // put the file name into the 'name' variable
                                    // for the time being
       std::string path_to_file =
-          std::string(path) +
-          file_list[file_num];  // put it all together (the path and filename)
+//          std::string(path) +
+//          file_list[file_num];  // put it all together (the path and filename)
+            path_str + file_list[file_num];
       if (is_suid(path_to_file.c_str()) == true)
         std::cout << path_to_file
                   << std::endl;  // if it's suid 0 then we'll print it to STDOUT
