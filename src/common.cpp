@@ -134,23 +134,41 @@ std::string trash_generator(int trash, int buf, std::string user_junk,
     }
   }
   if (trash == 1) {
-    for (trash_num = 0; trash_num < buf; trash_num++) {
-      junk = "9" + junk;  //  lots of 9s
-    }
+    junk = "-1";  //  -1
   }
   if (trash == 2) {
+    junk = "1";  //  1
+  }
+  if (trash == 3) {
+    junk = "0";  //  0
+  }
+  if (trash == 4) {
+    junk = "2";  //  2
+  }
+  if (trash == 5) {
+    int hex_null_i = 0x00;
+    std::stringstream hex_null_ss;
+    hex_null_ss << hex_null_i;
+    junk = hex_null_ss.str();  //  null
+  }
+  if (trash == 6) {
     for (trash_num = 0; trash_num < buf / 2; trash_num++) {
       junk = "\%s" + junk;  // for string format vulns
     }
   }
+  if (trash == 7) {
+    for (trash_num = 0; trash_num < buf / 2; trash_num++) {
+      junk = "\%n" + junk;  // for string format vulns
+    }
+  }
   if (never_rand == false) {
-    if (trash == 3) {
+    if (trash == 8) {
       for (trash_num = 0; trash_num < buf; trash_num++) {
         junk = junk += fortune_cookie();  // a n y t h i n g ! ! !
       }
     }
   }
-  if (trash == 4) {  // front
+  if (trash == 9) {  // front
     for (trash_num = 0; trash_num < buf; trash_num++) {
       junk = "A" + junk;  // put lots of As
     }
@@ -160,17 +178,7 @@ std::string trash_generator(int trash, int buf, std::string user_junk,
     else
       return ("OOR");
   }
-  if (trash == 5) {
-    for (trash_num = 0; trash_num < buf; trash_num++) {
-      junk = "9" + junk;  // yadda yadda
-    }
-    junk = user_junk + junk;
-    if (buf - user_junk.length() < junk.size())
-      junk = junk.substr(0, buf);
-    else
-      return ("OOR");
-  }
-  if (trash == 6) {
+  if (trash == 10) {
     for (trash_num = 0; trash_num < buf / 2; trash_num++) {
       junk = "\%s" + junk;  // yadda yadda
     }
@@ -181,7 +189,7 @@ std::string trash_generator(int trash, int buf, std::string user_junk,
       return ("OOR");
   }
   if (never_rand == false) {
-    if (trash == 7) {
+    if (trash == 11) {
       for (trash_num = 0; trash_num < buf; trash_num++) {
         junk = junk += fortune_cookie();
       }
@@ -192,7 +200,7 @@ std::string trash_generator(int trash, int buf, std::string user_junk,
         return ("OOR");
     }
   }
-  if (trash == 8) {
+  if (trash == 12) {
     for (trash_num = 0; trash_num < buf; trash_num++) {  // back
       junk = "A" + junk;                                 // put lots of As
     }
@@ -201,18 +209,8 @@ std::string trash_generator(int trash, int buf, std::string user_junk,
       junk = junk.substr(junk.length() - buf);
     else
       return ("OOR");
-  }
-  if (trash == 9) {
-    for (trash_num = 0; trash_num < buf; trash_num++) {
-      junk = "9" + junk;  // yadda yadda
     }
-    junk = junk + user_junk;
-    if (buf - user_junk.length() < junk.size())
-      junk = junk.substr(junk.length() - buf);
-    else
-      return ("OOR");
-  }
-  if (trash == 10) {
+  if (trash == 13) {
     for (trash_num = 0; trash_num < buf / 2; trash_num++) {
       junk = "\%s" + junk;  // yadda yadda
     }
@@ -223,7 +221,7 @@ std::string trash_generator(int trash, int buf, std::string user_junk,
       return ("OOR");
   }
   if (never_rand == false) {
-    if (trash == 11) {
+    if (trash == 14) {
       for (trash_num = 0; trash_num < buf; trash_num++) {
         junk = junk += fortune_cookie();
       }
@@ -234,7 +232,17 @@ std::string trash_generator(int trash, int buf, std::string user_junk,
         return ("OOR");
     }
   }
-  if (trash == 12) {
+  if (trash == 15) {
+    for (trash_num = 0; trash_num < buf / 2; trash_num++) {
+      junk = "\%n" + junk;  // yadda yadda
+    }
+    junk = junk + user_junk;
+    if (buf - user_junk.length() < junk.size())
+      junk = junk.substr(junk.length() - buf);
+    else
+      return ("OOR");
+  }  
+  if (trash == 16) {
     junk = opt_other_str;  // if its the other stuff from stdin put that
   }
   return (junk);  // return the junk to put between the args

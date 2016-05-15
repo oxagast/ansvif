@@ -71,11 +71,11 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
     while (segged == false) {
       int rand_spec_one, rand_spec_two;  // initialize the two random 'pieces'
       if (rand_all == true) {
-        rand_spec_one = 3;  // make for always random data
-        rand_spec_two = 3;  // always random too
+        rand_spec_one = 8;  // make for always random data
+        rand_spec_two = 8;  // always random too
       } else {
         rand_spec_one = 0;   // any data entered
-        rand_spec_two = 12;  // any data entered
+        rand_spec_two = 16;  // any data entered
       }
       std::vector<std::string>
           junk_opts_env;  // options for the environment in a vector

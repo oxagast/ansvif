@@ -92,7 +92,7 @@ int main(int argc, char *argv[]) {  // initialize our main
   bool single_try = false;  // this is off by default because it's usually only
                             // used with wrappers like xargs
   bool percent_sign = false; // percent sign stuff, default is off
-  std::string ver = "1.4.2"; // the version
+  std::string ver = "1.5"; // the version
   while ((opt = getopt(
               argc, argv,
               "m:p:t:e:c:f:o:b:s:x:R:A:F:S:L:W:B:C:1hrzvdDnVP")) !=  // these are
