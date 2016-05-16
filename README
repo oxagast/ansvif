@@ -24,7 +24,12 @@ Compliation:
   make
   $ cp /bin/cyggcc_s-seh-1.dll /bin/cygstdc++-6.dll /bin/cygwin1.dll bin/
   Make sure cyggcc_s-seh-1.dll, cygstdc++-6.dll and cygwin1.dll are in the same directory as ansvif.exe.
+  Note: In Windows 7 Powershell v2 is installed by default, however, this program requires atleast 
+        Powershell v5.  Windows 10 includes powershell v5.  You can go to Microsoft's site and download
+        the Windows Management Framework (which includes newer Versions of Powershell here: 
+        https://www.microsoft.com/en-us/download/details.aspx?id=50395.
 
+Testing:
   If you would like to try out the example code, you can compile faulty.c with:
   $ gcc faulty.c -o faulty
 
