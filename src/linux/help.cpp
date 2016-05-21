@@ -49,6 +49,7 @@ void help_me(std::string mr_me, std::string ver) {
       << std::endl
       << " -B \"bar\"     Always put this string before the command."
       << std::endl << " -F [file]    A file with junk to be fuzzed with whole."
+      << std::endl << "              Must be used with an -x template."
       << std::endl << " -n           Never use random data in the fuzz."
       << std::endl << " -R \"ls\"      Always run this command after the fuzz."
       << std::endl

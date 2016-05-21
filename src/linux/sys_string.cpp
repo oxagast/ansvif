@@ -52,7 +52,7 @@ std::vector<std::string> get_out_str(std::string env_str,
     out_str = out_str + ">" + log_prefix + ".output.ansvif.log 2>&1; echo $?";  // get the signal
   }
   if (log_prefix == "") {
-    out_str = out_str + " /dev/null 2>&1; echo $?";  // incase we're not logging so we don't
+    out_str = out_str + "  >/dev/null 2>&1; echo $?";  // incase we're not logging so we don't
                                                   // leave a blank file
   }
   std::vector<std::string> out_all;  // initialize the vector to put out_str and

@@ -76,7 +76,7 @@ Always put this string before the command.
 
 .B \-F
 .I [file]
-A file with junk to be fuzzed with whole.
+A file with junk to be fuzzed with whole.  Must be used with a template supplied to -x.
 
 .B \-n
 Never use random data in the fuzz.

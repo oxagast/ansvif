@@ -63,7 +63,7 @@ int main(int argc, char *argv[]) {  // initialize our main
   std::string other_sep = "";     // if space isn't to be used, what is?
   std::string low_lvl_user =
       "nobody";  // the user that we want to run as if we're running su as root
-  std::string junk_file_of_args;  // a file full of arguments to be supplied
+  std::string junk_file_of_args = "";  // a file full of arguments to be supplied
   std::string always_arg_before = "";  // the argument to be supplied after the
                                        // command, but before the rest of the
                                        // fuzz
@@ -92,7 +92,7 @@ int main(int argc, char *argv[]) {  // initialize our main
   bool single_try = false;  // this is off by default because it's usually only
                             // used with wrappers like xargs
   bool percent_sign = false; // percent sign stuff, default is off
-  std::string ver = "1.5.2"; // the version
+  std::string ver = "1.5.1"; // the version
   while ((opt = getopt(
               argc, argv,
               "m:p:t:e:c:f:o:b:s:x:R:A:F:S:L:W:B:C:1hrzvdDnVP")) !=  // these are
@@ -220,6 +220,11 @@ int main(int argc, char *argv[]) {  // initialize our main
     help_me(argv[0], ver);  // if theres any other errors uncaught then error out, or
                        // if they supplied a option thats not listed
   }
+  if ((junk_file_of_args != "") && (is_other == false)) {
+    help_me(argv[0], ver);
+  }
+
+
   std::istringstream b_size(buf_size);  // we're going to now make sure the buf
                                         // size is an integer only
   int is_int;                           // declare
