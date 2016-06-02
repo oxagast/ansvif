@@ -1,6 +1,6 @@
 .\" Manpage for ansvif.
 .\" Contact marshallwhittaker@gmail.com to report bugs.
-.TH man 8 "1 June 2017" "1.5" "ansvif man page"
+.TH man 1 "2 June 2017" "1.5" "ansvif man page"
 .SH NAME
 ansvif \- fuzzes command line arguments.
 .SH SYNOPSIS
@@ -116,7 +116,7 @@ ansvif \-t examples/blank.txt \-F tmp/tmphtml \-x examples/htmltags.txt \-c /usr
     128 \-A "file:///home/username/src/ansvif/tmp/tmphtml"  \-f 2 \-n -R "sleep 3 && killall\
     iceweasel" \-S ">"
 .SH SEE ALSO
-find(1)
+find(1), find_suid(1)
 .SH BUGS
 Probably many.  Fuzz them out.
 .SH AUTHOR
