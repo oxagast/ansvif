@@ -431,7 +431,7 @@ Copyright (C) 2012 Free Software Foundation, Inc.
 This config.status script is free software; the Free Software Foundation
 gives unlimited permission to copy, distribute and modify it."
 
-ac_pwd='/home/marshall/ansvif'
+ac_pwd='/home/marshall/Code/ansvif'
 srcdir='.'
 INSTALL='/usr/bin/install -c'
 MKDIR_P='/bin/mkdir -p'
@@ -626,12 +626,12 @@ S["mkdir_p"]="$(MKDIR_P)"
 S["MKDIR_P"]="/bin/mkdir -p"
 S["INSTALL_STRIP_PROGRAM"]="$(install_sh) -c -s"
 S["STRIP"]=""
-S["install_sh"]="${SHELL} /home/marshall/ansvif/install-sh"
-S["MAKEINFO"]="${SHELL} /home/marshall/ansvif/missing makeinfo"
-S["AUTOHEADER"]="${SHELL} /home/marshall/ansvif/missing autoheader"
-S["AUTOMAKE"]="${SHELL} /home/marshall/ansvif/missing automake-1.14"
-S["AUTOCONF"]="${SHELL} /home/marshall/ansvif/missing autoconf"
-S["ACLOCAL"]="${SHELL} /home/marshall/ansvif/missing aclocal-1.14"
+S["install_sh"]="${SHELL} /home/marshall/Code/ansvif/install-sh"
+S["MAKEINFO"]="${SHELL} /home/marshall/Code/ansvif/missing makeinfo"
+S["AUTOHEADER"]="${SHELL} /home/marshall/Code/ansvif/missing autoheader"
+S["AUTOMAKE"]="${SHELL} /home/marshall/Code/ansvif/missing automake-1.15"
+S["AUTOCONF"]="${SHELL} /home/marshall/Code/ansvif/missing autoconf"
+S["ACLOCAL"]="${SHELL} /home/marshall/Code/ansvif/missing aclocal-1.15"
 S["VERSION"]="1.4.2"
 S["PACKAGE"]="ansvif"
 S["CYGPATH_W"]="echo"
@@ -676,6 +676,7 @@ S["infodir"]="${datarootdir}/info"
 S["docdir"]="${datarootdir}/doc/${PACKAGE_TARNAME}"
 S["oldincludedir"]="/usr/include"
 S["includedir"]="${prefix}/include"
+S["runstatedir"]="${localstatedir}/run"
 S["localstatedir"]="${prefix}/var"
 S["sharedstatedir"]="${prefix}/com"
 S["sysconfdir"]="${prefix}/etc"

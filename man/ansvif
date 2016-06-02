@@ -1,0 +1,123 @@
+.\" Manpage for ansvif.
+.\" Contact marshallwhittaker@gmail.com to report bugs.
+.TH man 8 "1 June 2017" "1.5" "ansvif man page"
+.SH NAME
+ansvif \- fuzzes command line arguments.
+.SH SYNOPSIS
+ansvif \-[t|m] [template or manpage] \-c [program] \-b [buffer size]
+.SH DESCRIPTION
+Designed to find code bugs by throwing garbage input at programs to see how they react. This is great for finding bugs, because not every type of input is always handled, and buffers are not always checked, etc. It also comes in handy when writing (and protecting against), buffer overflow exploitation, as well as string input validation vulnerabilities (the %s bug).
+.SH OPTIONS
+.B \-t
+.I [file]
+This file should hold line by line command arguments as shown in the example file.
+
+.B \-e
+.I [file]
+This file should hold line by line environment variables as shown in the example file.  You can usually get these by doing something like:
+$ strings /bin/mount | perl -ne 'print if /[A-Z]=$/' > mount_envs
+
+.B \-c
+.I [path]
+Specifies the command path.
+
+.B \-p
+.I [integer]
+Specifies the manpage location (as an integer, usually 1 or 8).
+
+.B \-m
+.I [command]
+Specifies the commands manpage.
+
+.B \-D
+Dump what we can out of the manpage to stdout.
+
+.B \-f
+.I [integer]
+Number of threads to use.  Default is 2.
+
+.B \-b
+.I [integer]
+Specifies the buffer size to fuzz with. 256-2048 Is usually sufficient.
+
+.B \-r
+Use only random data.
+
+.B \-z
+Randomize buffer size from 1 to specified by the -b option.
+
+.B \-s
+.I "@#^$CE"
+Characters to omit from randomization.  Default omitted characters are: <>\n |&[](){}:;\ and mandatory omitted characters are: >\n
+
+.B \-o
+.I [file]
+Log to this file.
+
+.B \-x
+.I [file]
+Other opts to put in, such as usernames, etc.
+
+.B \-S
+.I ","
+Some seperator besides 'space' between opts, such as ',:-' etc.
+
+.B \-L
+.I [nobody]
+An unprivileged user to run as if you're root.  Defaults nobody.
+
+.B \-A
+.I "foo"
+Always put this string after the command.
+
+.B \-B
+.I bar
+Always put this string before the command.
+
+.B \-F
+.I [file]
+A file with junk to be fuzzed with whole.
+
+.B \-n
+Never use random data in the fuzz.
+
+.B \-R
+.I "ls"
+Always run this command after the fuzz.
+
+.B \-C
+.I "13"
+Non default crash recognition error codes. Defaults are 132, 136, 139, 135, 134, and 159.
+
+.B \-W
+.I [integer]
+Thread timeout.
+
+.B \-V
+Use Valgrind if installed.
+
+.B \-1
+Try to induce a crash once, and if a crash is not induced, throw error code 64.
+
+.B \-P
+Use % to represent binary in fuzz.
+
+.B \-v
+Be verbose.
+
+.B \-d
+Show debugging stuff.
+
+.SH EXAMPLES
+ansvif \-m mount \-c /bin/mount -e examples/mount_e.txt \-x examples/mount_o.txt\
+    \-f 8 \-b 2048
+
+ansvif \-t examples/blank.txt \-F tmp/tmphtml \-x examples/htmltags.txt \-c /usr/bin/iceweasel \-b\
+    128 \-A "file:///home/username/src/ansvif/tmp/tmphtml"  \-f 2 \-n -R "sleep 3 && killall\
+    iceweasel" \-S ">"
+.SH SEE ALSO
+find(1)
+.SH BUGS
+Probably many.  Fuzz them out.
+.SH AUTHOR
+Marshall Whittaker / oxagast (marshallwhittaker@gmail.com)
