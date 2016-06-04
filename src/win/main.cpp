@@ -225,6 +225,9 @@ int main(int argc, char *argv[]) {  // initialize our main
     help_me(argv[0], ver);  // if theres any other errors uncaught then error out, or
                        // if they supplied a option thats not listed
   }
+  if ((junk_file_of_args != "") && (is_other == false)) { // fixes -F no -x bug
+    help_me(argv[0], ver);
+  }
   std::istringstream b_size(buf_size);  // we're going to now make sure the buf
                                         // size is an integer only
   int is_int;                           // declare
