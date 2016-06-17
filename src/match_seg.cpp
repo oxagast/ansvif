@@ -329,29 +329,31 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
       reaper_thread.detach();               // takes care of the reaper thread
       std::string cmd_output; // the initializse thing that will have our cmd
                               // output string in it that comes out...
-          if (write_to_file == true) { // if we are writing to a file...
-            //            write_seg(write_file_n + ".crash.ansvif.log", "PID: "
-            //            + pid.str() + "\n" + "Exit Code: " + cmd_output + "\n"
-            //            + "Crashed with command: ");  // write the pid if
-            //            we're logging
-            std::ostringstream pid_as_s;
-            pid_as_s << pid;
-            std::ofstream xml_output;
-            xml_output.open(write_file_n + ".crash.ansvif.log");
-            Writer writer(xml_output);
-            writer.openElt("ansvif");
-            writer.openElt("Version")
-                .attr("ver", "The ansvif version to fuzzing with")
-                .content(ver.c_str())
-                .closeElt();
-            writer.openElt("Program")
-                .attr("path", "Path of the file fuzzed")
-                .content(path_str.c_str())
-                .closeElt();
-            writer.openElt("Process")
-                .attr("PID", "The process ID of the crashed program")
-                .content(pid_as_s.str().c_str())
-                .closeElt();
+      std::ostringstream pid_as_s;
+      pid_as_s << pid;
+      std::ofstream xml_output;
+      xml_output.open(write_file_n + ".crash.ansvif.log");
+      Writer writer(xml_output);
+      if (write_to_file == true) { // if we are writing to a file...
+        //            write_seg(write_file_n + ".crash.ansvif.log", "PID: "
+        //            + pid.str() + "\n" + "Exit Code: " + cmd_output + "\n"
+        //            + "Crashed with command: ");  // write the pid if
+        //            we're logging
+
+        writer.openElt("ansvif");
+        writer.openElt("Version")
+            .attr("ver", "The ansvif version to fuzzing with")
+            .content(ver.c_str())
+            .closeElt();
+        writer.openElt("Program")
+            .attr("path", "Path of the file fuzzed")
+            .content(path_str.c_str())
+            .closeElt();
+        writer.openElt("Process")
+            .attr("PID", "The process ID of the crashed program")
+            .content(pid_as_s.str().c_str())
+            .closeElt();
+      }
       while (std::getline(output, cmd_output)) {
         cmd_output.erase(cmd_output.find_last_not_of(" \n\r\t") + 1); // trim it
         if (verbose == true) {
@@ -384,7 +386,7 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
                 .attr("run", "What the command crashed with")
                 .content(out_str_p.c_str())
                 .closeElt();
-                writer.openElt("Command")
+            writer.openElt("Command")
                 .attr("run_plain", "What the command crashed with (plaintext)")
                 .content(out_str.c_str())
                 .closeElt();
@@ -404,23 +406,22 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
           } else {
             exit(0); // same as above
           }
-        }
-                  if (write_to_file == true) { // if we are writing to a file...
-                                  writer.openElt("Command")
+          if (write_to_file == true) { // if we are writing to a file...
+            writer.openElt("Command")
                 .attr("run", "What the command hung with")
                 .content(out_str_p.c_str())
                 .closeElt();
-                writer.openElt("Command")
+            writer.openElt("Command")
                 .attr("run_plain", "What the command hung with (plaintext)")
                 .content(out_str.c_str())
                 .closeElt();
             writer.openElt("File data")
                 .attr("file", "File data used left here")
                 .content(junk_file_of_args.c_str())
-            .closeAll();
+                .closeAll();
             xml_output.close();
-                  }
-      }
+          }
+        }
       }
       if (single_try == true) { // do all that shit but ONLY once
         if ((verbose == true) || (debug == true)) {

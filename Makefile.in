@@ -333,7 +333,7 @@ ansvif_CPPFLAGS = -O3
 ansvif_LDFLAGS = -I./include/gzstream -I./include/xml_writer
 find_suid_SOURCES = src/linux/find_suid.cpp
 faulty_SOURCES = src/faulty.c
-faulty_CFLAGS = -ansi
+faulty_CFLAGS = -ansi -fno-stack-protector
 ansvifdir = bin
 AM_CXXFLAGS = -Wall
 all: all-am
@@ -1064,6 +1064,12 @@ uninstall-am: uninstall-binPROGRAMS
 
 .PRECIOUS: Makefile
 
+check: all
+	./ansvif -t examples/space.txt -c ./faulty -b 32 -o checkfaulty && rm checkfaulty.*
+	@echo "*** CHECK 1 PASSED ***"
+	./ansvif -t examples/space.txt -c ./faulty -b 32
+	@echo "*** CHECK 2 PASSED ***"
+	@echo "*** ALL TESTS PASSED ***"
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
