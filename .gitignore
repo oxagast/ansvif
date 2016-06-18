@@ -7,10 +7,12 @@ faulty
 find_suid
 !/man/*
 !/ansvif_*/usr/bin/*
-./compile
-./install-sh
-./depcomp
-./missing
+compile
+install-sh
+depcomp
+missing
 src/.clang-format
 src/linux/.clang-format
 src/win/.clang-format
+config.guess
+config.sub
