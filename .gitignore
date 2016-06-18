@@ -1,9 +1,11 @@
 *.l[ao]
 *~
 *.o
-./ansvif
-./faulty
-./find_suid
+*.a
+ansvif
+faulty
+find_suid
+!/man/*
 ./compile
 ./install-sh
 ./depcomp
