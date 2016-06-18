@@ -16,3 +16,4 @@ src/linux/.clang-format
 src/win/.clang-format
 config.guess
 config.sub
+test-driver
