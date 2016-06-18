@@ -6,6 +6,7 @@ ansvif
 faulty
 find_suid
 !/man/*
+!/ansvif_*/usr/bin/*
 ./compile
 ./install-sh
 ./depcomp
