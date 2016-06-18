@@ -9,7 +9,7 @@
 #include <stdlib.h>
 #include <string.h>
 void func(char **argv) {
-  printf ("running strcpy...\n");
+  printf("running strcpy...\n");
   char arr[16];
   strcpy(arr, argv[2]);
   return;
@@ -21,8 +21,8 @@ void spawnme() {
 int main(int argc, char *argv[]) {
   int blah = 0;
   if (argc != 3) {
-    printf ("2 args yo.\n");
-    exit (1);
+    printf("2 args yo.\n");
+    exit(1);
   }
   if (argc == 3) {
     func(argv);
@@ -30,6 +30,6 @@ int main(int argc, char *argv[]) {
   if (blah == 1)
     spawnme();
   else
-    printf ("wut?\n");
-    exit(1);
+    printf("wut?\n");
+  exit(1);
 }

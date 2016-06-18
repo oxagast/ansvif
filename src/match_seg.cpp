@@ -54,16 +54,28 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
   bool segged = false;
   std::string valgrind_str;
   if (valgrind == true) {
-    valgrind_str = "/usr/bin/valgrind --leak-check=full --xml=yes "
-                   "--xml-file=" +
-                   write_file_n +
-                   ".valgrind.ansvif.log --error-exitcode=139"; // if valgrind
-                                                                // is activated
-                                                                // we use exit
-                                                                // code 139 to
-                                                                // wrap around
-                                                                // and match
-                                                                // faults
+    if (write_file_n != "") {
+
+      valgrind_str = "/usr/bin/valgrind --leak-check=full --xml=yes "
+                     "--xml-file=" +
+                     write_file_n +
+                     ".valgrind.ansvif.log --error-exitcode=139"; // if valgrind
+      // is activated
+      // we use exit
+      // code 139 to
+      // wrap around
+      // and match
+      // faults
+    } else {
+      valgrind_str = "/usr/bin/valgrind --leak-check=full --error-exitcode=139";
+      // if valgrind
+      // is activated
+      // we use exit
+      // code 139 to
+      // wrap around
+      // and match
+      // faults
+    }
   }
   if (valgrind == false) {
     valgrind_str = ""; // nada if valgrinds out
@@ -328,13 +340,14 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
                                             // unclean
       reaper_thread.detach();               // takes care of the reaper thread
       std::string cmd_output; // the initializse thing that will have our cmd
-                              // output string in it that comes out...
-      std::ostringstream pid_as_s;
-      pid_as_s << pid;
-      std::ofstream xml_output;
-      xml_output.open(write_file_n + ".crash.ansvif.log");
-      Writer writer(xml_output);
-      if (write_to_file == true) { // if we are writing to a file...
+                              // output string in it that comes out..
+      if (write_file_n != "") {
+        std::ostringstream pid_as_s;
+        pid_as_s << pid;
+        std::ofstream xml_output;
+        xml_output.open(write_file_n + ".crash.ansvif.log");
+        Writer writer(xml_output);
+        // if we are writing to a file...
         //            write_seg(write_file_n + ".crash.ansvif.log", "PID: "
         //            + pid.str() + "\n" + "Exit Code: " + cmd_output + "\n"
         //            + "Crashed with command: ");  // write the pid if
@@ -377,6 +390,11 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
                       << std::endl; // ...make sure to log the file data too
           }
           if (write_to_file == true) { // if we are writing to a file...
+            std::ostringstream pid_as_s;
+            pid_as_s << pid;
+            std::ofstream xml_output;
+            xml_output.open(write_file_n + ".crash.ansvif.log");
+            Writer writer(xml_output);
             writer.openElt("Crash");
             writer.openElt("Exit Code")
                 .attr("code", "The programs exit code")
@@ -407,6 +425,11 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
             exit(0); // same as above
           }
           if (write_to_file == true) { // if we are writing to a file...
+            std::ostringstream pid_as_s;
+            pid_as_s << pid;
+            std::ofstream xml_output;
+            xml_output.open(write_file_n + ".crash.ansvif.log");
+            Writer writer(xml_output);
             writer.openElt("Command")
                 .attr("run", "What the command hung with")
                 .content(out_str_p.c_str())
