@@ -2,8 +2,14 @@
  * ansvif
  * A Not So Very Intelligent Fuzzer
  * Marshall Whittaker / oxagast
+ *
+ *
+ *    __ _  _  __   ___  __  ____ ____ 
+ *   /  ( \/ )/ _\ / __)/ _\/ ___(_  _)
+ *  (  O )  (/    ( (_ /    \___ \ )(  
+ *   \__(_/\_\_/\_/\___\_/\_(____/(__)
  */
-
+ 
 #define _GNU_SOURCE
 #include <stdio.h>
 #include <stdlib.h>
