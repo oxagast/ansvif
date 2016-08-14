@@ -20,6 +20,7 @@
 #include <thread>
 #include <unistd.h>
 #include <vector>
+#include <signal.h>
 
 #define READ 0
 #define WRITE 1

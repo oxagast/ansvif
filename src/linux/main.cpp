@@ -19,6 +19,7 @@
 #include <thread>
 #include <unistd.h>
 #include <vector>
+#include <signal.h>
 
 int toint(std::string ints);
 void help_me(std::string mr_me, std::string ver);
@@ -41,6 +42,26 @@ std::vector<std::string> get_flags_template(std::string filename, bool verbose,
 std::vector<std::string> get_other(std::string filename, bool verbose,
                                    bool debug);
 void write_seg(std::string filename, std::string seg_line);
+
+// globals to be passed to sig_handler because its easier this way
+std::string write_file_n;
+std::string junk_file_of_args;
+
+void sig_handler(int sig) {
+  std::cout.flush();
+    sleep(1.5);
+
+  std::cout << std::endl << "Cought ctrl+c, Killing threads..."
+  << std::endl;
+  std::cout << "Cleaning up..." << std::endl;
+  std::string crash_file = write_file_n + ".crash.ansvif.log";
+  std::string output_file = write_file_n + ".output.ansvif.log";
+  unlink(junk_file_of_args.c_str());
+  unlink(crash_file.c_str());
+  unlink(output_file.c_str());
+  std::cout << "Exiting cleanly..." << std::endl;
+  exit(0);
+}
 
 int main(int argc, char *argv[]) { // initialize our main
   int opt;                         // initialize opt for how many options
@@ -65,12 +86,12 @@ int main(int argc, char *argv[]) { // initialize our main
                                   // to /bin/sh
   std::string u_strip_shell; // if the user supplied extra characters to strip
                              // out, they go here
-  std::string write_file_n = ""; // the log file's location and name
+  write_file_n = ""; // the log file's location and name
   std::string path_str = "";     // the path to the command
   std::string other_sep = "";    // if space isn't to be used, what is?
   std::string low_lvl_user =
       "nobody"; // the user that we want to run as if we're running su as root
-  std::string junk_file_of_args = ""; // a file full of arguments to be supplied
+  junk_file_of_args = ""; // a file full of arguments to be supplied
   std::string always_arg_before = ""; // the argument to be supplied after the
                                       // command, but before the rest of the
                                       // fuzz
@@ -100,6 +121,7 @@ int main(int argc, char *argv[]) { // initialize our main
                            // used with wrappers like xargs
   bool percent_sign = false; // percent sign stuff, default is off
   std::string ver = "1.5.2"; // the version
+  signal(SIGINT, sig_handler);
   while ((opt = getopt(
               argc, argv,
               "m:p:t:e:c:f:o:b:s:x:R:A:F:S:L:W:B:C:1hrzvdDnVP")) != // these are

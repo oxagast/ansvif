@@ -142,6 +142,7 @@ src/linux/ansvif-man_read.o: src/linux/man_read.cpp \
  /usr/include/c++/5/vector /usr/include/c++/5/bits/stl_uninitialized.h \
  /usr/include/c++/5/bits/stl_vector.h \
  /usr/include/c++/5/bits/stl_bvector.h /usr/include/c++/5/bits/vector.tcc \
+ /usr/include/c++/5/bits/uniform_int_dist.h \
  /usr/include/x86_64-linux-gnu/c++/5/bits/opt_random.h \
  /usr/lib/gcc/x86_64-linux-gnu/5/include/x86intrin.h \
  /usr/lib/gcc/x86_64-linux-gnu/5/include/ia32intrin.h \
@@ -623,6 +624,8 @@ src/linux/../../include/gzstream/gzstream.h:
 /usr/include/c++/5/bits/stl_bvector.h:
 
 /usr/include/c++/5/bits/vector.tcc:
+
+/usr/include/c++/5/bits/uniform_int_dist.h:
 
 /usr/include/x86_64-linux-gnu/c++/5/bits/opt_random.h:
 
