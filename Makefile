@@ -210,8 +210,8 @@ ETAGS = etags
 CTAGS = ctags
 CSCOPE = cscope
 AM_RECURSIVE_TARGETS = cscope
-am__DIST_COMMON = $(srcdir)/Makefile.in README compile depcomp \
-	install-sh missing
+am__DIST_COMMON = $(srcdir)/Makefile.in compile depcomp install-sh \
+	missing
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 distdir = $(PACKAGE)-$(VERSION)
 top_distdir = $(distdir)
@@ -235,7 +235,7 @@ AM_DEFAULT_VERBOSITY = 1
 AUTOCONF = ${SHELL} /home/marshall/Code/ansvif/missing autoconf
 AUTOHEADER = ${SHELL} /home/marshall/Code/ansvif/missing autoheader
 AUTOMAKE = ${SHELL} /home/marshall/Code/ansvif/missing automake-1.15
-AWK = mawk
+AWK = gawk
 CC = gcc
 CCDEPMODE = depmode=gcc3
 CFLAGS = -g -O2
@@ -245,7 +245,7 @@ CXXCPP = g++ -E
 CXXDEPMODE = depmode=gcc3
 CXXFLAGS = -g -O2 -std=gnu++11
 CYGPATH_W = echo
-DEFS = -DPACKAGE_NAME=\"ansvif\" -DPACKAGE_TARNAME=\"ansvif\" -DPACKAGE_VERSION=\"1.5.2\" -DPACKAGE_STRING=\"ansvif\ 1.5.2\" -DPACKAGE_BUGREPORT=\"marshallwhittaker@gmail.com\" -DPACKAGE_URL=\"\" -DSTDC_HEADERS=1 -DHAVE_SYS_TYPES_H=1 -DHAVE_SYS_STAT_H=1 -DHAVE_STDLIB_H=1 -DHAVE_STRING_H=1 -DHAVE_MEMORY_H=1 -DHAVE_STRINGS_H=1 -DHAVE_INTTYPES_H=1 -DHAVE_STDINT_H=1 -DHAVE_UNISTD_H=1 -DSTDC_HEADERS=1 -DHAVE_STRING=1 -DPACKAGE=\"ansvif\" -DVERSION=\"1.5.2\"
+DEFS = -DPACKAGE_NAME=\"ansvif\" -DPACKAGE_TARNAME=\"ansvif\" -DPACKAGE_VERSION=\"1.5.3\" -DPACKAGE_STRING=\"ansvif\ 1.5.3\" -DPACKAGE_BUGREPORT=\"marshallwhittaker@gmail.com\" -DPACKAGE_URL=\"\" -DSTDC_HEADERS=1 -DHAVE_SYS_TYPES_H=1 -DHAVE_SYS_STAT_H=1 -DHAVE_STDLIB_H=1 -DHAVE_STRING_H=1 -DHAVE_MEMORY_H=1 -DHAVE_STRINGS_H=1 -DHAVE_INTTYPES_H=1 -DHAVE_STDINT_H=1 -DHAVE_UNISTD_H=1 -DSTDC_HEADERS=1 -DHAVE_STRING=1 -DPACKAGE=\"ansvif\" -DVERSION=\"1.5.3\"
 DEPDIR = .deps
 ECHO_C = 
 ECHO_N = -n
@@ -269,16 +269,16 @@ OBJEXT = o
 PACKAGE = ansvif
 PACKAGE_BUGREPORT = marshallwhittaker@gmail.com
 PACKAGE_NAME = ansvif
-PACKAGE_STRING = ansvif 1.5.2
+PACKAGE_STRING = ansvif 1.5.3
 PACKAGE_TARNAME = ansvif
 PACKAGE_URL = 
-PACKAGE_VERSION = 1.5.2
+PACKAGE_VERSION = 1.5.3
 PATH_SEPARATOR = :
 RANLIB = ranlib
 SET_MAKE = 
 SHELL = /bin/bash
 STRIP = 
-VERSION = 1.5.2
+VERSION = 1.5.3
 abs_builddir = /home/marshall/Code/ansvif
 abs_srcdir = /home/marshall/Code/ansvif
 abs_top_builddir = /home/marshall/Code/ansvif
