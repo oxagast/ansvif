@@ -44,6 +44,7 @@ the Windows Management Framework (which includes newer Versions of Powershell he
 https://www.microsoft.com/en-us/download/details.aspx?id=50395.*
 
 **Testing:**
+
 If you would like to try out the example code, you can compile faulty.c with:
 ```
 $ gcc faulty.c -o faulty
@@ -124,12 +125,14 @@ PS C:\ansvif\bin\ansvif_win> .\ansvif -t ..\..\examples\space -F ..\..\tmp\tmpht
 ```
 
 **Recommendations:**
-  **DO NOT RUN THIS CODE IN A PRODUCTION ENVIRONMENT!**
-  If you try setting faulty.c's output to suid(0) then *PLEASE* do it in a virtual machine.
-  or atleast a machine that you don't care about.
-  Other than that, just play around and have fun!
+
+**DO NOT RUN THIS CODE IN A PRODUCTION ENVIRONMENT!**
+If you try setting faulty.c's output to suid(0) then *PLEASE* do it in a virtual machine.
+or atleast a machine that you don't care about.
+Other than that, just play around and have fun!
 
 
 **Notes:**
-  Windows users must have ansvif running from Powershell and have the cygwin .dll's in the same dir.
-  Linux code should be relatively stable.
+
+Windows users must have ansvif running from Powershell and have the cygwin .dll's in the same dir.
+Linux code should be relatively stable.
