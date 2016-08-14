@@ -26,19 +26,22 @@ AUTOCONF_VERSION=`ls /usr/local/bin/autoconf-* | head -n 1 | sed -e 's/.*-//'` a
 && CXX=eg++ ./configure && make
 ```
 *Windows:*
-  Precompiled binaries are left in a zip file in ./bin.
-  Use cygwin, install g++ and gcc.
-  (In cygwin)
+
+Precompiled binaries are left in a zip file in ./bin.
+Use cygwin, install g++ and gcc.
+(In cygwin)
+
 ```
 ./configure_win
 make
 $ cp /bin/cyggcc_s-seh-1.dll /bin/cygstdc++-6.dll /bin/cygwin1.dll bin/
 ```
-  *Make sure cyggcc_s-seh-1.dll, cygstdc++-6.dll and cygwin1.dll are in the same directory as ansvif.exe.
-  Note: In Windows 7 Powershell v2 is installed by default, however, this program requires atleast 
-        Powershell v5.  Windows 10 includes powershell v5.  You can go to Microsoft's site and download
-        the Windows Management Framework (which includes newer Versions of Powershell here: 
-        https://www.microsoft.com/en-us/download/details.aspx?id=50395.*
+
+*Make sure cyggcc_s-seh-1.dll, cygstdc++-6.dll and cygwin1.dll are in the same directory as ansvif.exe.
+Note: In Windows 7 Powershell v2 is installed by default, however, this program requires atleast 
+Powershell v5.  Windows 10 includes powershell v5.  You can go to Microsoft's site and download
+the Windows Management Framework (which includes newer Versions of Powershell here: 
+https://www.microsoft.com/en-us/download/details.aspx?id=50395.*
 
 **Testing:**
 If you would like to try out the example code, you can compile faulty.c with:
