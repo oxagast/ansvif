@@ -223,17 +223,17 @@ src/linux/ansvif-main.o: src/linux/main.cpp /usr/include/stdc-predef.h \
  /usr/include/c++/5/bits/regex_compiler.tcc \
  /usr/include/c++/5/bits/regex.h /usr/include/c++/5/bits/regex.tcc \
  /usr/include/c++/5/bits/regex_executor.h \
- /usr/include/c++/5/bits/regex_executor.tcc \
- /usr/include/x86_64-linux-gnu/sys/stat.h \
- /usr/include/x86_64-linux-gnu/bits/stat.h \
- /usr/include/x86_64-linux-gnu/sys/wait.h /usr/include/signal.h \
+ /usr/include/c++/5/bits/regex_executor.tcc /usr/include/signal.h \
  /usr/include/x86_64-linux-gnu/bits/signum.h \
  /usr/include/x86_64-linux-gnu/bits/siginfo.h \
  /usr/include/x86_64-linux-gnu/bits/sigaction.h \
  /usr/include/x86_64-linux-gnu/bits/sigcontext.h \
  /usr/include/x86_64-linux-gnu/bits/sigstack.h \
  /usr/include/x86_64-linux-gnu/sys/ucontext.h \
- /usr/include/x86_64-linux-gnu/bits/sigthread.h /usr/include/c++/5/thread \
+ /usr/include/x86_64-linux-gnu/bits/sigthread.h \
+ /usr/include/x86_64-linux-gnu/sys/stat.h \
+ /usr/include/x86_64-linux-gnu/bits/stat.h \
+ /usr/include/x86_64-linux-gnu/sys/wait.h /usr/include/c++/5/thread \
  /usr/include/c++/5/chrono /usr/include/c++/5/ratio \
  /usr/include/c++/5/bits/parse_numbers.h /usr/include/unistd.h \
  /usr/include/x86_64-linux-gnu/bits/posix_opt.h \
@@ -817,12 +817,6 @@ src/linux/ansvif-main.o: src/linux/main.cpp /usr/include/stdc-predef.h \
 
 /usr/include/c++/5/bits/regex_executor.tcc:
 
-/usr/include/x86_64-linux-gnu/sys/stat.h:
-
-/usr/include/x86_64-linux-gnu/bits/stat.h:
-
-/usr/include/x86_64-linux-gnu/sys/wait.h:
-
 /usr/include/signal.h:
 
 /usr/include/x86_64-linux-gnu/bits/signum.h:
@@ -838,6 +832,12 @@ src/linux/ansvif-main.o: src/linux/main.cpp /usr/include/stdc-predef.h \
 /usr/include/x86_64-linux-gnu/sys/ucontext.h:
 
 /usr/include/x86_64-linux-gnu/bits/sigthread.h:
+
+/usr/include/x86_64-linux-gnu/sys/stat.h:
+
+/usr/include/x86_64-linux-gnu/bits/stat.h:
+
+/usr/include/x86_64-linux-gnu/sys/wait.h:
 
 /usr/include/c++/5/thread:
 

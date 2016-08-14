@@ -4,22 +4,22 @@
  * Marshall Whittaker / oxagast
  */
 
-//    __ _  _  __   ___  __  ____ ____ 
+//    __ _  _  __   ___  __  ____ ____
 //   /  ( \/ )/ _\ / __)/ _\/ ___(_  _)
-//  (  O )  (/    ( (_ /    \___ \ )(  
+//  (  O )  (/    ( (_ /    \___ \ )(
 //   \__(_/\_\_/\_/\___\_/\_(____/(__)
 
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
 #include <regex>
+#include <signal.h>
 #include <stdio.h>
 #include <sys/stat.h>
 #include <sys/wait.h>
 #include <thread>
 #include <unistd.h>
 #include <vector>
-#include <signal.h>
 
 int toint(std::string ints);
 void help_me(std::string mr_me, std::string ver);
@@ -49,9 +49,8 @@ std::string junk_file_of_args;
 
 void sig_handler(int sig) {
   std::cout.flush();
-    sleep(1);
-  std::cout << std::endl << "Cought ctrl+c, Killing threads..."
-  << std::endl;
+  sleep(1);
+  std::cout << std::endl << "Cought ctrl+c, Killing threads..." << std::endl;
   std::cout << "Cleaning up..." << std::endl;
   std::string crash_file = write_file_n + ".crash.ansvif.log";
   std::string output_file = write_file_n + ".output.ansvif.log";
@@ -64,9 +63,10 @@ void sig_handler(int sig) {
 
 int main(int argc, char *argv[]) { // initialize our main
   int opt;                         // initialize opt for how many options
-  int thread_count_def = 2;             // how many threads are we using?
-  int thread_timeout_def = 3; // what is the seconds that the thread will time out in if
-                     // it takes too long?
+  int thread_count_def = 2;        // how many threads are we using?
+  int thread_timeout_def =
+      3; // what is the seconds that the thread will time out in if
+         // it takes too long?
 
   std::vector<std::string> opts; // the options that are pulled out of the
                                  // manpage or template file go in this vector
@@ -76,7 +76,7 @@ int main(int argc, char *argv[]) { // initialize our main
                                       // file output to be fed in or to be used
                                       // as sub options
   std::string t_timeout = "3";
-  std::string man_loc = "8";          // the default manpage location
+  std::string man_loc = "8"; // the default manpage location
   std::string num_threads = "2";
   std::string buf_size; // the size of the buffer we will use (this can varry,
                         // has to be an integar)
@@ -86,14 +86,14 @@ int main(int argc, char *argv[]) { // initialize our main
       "`<>\n|&\[]\()\{}:;\\'\"$"; // what characters not to use
                                   // in the command that goes
                                   // to /bin/sh
-  std::string u_strip_shell; // if the user supplied extra characters to strip
-                             // out, they go here
-  write_file_n = ""; // the log file's location and name
-  std::string path_str = "";     // the path to the command
-  std::string other_sep = "";    // if space isn't to be used, what is?
+  std::string u_strip_shell;  // if the user supplied extra characters to strip
+                              // out, they go here
+  write_file_n = "";          // the log file's location and name
+  std::string path_str = "";  // the path to the command
+  std::string other_sep = ""; // if space isn't to be used, what is?
   std::string low_lvl_user =
       "nobody"; // the user that we want to run as if we're running su as root
-  junk_file_of_args = ""; // a file full of arguments to be supplied
+  junk_file_of_args = "";             // a file full of arguments to be supplied
   std::string always_arg_before = ""; // the argument to be supplied after the
                                       // command, but before the rest of the
                                       // fuzz
@@ -258,68 +258,74 @@ int main(int argc, char *argv[]) { // initialize our main
   }
   std::istringstream b_size(buf_size); // we're going to now make sure the buf
                                        // size is an integer only
-  int is_int_b_s;                          // declare
-  if (!(b_size >> is_int_b_s)) {           // and if it's not an integar then...
+  int is_int_b_s;                      // declare
+  if (!(b_size >> is_int_b_s)) {       // and if it's not an integar then...
     help_me(argv[0], ver);             // send them to get mental help
   }
   char buf_char_maybe_b_s;            // if it's a char in the buf size...
   if (b_size >> buf_char_maybe_b_s) { // then also...
-    help_me(argv[0], ver);        // send them to the nuthouse
+    help_me(argv[0], ver);            // send them to the nuthouse
   } else {
     int buf_size_int = toint(buf_size); // otherwise we're going to turn the
                                         // buf size into an integar
- 
-   int thread_count_int = thread_count_def;
-    std::istringstream t_count(num_threads); // we're going to now make sure the buf
-                                       // size is an integer only
-  int is_int_t_c;                          // declare
-  if (!(t_count >> is_int_t_c)) {           // and if it's not an integar then...
-    help_me(argv[0], ver);             // send them to get mental help
-  }
-  char buf_char_maybe_t_c;            // if it's a char in the buf size...
-  if (t_count >> buf_char_maybe_t_c) { // then also...
-    help_me(argv[0], ver);        // send them to the nuthouse
-  } else {
-      thread_count_int = toint(num_threads); // otherwise we're going to turn the
-                                        // buf size into an integar
-         int thread_timeout_int = thread_timeout_def;
-    std::istringstream th_timeout(t_timeout); // we're going to now make sure the buf
-                                       // size is an integer only
-  int is_int_t_t;                          // declare
-  if (!(th_timeout >> is_int_t_t)) {           // and if it's not an integar then...
-    help_me(argv[0], ver);             // send them to get mental help
-  }
-  char buf_char_maybe_t_t;            // if it's a char in the buf size...
-  if (th_timeout >> buf_char_maybe_t_t) { // then also...
-    help_me(argv[0], ver);        // send them to the nuthouse
-  } else {
-      thread_timeout_int = toint(t_timeout); // otherwise we're going to turn the
-                                        // buf size into an integar
-    if (single_try ==
-        false) { // if single try isn't turned on then we're going to use...
-      std::vector<std::thread> threads; // DING DING DING! threading!
-      for (int cur_thread = 1; cur_thread <= thread_count_int; ++cur_thread)
-        threads.push_back(std::thread(
-            match_seg, buf_size_int, opts, spec_env, path_str, strip_shell,
-            rand_all, write_to_file, write_file_n, rand_buf, opt_other,
-            is_other, other_sep, thread_timeout_int, low_lvl_user, junk_file_of_args,
-            always_arg_before, always_arg_after, never_rand, run_command,
-            fault_code, valgrind, single_try, percent_sign, verbose, debug,
-            ver)); // Thrift Shop
-      for (auto &all_thread : threads)
-        all_thread.join(); // is that your grandma's coat?
+
+    int thread_count_int = thread_count_def;
+    std::istringstream t_count(
+        num_threads);               // we're going to now make sure the buf
+                                    // size is an integer only
+    int is_int_t_c;                 // declare
+    if (!(t_count >> is_int_t_c)) { // and if it's not an integar then...
+      help_me(argv[0], ver);        // send them to get mental help
     }
-    if (single_try == true) {
-      match_seg(buf_size_int, opts, spec_env, path_str, strip_shell, rand_all,
-                write_to_file, write_file_n, rand_buf, opt_other, is_other,
-                other_sep, thread_timeout_int, low_lvl_user, junk_file_of_args,
-                always_arg_before, always_arg_after, never_rand, run_command,
-                fault_code, valgrind, single_try, percent_sign, verbose, debug,
-                ver); // if we're only doing a single run then we'll just
-                      // directly call the match_seg subroutine
+    char buf_char_maybe_t_c;             // if it's a char in the buf size...
+    if (t_count >> buf_char_maybe_t_c) { // then also...
+      help_me(argv[0], ver);             // send them to the nuthouse
+    } else {
+      thread_count_int =
+          toint(num_threads); // otherwise we're going to turn the
+                              // buf size into an integar
+      int thread_timeout_int = thread_timeout_def;
+      std::istringstream th_timeout(
+          t_timeout);                    // we're going to now make sure the buf
+                                         // size is an integer only
+      int is_int_t_t;                    // declare
+      if (!(th_timeout >> is_int_t_t)) { // and if it's not an integar then...
+        help_me(argv[0], ver);           // send them to get mental help
+      }
+      char buf_char_maybe_t_t; // if it's a char in the buf size...
+      if (th_timeout >> buf_char_maybe_t_t) { // then also...
+        help_me(argv[0], ver);                // send them to the nuthouse
+      } else {
+        thread_timeout_int =
+            toint(t_timeout); // otherwise we're going to turn the
+                              // buf size into an integar
+        if (single_try ==
+            false) { // if single try isn't turned on then we're going to use...
+          std::vector<std::thread> threads; // DING DING DING! threading!
+          for (int cur_thread = 1; cur_thread <= thread_count_int; ++cur_thread)
+            threads.push_back(std::thread(
+                match_seg, buf_size_int, opts, spec_env, path_str, strip_shell,
+                rand_all, write_to_file, write_file_n, rand_buf, opt_other,
+                is_other, other_sep, thread_timeout_int, low_lvl_user,
+                junk_file_of_args, always_arg_before, always_arg_after,
+                never_rand, run_command, fault_code, valgrind, single_try,
+                percent_sign, verbose, debug,
+                ver)); // Thrift Shop
+          for (auto &all_thread : threads)
+            all_thread.join(); // is that your grandma's coat?
+        }
+        if (single_try == true) {
+          match_seg(buf_size_int, opts, spec_env, path_str, strip_shell,
+                    rand_all, write_to_file, write_file_n, rand_buf, opt_other,
+                    is_other, other_sep, thread_timeout_int, low_lvl_user,
+                    junk_file_of_args, always_arg_before, always_arg_after,
+                    never_rand, run_command, fault_code, valgrind, single_try,
+                    percent_sign, verbose, debug,
+                    ver); // if we're only doing a single run then we'll just
+                          // directly call the match_seg subroutine
+        }
+        exit(0); // exit cleanly now.
+      }
     }
-    exit(0); // exit cleanly now.
   }
-}
-}
 }
