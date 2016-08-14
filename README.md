@@ -8,7 +8,8 @@
 **Compliation:**
 
 **Dependancies:**
-  automake autoconf-archive zlib1g-dev g++ gcc
+
+automake autoconf-archive zlib1g-dev g++ gcc
 
 *Linux:*
 ```
@@ -39,8 +40,8 @@ $ cp /bin/cyggcc_s-seh-1.dll /bin/cygstdc++-6.dll /bin/cygwin1.dll bin/
         the Windows Management Framework (which includes newer Versions of Powershell here: 
         https://www.microsoft.com/en-us/download/details.aspx?id=50395.*
 
-Testing:
-  If you would like to try out the example code, you can compile faulty.c with:
+**Testing:**
+If you would like to try out the example code, you can compile faulty.c with:
 ```
 $ gcc faulty.c -o faulty
 ```
@@ -53,9 +54,10 @@ Using the example code:
   want to try it out.  The code above /should/ drop you at a bash prompt.
   If the code is set to a mode where all are able to execute as another user, it will
   attempt to spawn a root shell.
-
+  or simply run `make test`.
 
 **Useage:**
+
 *Important note: Windows users will have to run ansvif.exe from Powershell for it to work!*
 
 ```
@@ -63,6 +65,7 @@ $ ./find_suid /usr/bin/ /bin/ /sbin/
 $ ./ansvif -[tm] [template/manpage] -c /path/to/executable -b buffersize
 ```
 **Examples:**
+
 *Linux/BSD:*
 ```
 $ echo "Marshall" ./ansvif -t examples/template -c ./faulty -b 64
@@ -72,6 +75,7 @@ $ ./ansvif -t examples/blank.txt -F tmp/tmphtml -x examples/htmltags.txt -c /usr
 128 -A "file:///home/username/src/ansvif/tmp/tmphtml"  -f 2 -n -R "sleep 3 && killall\
 iceweasel" -S ">"
 ```
+
 *Windows:*
 ```
 PS C:\ansvif\bin\ansvif_win> .\ansvif -t ..\..\examples\space -F ..\..\tmp\tmphtml -x `
@@ -114,7 +118,8 @@ PS C:\ansvif\bin\ansvif_win> .\ansvif -t ..\..\examples\space -F ..\..\tmp\tmpht
   -v Verbose.
   -d Debug data.
   -h Shows the help page.
-`
+```
+
 **Recommendations:**
   **DO NOT RUN THIS CODE IN A PRODUCTION ENVIRONMENT!**
   If you try setting faulty.c's output to suid(0) then *PLEASE* do it in a virtual machine.
