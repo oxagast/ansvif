@@ -19,64 +19,98 @@
 #include <vector>
 
 bool is_suid(const char *file) {
-  struct stat results;  // build the holder
-  stat(file, &results); // find our file and stat it
-  if (results.st_mode & S_ISUID)
-    return true; // if it's suid return true
-  return false;  // else false
+  /* build the holder, find our  file and stat it */
+  struct stat results;
+  stat(file, &results);
+  /* check if the file is suid and if it is return
+   * true
+   */
+  if (results.st_mode & S_ISUID) {
+    return true;
+  }
+  /* if it's not then we'll return false */
+  else {
+    return false;
+  }
 }
 
 void help_me(char *me) {
+  /* we're gonna print a little help page if they
+   * didn't put in correct input
+   */
   std::cout << "Usage:" << std::endl
             << " " << me << " /bin/ /usr/sbin/ /usr/bin/ /usr/bin/libexec/"
-            << std::endl; // some useage details
-  exit(1);                // error out because we didn't have proper input
+            << std::endl;
+  exit(1);
 }
 
 int main(int argc, char **argv) {
   if (argc < 2)
-    help_me(argv[0]);   // if there is less than one argument, then go to the
-                        // help page
-  std::string file_str; // initialize the string for the file
-  std::vector<std::string> file_list; // initialize the file list vector
+    /* if there is less than one argument than go
+     * to the help page
+     */
+  help_me(argv[0]);
+  /* initialize our varaibles like the string for the file
+   * and the list of files vector
+   */
+  std::string file_str;
+  std::vector<std::string> file_list;
+  /* for each file in the list  we'll have the check path
+   * and the path string
+   */
   for (int path_num = 1; path_num != argc;
-       path_num++) { // for each file in the list...
-    //    const char *path = argv[path_num];  // do for  the current path
-    // char *path2;
+       path_num++) {
     std::string check_path = argv[path_num];
     std::string path_str;
     if (check_path.substr(check_path.length() - 1) !=
-        "/") { // so that we have '/'
+        "/") {
+      /* make sure that we have a '/' at the end */
       path_str = argv[path_num];
-      path_str = path_str + "/"; // '/'
-    } else {
-      path_str = argv[path_num]; // otherwise just that
+      path_str = path_str + "/";
+    } 
+    /* otherwise we'll just use what they put if they
+     * already had the slash at the end of the path 
+     */
+    else {
+      path_str = argv[path_num];
     }
-    DIR *the_dir;                        // the dir to use
-    struct dirent *this_dir;             // we're using dirent.h for 'this_dir'
-    the_dir = opendir(path_str.c_str()); // open the path to check the files
-    if (the_dir != NULL)                 // if it's not nothing...
-      while ((this_dir = readdir(the_dir))) // and while we're reading...
+    /* we declare the pointer to the dir to use, and use dirent.h
+     * for this_dir and open the path to check for files, make sure
+     * that the path isn't empty
+     */
+    DIR *the_dir;
+    struct dirent *this_dir;
+    the_dir = opendir(path_str.c_str());
+    /* if the dir exists then we'll read the dir and put the file
+     * in the list if it is suid
+     */
+    if (the_dir != NULL) {
+      while ((this_dir = readdir(the_dir))) {
         file_list.push_back(std::string(
-            this_dir->d_name)); // put it in the file list if it's suid 0
-    std::string name;           // initialize the name
-    int file_list_size =
-        file_list.size(); // so that we don't get a warning with -Wall about
-                          // unsigned variables being compared to integars
-    for (int file_num = 0; file_num != file_list_size;
-         file_num++) {            // we'll loop through them
-      name = file_list[file_num]; // put the file name into the 'name' variable
-                                  // for the time being
-      std::string path_to_file =
-          //          std::string(path) +
-          //          file_list[file_num];  // put it all together (the path and
-          //          filename)
-          path_str + file_list[file_num];
-      if (is_suid(path_to_file.c_str()) == true)
-        std::cout << path_to_file
-                  << std::endl; // if it's suid 0 then we'll print it to STDOUT
+            this_dir->d_name));
+      }
+      /* initialize the name variable for a filename placeholder */
+      std::string name;
+      /* we do this so that with warnings on we don't spew a bunch of
+       * unsigned variables being compared to integars warnings
+       */
+      int file_list_size = file_list.size();
+      /* we'll now loop through the files and put the file name into
+       * the name variable placeholder
+       */
+      for (int file_num = 0; file_num != file_list_size;
+           file_num++) {
+        name = file_list[file_num];
+        std::string path_to_file = path_str + file_list[file_num];
+        if (is_suid(path_to_file.c_str()) == true) {
+          /* if the file is suid then we will cough it up to STDOUT */
+          std::cout << path_to_file << std::endl;
+        }
+      }
     }
-    file_list.clear(); // clear out the file list vector
+    /* clear out the file list vector */
+    file_list.clear();
   }
-  exit(0); // success
+  /* we're done, success! */
+  exit(0);
 }

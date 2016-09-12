@@ -19,55 +19,49 @@ std::vector<std::string>
 get_out_str(std::string env_str, std::string valgrind_str, std::string sys_str,
             std::string path_str, std::string always_arg,
             std::string fuzz_after, std::string log_prefix) {
-  std::string out_str;   // this is for normal output (lots of garbage will show
-                         // up, but normal characters)
-  std::string out_str_p; // this is to be fed into printf on linux machines, a
-                         // windows binary can be compiled from src to be
-                         // compat with this
-  if (sys_str != "") {   // if we're not blank on the sys side
-    if (env_str != "") { // if we're not blank on the env side
+  /* these are the strings that will go to be run in popen
+   * out_str is normal, and out_str_p is pritnf compatible
+   * for easy crash replay, except this is for % for
+   * web browsers and such
+   */
+  std::string out_str, out_str_p;
+  /* no shooting blanks plz */
+  if (sys_str != "") {
+    if (env_str != "") {
       out_str_p =
           "$(printf \"" + binstr_to_hex(env_str) + "\") " + valgrind_str + " " +
           path_str + " $(printf \"" + binstr_to_hex(sys_str) + "\") " +
           always_arg +
-          fuzz_after; // put the printf in first but with a $( for running in
-                      // bash, then a hex space (space is added auto here
-                      // because it's 'blank') then turn the environment string
-                      // into hex, then close that out, then we'll put the
-                      // valgrind string, a space, the path to the program,
-                      // then do the same thing we did with the envionment
-                      // string with the sys string, and end it with the last
-                      // argument after the fuzz if we have one
+          fuzz_after;
     }
     if (env_str == "") { // if we have no environment string
       out_str_p = valgrind_str + " " + path_str + " $(printf \"" +
                   binstr_to_hex(sys_str) + "\") " + always_arg +
                   " $(printf \"" + binstr_to_hex(fuzz_after) +
-                  "\") "; // this is all the same, but without the
-                          // environment string
+                  "\") ";
     }
     out_str =
         env_str + " " + valgrind_str + " " + path_str + " " + sys_str + " " +
         always_arg +
-        fuzz_after; // this is just normal characters, pretty easy, we have the
-                    // out_str being environment, valgrind if there is one
-                    // (which is handled elsewhere and just passed here), the
-                    // path string next, the system string, then whatever
-                    // argument is always meant to go after the fuzz
+        fuzz_after;
   }
   if (log_prefix == "") {
+    /* not logging here */
     out_str =
         out_str +
-        "  >/dev/null 2>&1; echo $?"; // incase we're not logging so we don't
-  }                                   // leave a blank file
-  else {
-    out_str = out_str + ">" + log_prefix +
-              ".output.ansvif.log 2>&1; echo $?"; // get the signal
+        "  >/dev/null 2>&1; echo $?";
   }
-  std::vector<std::string> out_all; // initialize the vector to put out_str and
-                                    // out_str_p (regular and printf version)
-                                    // in
-  out_all.push_back(out_str);       // put regular version in first
-  out_all.push_back(out_str_p);     // put printf version in last
-  return (out_all);                 // return it for the rest of the program
-} // we're done now
+  else {
+    /* logging here */
+    out_str = out_str + ">" + log_prefix +
+              ".output.ansvif.log 2>&1; echo $?";
+  }
+  /* here we declare out_all and put the out_str and out_str_p
+   * printf compatible stuff into the vector to be fed back into
+   * the calling routine
+   */
+  std::vector<std::string> out_all;
+  out_all.push_back(out_str);
+  out_all.push_back(out_str_p);
+  return (out_all);
+}

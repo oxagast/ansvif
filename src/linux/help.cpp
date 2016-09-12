@@ -84,7 +84,9 @@ void help_me(std::string mr_me, std::string ver) {
       << " -P           Use % to represent binary in fuzz." << std::endl
       << " -v           Verbose." << std::endl
       << " -d           Debug."
-      << std::endl; // write all this help file shit out to STDOUT
-  exit(1); // exit with error 1 because we didn't really do anything but print
-           // help...
+      << std::endl;
+      /* Write all this help file shit to stdout, then exit with error 1
+       * because we didn't have anything to print but help
+       */
+  exit(1);
 }

@@ -28,49 +28,58 @@ FILE *popen2(std::string command, std::string type, int &pid,
     perror("fork");
     exit(1);
   }
-  if (child_pid == 0) { // child begins
+  /* here the child begins */
+  if (child_pid == 0) {
     if (type == "r") {
-      close(fd[READ]);    // Close the READ
-      dup2(fd[WRITE], 1); // Redirect stdout to pipe
+      /* redirect stdout and stdin to pipe */
+      close(fd[READ]);
+      dup2(fd[WRITE], 1);
     } else {
-      close(fd[WRITE]);  // Close the WRITE
-      dup2(fd[READ], 0); // Redirect stdin to pipe
+      close(fd[WRITE]);
+      dup2(fd[READ], 0);
     }
-    if (getuid() == 0) { // if we're root...
+    if (getuid() == 0) {
+      /* if we're root we're going to drop our privs 
+       * this fixes not being able to reap processes that
+       * are suid
+       */
       execl("/bin/su", "su", "-c", "/bin/sh", "-c", command.c_str(),
             low_lvl_user.c_str(),
-            NULL); // fixes not being able to reap suid 0 processes
+            NULL);
     } else {
-      execl("/bin/sh", "/bin/sh", "-c", command.c_str(),
-            NULL); // runs it all if we're not using a lower level user (or
-                   // root itself)
+      /* or just run it like we normally would */
+      execl("/bin/sh", "/bin/sh", "-c", command.c_str(), NULL);
     }
-    exit(0); // exit cleanly, wtf
+    exit(0);
   } else {
-    if (type == "r") {  // if we're reading
-      close(fd[WRITE]); // Close the WRITE
-    } else {            // or...
-      close(fd[READ]);  // Close the READ
+    if (type == "r") {
+      close(fd[WRITE]);
+    } else {
+      close(fd[READ]);
     }
   }
-  pid = child_pid;   // our process id shall now equal the child's pid
-  if (type == "r") { // if we're reading...
-    return fdopen(fd[READ], "r"); // return the stuff to the rest of the program
+  /* our new process should now equal the child's pid */
+  pid = child_pid;
+  if (type == "r") {
+  /* return the junk to the rest of the program */
+  return fdopen(fd[READ], "r");
   }
-  return fdopen(fd[WRITE],
-                "w"); // return the stuff to the rest of the program too
-} // the end of popen2
+  return fdopen(fd[WRITE], "w");
+}
 
-int pclose2(FILE *fp, pid_t pid) // close it so we don't fuck outselves
+/* we have to close it all our so we don't fuck
+ * ourselves on OOM later
+ */
+int pclose2(FILE *fp, pid_t pid) 
 {
   int stat;   // initialize stat
   fclose(fp); // close the pipe
-  while (waitpid(pid, &stat, 0) ==
-         0) {             // while we're waiting for pid and stat to be 0...
-    if (errno != EINTR) { // if we errored out...
-      stat = -1;          // stat will now be -1 so we know we did
-      break;              // break out of the while
+  while (waitpid(pid, &stat, 0) == 0) {
+    if (errno != EINTR) {
+      stat = -1;
+      break;
     }
   }
-  return stat; // return our status
-} // the end of pclose2
+  /* return our status and end pclose2 */
+  return stat;
+}

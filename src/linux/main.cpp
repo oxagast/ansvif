@@ -43,93 +43,92 @@ std::vector<std::string> get_other(std::string filename, bool verbose,
                                    bool debug);
 void write_seg(std::string filename, std::string seg_line);
 
-// globals to be passed to sig_handler because its easier this way
-std::string write_file_n;
-std::string junk_file_of_args;
+/* globals to be passed to sig_handler because its easier this way */
+std::string write_file_n, junk_file_of_args;
 
 void sig_handler(int sig) {
+  /* flush the screen buffer  then sleep before printing 
+   * the message about killing threads
+   */
   std::cout.flush();
   sleep(1);
   std::cout << std::endl << "Cought ctrl+c, Killing threads..." << std::endl;
   std::cout << "Cleaning up..." << std::endl;
+  /* append the crash logs to their respective strings so that we
+   * can clean up after ourselves if there was no crash
+   */
   std::string crash_file = write_file_n + ".crash.ansvif.log";
   std::string output_file = write_file_n + ".output.ansvif.log";
+  /* clean up the junk files */
   unlink(junk_file_of_args.c_str());
   unlink(crash_file.c_str());
   unlink(output_file.c_str());
+  /* exit our program as the user wanted to */
   std::cout << "Exiting cleanly..." << std::endl;
   exit(0);
 }
 
 int main(int argc, char *argv[]) { // initialize our main
-  int opt;                         // initialize opt for how many options
-  int thread_count_def = 2;        // how many threads are we using?
-  int thread_timeout_def =
-      3; // what is the seconds that the thread will time out in if
-         // it takes too long?
-
-  std::vector<std::string> opts; // the options that are pulled out of the
-                                 // manpage or template file go in this vector
-  std::vector<std::string>
-      spec_env; // the environment variables go in this vector
-  std::vector<std::string> opt_other; // opt other is to be combind with -x for
-                                      // file output to be fed in or to be used
-                                      // as sub options
-  std::string t_timeout = "3";
-  std::string man_loc = "8"; // the default manpage location
-  std::string num_threads = "2";
-  std::string buf_size; // the size of the buffer we will use (this can varry,
-                        // has to be an integar)
-  std::string mp;       // the string that holds the manpage
-  std::string template_file; // the location of the template file
-  std::string strip_shell =
-      "`<>\n|&\[]\()\{}:;\\'\"$"; // what characters not to use
-                                  // in the command that goes
-                                  // to /bin/sh
-  std::string u_strip_shell;  // if the user supplied extra characters to strip
-                              // out, they go here
-  write_file_n = "";          // the log file's location and name
-  std::string path_str = "";  // the path to the command
-  std::string other_sep = ""; // if space isn't to be used, what is?
-  std::string low_lvl_user =
-      "nobody"; // the user that we want to run as if we're running su as root
-  junk_file_of_args = "";             // a file full of arguments to be supplied
-  std::string always_arg_before = ""; // the argument to be supplied after the
-                                      // command, but before the rest of the
-                                      // fuzz
-  std::string always_arg_after =
-      "";                         // the argument to be supplied after the fuzz
-  std::string run_command = "";   // the command name to be run
-  std::string man_page = "";      // the man page name
-  std::string fault_code = "134"; // default dummy fault code
-                                  // we're going to trap, this
-                                  // can be user selected
-  bool template_opt = false;      // default is false
-  bool man_opt = false;           // default is false
-  bool rand_all = false;          // default for randomize all the fuzz is off
-  bool rand_buf = false;      // default for randomizing the buffer size is off
-  bool write_to_file = false; // logging is off by default
-  bool u_strip_shell_set = false; // the user hasn't set a strip option yet
-  bool verbose = false;           // default is not to talk alot
-  bool debug = false;             // default is not to be noisey as fuckkkk
-  bool is_other = false;   // a different seperator other than space isn't
-                           // normally used, so its false by default
-  bool dump_opts = false;  // we're not dumping options by default
-  bool never_rand = false; // this is false because we want some randomization
-                           // in the fuzz usually
-  bool valgrind = false;   // since we don't know if valgrind is installed or if
-                           // the user wants to use it it's off by default
-  bool single_try = false; // this is off by default because it's usually only
-                           // used with wrappers like xargs
-  bool percent_sign = false; // percent sign stuff, default is off
-  std::string ver = "1.5.3"; // the version
+  /* initialize all our variables for startup! */
+  /* how many options? */
+  int opt, thread_count_def = 2, thread_timeout_def = 3;
+  /* the options that are pulled out of the manpage or
+   * template go into the opts vector, the environment
+   * variables go into spec_env and the extra variables
+   * that are invoked with -x go into opt_other
+   */
+  std::vector<std::string> opts, spec_env, opt_other;
+  /* here we're initializing the variables for the thread
+   * timeout, the manpage location (8 is the default because
+   * thats where most manpages are stored, but 1 could also
+   * work.) as a string so we can check int later, the number
+   * of threads we're using, the buffer size as a string so
+   * that we chan check later if it is really an integar, 
+   * the string that holds the manpage, the location of the
+   * template file, the characters we should strip that are
+   * sh dependant (characters that would interfere with the
+   * fuzz), if the user supplied any extra characters to
+   * strip out of the fuzz, the log file's name, the path
+   * of the command, the other seperator that should be used
+   * if not space with the -x option, the lower level user
+   * is initialized as 'nobody' by default if we're running
+   * as root, the command to run after the fuzz (good for
+   * killing off nasty processes afterwards if the reaper
+   * doesn't get them), the man page name, as well as
+   * a dummy fault code thats a duplicate so that the user
+   * can supply a fault code to the program that it should
+   * catch as well as the other default ones.
+   */
+  std::string t_timeout = "3", man_loc = "8", num_threads = "2",
+    buf_size, mp, template_file, strip_shell = "`<>\n|&\[]\()\{}:;\\'\"$",
+    u_strip_shell, write_file_n = "", path_str = "", other_sep = "", low_lvl_user =
+    "nobody", junk_file_of_args = "", always_arg_before = "", always_arg_after =
+    "", run_command = "", man_page = "", fault_code = "134";
+  /* declare some more variables as boolean, the template_opt,
+   * manpage option, if random is always used, if we're randomizing
+   * the buffer size, if we're writing to a file (logging), if the
+   * user has set custom stripping characters, if we're going to be
+   * jabbering a lot, if we're going to print the printf stuff as we
+   * fuzz, if there is another seperator besides space, if we're just
+   * going to dump the manpage options, if we're never going to
+   * inject random data, if we're using valgrind, if we're going to
+   * do a single dry run, if we're going to need the % sign (this is
+   * good for web browser fuzzing)
+   */
+  bool template_opt = false, man_opt = false, rand_all = false, rand_buf = false,
+    write_to_file = false, u_strip_shell_set = false, verbose = false,
+    debug = false, is_other = false, dump_opts = false, never_rand = false,
+    valgrind = false, single_try = false, percent_sign = false;
+  /* what version of ansvif are we running? */
+    std::string ver = "1.5.3";
+  /* first off we're going to start the signal handler incase they
+   * do ctrl+c or something
+   */
   signal(SIGINT, sig_handler);
+  /* now we can start grabbing all the options! */
   while ((opt = getopt(
-              argc, argv,
-              "m:p:t:e:c:f:o:b:s:x:R:A:F:S:L:W:B:C:1hrzvdDnVP")) != // these are
-                                                                    // all the
-                                                                    // flags
-         -1) {
+    argc, argv,
+    "m:p:t:e:c:f:o:b:s:x:R:A:F:S:L:W:B:C:1hrzvdDnVP")) != -1) {
     switch (opt) {
     case 'v':
       verbose = true;
@@ -225,83 +224,83 @@ int main(int argc, char *argv[]) { // initialize our main
     }
   }
   if (u_strip_shell_set == true) {
-    strip_shell = u_strip_shell +
-                  ">\n"; // always strip a new line no matter what the user says
+    /* always strip a new line no matter what the user says */
+    strip_shell = u_strip_shell + ">\n";
   }
   if ((man_opt == true) && (template_opt == false)) {
-    opts = get_flags_man(
-        man_page, man_loc, verbose, debug,
-        dump_opts); // we'll be getting stuff from the manpage this time
+    /* because we're getting stuff from the manpage */
+    opts = get_flags_man(man_page, man_loc, verbose, debug, dump_opts);
   } else if ((man_opt == false) && (template_opt == true)) {
-    opts = get_flags_template(
-        template_file, verbose,
-        debug); // we'll be getting stuff from a template file this time
+    /* we're getting stuff from a template */
+    opts = get_flags_template(template_file, verbose, debug);
   } else if ((man_opt == true) && (template_opt == true)) {
-    help_me(argv[0],
-            ver); // give the help file is they supply both the template
-                  // and manpage because they are mutually exclusive
+    /* send them to help because you can't have a manpage and
+     * a template at the same time
+     */
+    help_me(argv[0], ver);
   } else if ((man_opt == false) && (template_opt == false)) {
-    help_me(argv[0],
-            ver); // if they supply neither a template or manpage then we
-                  // can't fuzz, if you wanna fuzz blank then just fuzz
-                  // with a template made with touch, or make a file and
-                  // only put a space in it
+    /* can't fuzz if we don't have a template or manpage as
+     * a starting point, if you want nothing just touch a file
+     * and use it as a template
+     */
+    help_me(argv[0], ver);
   } else if (path_str == "") {
-    help_me(argv[0], ver); // if they didn't specify the command, error out
+    /* if they didn't specify a command path then error out */
+    help_me(argv[0], ver);
   } else {
-    help_me(argv[0],
-            ver); // if theres any other errors uncaught then error out, or
-                  // if they supplied a option thats not listed
-  }
-  if ((junk_file_of_args != "") && (is_other == false)) { // fixes -F no -x bug
+    /* like if the option they supplied doesn't exist... */
     help_me(argv[0], ver);
   }
-  std::istringstream b_size(buf_size); // we're going to now make sure the buf
-                                       // size is an integer only
-  int is_int_b_s;                      // declare
-  if (!(b_size >> is_int_b_s)) {       // and if it's not an integar then...
-    help_me(argv[0], ver);             // send them to get mental help
+  if ((junk_file_of_args != "") && (is_other == false)) {
+    /* this will fix the -F no -x bug */
+    help_me(argv[0], ver);
   }
-  char buf_char_maybe_b_s;            // if it's a char in the buf size...
-  if (b_size >> buf_char_maybe_b_s) { // then also...
-    help_me(argv[0], ver);            // send them to the nuthouse
+  /* make sure the buffer size is really an integar and if it
+   * happens to not be, then we'll send them to the help page,
+   * otherwise we'll turn it into type int
+   */
+  std::istringstream b_size(buf_size);
+  int is_int_b_s;
+  if (!(b_size >> is_int_b_s)) {
+    help_me(argv[0], ver);
+  }
+  char buf_char_maybe_b_s;
+  if (b_size >> buf_char_maybe_b_s) {
+    help_me(argv[0], ver);
   } else {
-    int buf_size_int = toint(buf_size); // otherwise we're going to turn the
-                                        // buf size into an integar
-
+    int buf_size_int = toint(buf_size);
+    /* make sure the thread count is an integar the same way
+     * we did with the buffer size
+     */
     int thread_count_int = thread_count_def;
-    std::istringstream t_count(
-        num_threads);               // we're going to now make sure the buf
-                                    // size is an integer only
-    int is_int_t_c;                 // declare
-    if (!(t_count >> is_int_t_c)) { // and if it's not an integar then...
-      help_me(argv[0], ver);        // send them to get mental help
+    std::istringstream t_count(num_threads);
+    int is_int_t_c;
+    if (!(t_count >> is_int_t_c)) {
+      help_me(argv[0], ver);
     }
-    char buf_char_maybe_t_c;             // if it's a char in the buf size...
-    if (t_count >> buf_char_maybe_t_c) { // then also...
-      help_me(argv[0], ver);             // send them to the nuthouse
+    char buf_char_maybe_t_c;
+    if (t_count >> buf_char_maybe_t_c) {
+      help_me(argv[0], ver);
     } else {
-      thread_count_int =
-          toint(num_threads); // otherwise we're going to turn the
-                              // buf size into an integar
+      thread_count_int = toint(num_threads);
       int thread_timeout_int = thread_timeout_def;
-      std::istringstream th_timeout(
-          t_timeout);                    // we're going to now make sure the buf
-                                         // size is an integer only
-      int is_int_t_t;                    // declare
-      if (!(th_timeout >> is_int_t_t)) { // and if it's not an integar then...
-        help_me(argv[0], ver);           // send them to get mental help
+      /* we're gonna do the same thing with the thread timeout */
+      std::istringstream th_timeout(t_timeout);
+      int is_int_t_t;
+      if (!(th_timeout >> is_int_t_t)) {
+        help_me(argv[0], ver);
       }
-      char buf_char_maybe_t_t; // if it's a char in the buf size...
-      if (th_timeout >> buf_char_maybe_t_t) { // then also...
-        help_me(argv[0], ver);                // send them to the nuthouse
+      char buf_char_maybe_t_t;
+      if (th_timeout >> buf_char_maybe_t_t) {
+        help_me(argv[0], ver);
       } else {
-        thread_timeout_int =
-            toint(t_timeout); // otherwise we're going to turn the
-                              // buf size into an integar
-        if (single_try ==
-            false) { // if single try isn't turned on then we're going to use...
-          std::vector<std::thread> threads; // DING DING DING! threading!
+        thread_timeout_int = toint(t_timeout);
+        /* if we're not doing a single try then turn on 
+         * threading 
+         */
+        if (single_try == false) {
+          /* initialize threading! */
+          std::vector<std::thread> threads;
           for (int cur_thread = 1; cur_thread <= thread_count_int; ++cur_thread)
             threads.push_back(std::thread(
                 match_seg, buf_size_int, opts, spec_env, path_str, strip_shell,
@@ -310,21 +309,26 @@ int main(int argc, char *argv[]) { // initialize our main
                 junk_file_of_args, always_arg_before, always_arg_after,
                 never_rand, run_command, fault_code, valgrind, single_try,
                 percent_sign, verbose, debug,
-                ver)); // Thrift Shop
+                ver));
+            /* thrift shop */
           for (auto &all_thread : threads)
-            all_thread.join(); // is that your grandma's coat?
+            all_thread.join();
+          /* is that your grandma's coat??? */
         }
         if (single_try == true) {
+          /* no threads or anything since we're only doing a
+           * single run
+           */
           match_seg(buf_size_int, opts, spec_env, path_str, strip_shell,
                     rand_all, write_to_file, write_file_n, rand_buf, opt_other,
                     is_other, other_sep, thread_timeout_int, low_lvl_user,
                     junk_file_of_args, always_arg_before, always_arg_after,
                     never_rand, run_command, fault_code, valgrind, single_try,
                     percent_sign, verbose, debug,
-                    ver); // if we're only doing a single run then we'll just
-                          // directly call the match_seg subroutine
+                    ver);
         }
-        exit(0); // exit cleanly now.
+        /* exit cleanly! */
+        exit(0);
       }
     }
   }

@@ -15,22 +15,32 @@
 #include <string>
 
 std::string binstr_to_hex(std::string bin_str) {
-  std::stringstream hex_out; // initialize the hex to go out
-  std::string hexxy;         // initalize our string to put it in
+  /* here we will initialize our variables */
+  std::stringstream hex_out;
+  std::string hexxy;
+  /* set up the hex output with a filler of 0 in uppercase
+   * hexadecimal with a width of two
+   */
   hex_out << std::setw(2) << std::setfill('0') << std::hex
-          << std::uppercase; // set the filler to 0, uppercase hexadecimal and
-                             // width 2.
+          << std::uppercase;
+  /* for each of them go put the \\x infront for output to
+   * printf, if we don't have anything in the buffer then
+   * put two spaces
+   */
   std::copy(bin_str.begin(), bin_str.end(),
             std::ostream_iterator<unsigned int>(
-                hex_out, "\\\\x")); // for each of them, go put the \\x infront
-                                    // for the output to go to printf
-  if (hex_out.str() != "") {        // if we don't have anything in the buffer
-    hexxy = hex_out.str() + "20";   // put a space
+                hex_out, "\\\\x"));
+  if (hex_out.str() != "") {
+    hexxy = hex_out.str() + "20";
   }
+  /* make sure that it begins in \\x for output */
   hexxy = "\\\\x" + hexxy;
+  /* if the output is only spaces then return nothing */
   if (hexxy == "\\\\x20\\\\x20") {
     return "";
-  } else {
-    return (hexxy); // return to sys_string in hex to be put into printf
+  } 
+  /* return to sys_string in hex */
+  else {
+    return (hexxy);
   }
 }

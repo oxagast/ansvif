@@ -22,81 +22,90 @@ bool file_exists(const std::string &filen);
 std::vector<std::string> get_flags_man(std::string man_page,
                                        std::string man_loc, bool verbose,
                                        bool debug, bool dump_opts) {
+  /* declare our variables */
   std::string filename;
   std::vector<std::string> opt_vec;
+  /* put the filename back together */
   filename = "/usr/share/man/man" + man_loc + "/" + man_page + "." + man_loc +
-             ".gz"; // put the filename back together
+             ".gz";
   if (file_exists(filename) == true) {
-    char *chr_fn =
-        strdup(filename.c_str()); // change the filename to a char pointer
-    igzstream in(chr_fn);         //  gunzip baby
-    std::string gzline;           // initialize a line out of the gzstream
+    /* change our type for chr_fn */
+    char *chr_fn = strdup(filename.c_str());
+    /* time for the gunzip! */
+    igzstream in(chr_fn);
+    std::string gzline;
+    /* now we have some hella fucking regexes that are
+     * going to be matched... fml
+     */
     std::regex start_of_opt_1(
         "^(\\.?\\\\?\\w{2} )*(\\\\?\\w{2} ?)*(:?\\.B "
-        ")*((?:(?:\\\\-)+\\w+)(?:\\\\-\\w+)*).*"); // hella regex... why you do
-                                                   // this to me manpage?
-    std::smatch opt_part_1;                        // we'll match now
+        ")*((?:(?:\\\\-)+\\w+)(?:\\\\-\\w+)*).*");
+    std::smatch opt_part_1;
     std::regex start_of_opt_2(
-        "^\\.Op Fl (\\w+) Ar.*"); // also a stupid fucking regex
-    std::smatch opt_part_2;       // try to match again
-    std::regex start_of_opt_3("^\\\\fB(-.*)\\\\fB.*"); // ANOTHER goddamn regex
-                                                       // for the manpage --
-                                                       // fml
-    std::smatch opt_part_3;            // try to match the theird regex
-    while (std::getline(in, gzline)) { // if we've got a manpage...
+        "^\\.Op Fl (\\w+) Ar.*");
+    std::smatch opt_part_2;
+    std::regex start_of_opt_3("^\\\\fB(-.*)\\\\fB.*");
+    std::smatch opt_part_3;
+    while (std::getline(in, gzline)) {
+      /* if we've got a manpage, then we match the stuff
+       * out of the regex as we're ungzing and putting the 
+       * options in strings, removing the backspaces, and 
+       * putting it all cleanly into a vector
+       */
       if (std::regex_match(gzline, opt_part_1,
-                           start_of_opt_1)) { // ring 'er out
-        std::string opt_1 = opt_part_1[4];    // initialize opt_1 as a string
+                           start_of_opt_1)) {
+        std::string opt_1 = opt_part_1[4];
         std::string opt_release = (remove_chars(
-            opt_part_1[4], "\\"));      // remove the fucking backslashes plz
-        opt_vec.push_back(opt_release); // push the stuff into opt vec after we
-                                        // moved the excessive backslashes
+            opt_part_1[4], "\\"));
+        opt_vec.push_back(opt_release);
       }
       if (std::regex_match(
               gzline, opt_part_2,
-              start_of_opt_2)) { // if we've got a different style manpage...
-        std::string opt_2 = opt_part_2[1]; // initialize opt two
-        opt_vec.push_back("-" + opt_2);    // push the opt onto option vector
+              start_of_opt_2)) {
+        std::string opt_2 = opt_part_2[1];
+        opt_vec.push_back("-" + opt_2);
       }
       if (std::regex_match(
               gzline, opt_part_3,
-              start_of_opt_3)) {           // if we have the third style manpage
-        std::string opt_3 = opt_part_3[1]; // initialize opt three
-        opt_vec.push_back(opt_3);          // push the opt into option vector
+              start_of_opt_3)) {
+        std::string opt_3 = opt_part_3[1];
+        opt_vec.push_back(opt_3);
       }
     }
   } else {
+    /* either they didn't have the right location or the command
+     * doesn't have a manpage, either way, exit with error 1
+     */
     std::cerr << "Could not find a manpage for that command..."
-              << std::endl; // say that we couldn't find the manpage because
-                            // either they didn't enter the right location, or
-                            // the command doesn't have one
-    exit(1);                // exit on error 1
+              << std::endl;
+    exit(1);
   }
-  std::sort(opt_vec.begin(),
-            opt_vec.end()); // sort 'em first so that unique will work correctly
+  /* sort them so that we can unique them correctly */
+  std::sort(opt_vec.begin(), opt_vec.end());
   opt_vec.erase(unique(opt_vec.begin(), opt_vec.end()),
-                opt_vec.end());      // then we'll run unique over the vector
-                                     // holding all the options
-  int opt_vec_size = opt_vec.size(); // so we don't get a error on compliation
-                                     // about unsigned compared with int
-  if (verbose == true) {             // if we're talkative today...
-    std::cout << "Options being used: "
-              << std::endl; // start telling them what options will be used...
+                opt_vec.end());
+  /* just so we don't get an unsigned int error */
+  int opt_vec_size = opt_vec.size();
+  if (verbose == true) {
+    /* if we're being verbose then options used are listed */
+    std::cout << "Options being used: " << std::endl;
     for (int man_ln = 0; man_ln < opt_vec_size;
-         man_ln++) {                          // loop around the options
-      std::cout << opt_vec.at(man_ln) << " "; // output options for the user
+         man_ln++) {
+      std::cout << opt_vec.at(man_ln) << " ";
     }
-    std::cout << std::endl; // end the line, duh
+    std::cout << std::endl;
   }
-  if (dump_opts == true) { // if we've got the dump options flag set then we're
-                           // going to JUST dump all the options from the
-                           // manpage to STDOUT and be done with it
+  if (dump_opts == true) {
+    /* if we're going to dump the options of the manpage with -D
+     * then just dump them out on STDOUT and be done with it!
+     */
     for (int man_ln = 0; man_ln < opt_vec_size;
-         man_ln++) {                                // loop around the options
-      std::cout << opt_vec.at(man_ln) << std::endl; // output options only
+         man_ln++) {
+      std::cout << opt_vec.at(man_ln) << std::endl;
     }
-    std::cout << std::endl; // end the line
-    exit(0);                // exit cleanly
+    std::cout << std::endl;
+    exit(0);
   }
-  return (opt_vec); // or return the options we've extracted out of the manpages
+  /* return the options we've extracted out of the manpages */
+  return (opt_vec);
 }
