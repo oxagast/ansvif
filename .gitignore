@@ -21,3 +21,4 @@ test-driver
 /bin/
 *.Po
 Makefile
+Makefile.in
