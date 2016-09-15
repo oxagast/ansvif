@@ -72,8 +72,8 @@ FILE *popen2(std::string command, std::string type, int &pid,
  */
 int pclose2(FILE *fp, pid_t pid) 
 {
-  int stat;   // initialize stat
-  fclose(fp); // close the pipe
+  int stat;
+  fclose(fp);
   while (waitpid(pid, &stat, 0) == 0) {
     if (errno != EINTR) {
       stat = -1;

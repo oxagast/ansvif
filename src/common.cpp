@@ -60,7 +60,8 @@ std::string remove_chars(const std::string &source, const std::string &chars) {
 }
 
 int toint(std::string ints) {
-  return atoi(ints.c_str()); // for compatability with cygwin and mingw
+  /* for compatibility with cygwin */
+  return atoi(ints.c_str()); 
 }
 
 bool file_exists(const std::string &filen) {

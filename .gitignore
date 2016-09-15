@@ -17,3 +17,4 @@ src/win/.clang-format
 config.guess
 config.sub
 test-driver
+/autom4te.cache/
