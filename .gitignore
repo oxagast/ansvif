@@ -6,7 +6,12 @@ ansvif
 faulty
 find_suid
 !/man/*
-!/ansvif_*/usr/bin/*
+!/bin/
+/bin/*
+!/bin/ansvif_*
+/bin/ansvif_*/
+!/bin/ansvif_*/DEBIAN
+!/bin/ansvif_*/DEBIAN/control
 compile
 install-sh
 depcomp
@@ -18,7 +23,9 @@ config.guess
 config.sub
 test-driver
 /autom4te.cache/
-/bin/
 *.Po
 Makefile
 Makefile.in
+config.log
+config.status
+aclocal.m4
