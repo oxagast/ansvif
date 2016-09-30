@@ -9,7 +9,7 @@
 //  (  O )  (/    ( (_ /    \___ \ )(  
 //   \__(_/\_\_/\_/\___\_/\_(____/(__)
 
-#include "include/xmlwriter/xml_writer.hpp"
+#include "../include/xmlwriter/xml_writer.hpp"
 #include <cstdlib>
 #include <cstring>
 #include <fstream>
@@ -27,7 +27,9 @@ std::string remove_chars(const std::string &source, const std::string &chars);
 int reaper(int grim, int t_timeout);
 FILE *popen2(std::string command, std::string type, int &pid,
              std::string low_lvl_user);
+FILE *popen2_win(std::string command);
 int pclose2(FILE *fp, pid_t pid);
+int pclose2_win(FILE *fp);
 void write_seg(std::string filename, std::string seg_line);
 int rand_me_plz(int rand_from, int rand_to);
 std::string make_garbage(int trash, int buf, std::string opt_other_str,
@@ -328,6 +330,8 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
        * when we go to match.  we match with stringstream to get
        * output and put its contense in 'output'
        */
+ 
+      #ifdef __linux
       int pid;
       FILE *fp =
           popen2(out_str, "r", pid, low_lvl_user);
@@ -340,6 +344,7 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
       }
       /* close out the command cleanly */
       pclose2(fp, pid);
+
       /* this here takes care of the command that is run after 
        * the fuzz
        */
@@ -355,11 +360,37 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
       std::thread reaper_thread(reaper, pid, t_timeout);
       /* takes care of the reaper thread */
       reaper_thread.detach();
+      #endif
+	  #ifdef _WIN32
+//	        int pid;
+      FILE *fp = popen2_win(out_str);
+      char command_out[4096] = {0};
+      std::stringstream output;
+      while (read(fileno(fp), command_out, sizeof(command_out) - 1) != 0) {
+        output << std::string(command_out);
+        /* make sure we don't overflow */
+        memset(&command_out, 0, sizeof(command_out));
+      }
+      /* close out the command cleanly */
+      pclose2_win(fp);
+
+      /* this here takes care of the command that is run after 
+       * the fuzz
+       */
+ //     int run_com_pid;
+      if (run_command != "") {
+        FILE *fp = popen2_win(run_command);
+        pclose2_win(fp);
+      }
+	  #endif
       /* our output will be stored here! */
       std::string cmd_output;
+
       if (write_file_n != "") {
-        std::ostringstream pid_as_s;
+      #ifdef __linux
+	  std::ostringstream pid_as_s;
         pid_as_s << pid;
+      #endif
         /* all this xml stuff is for logging */
         std::ofstream xml_output;
         xml_output.open(write_file_n + ".crash.ansvif.log");
@@ -373,10 +404,12 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
             .attr("path", "Path of the file fuzzed")
             .content(path_str.c_str())
             .closeElt();
-        writer.openElt("Process")
+        #ifdef __linux
+			writer.openElt("Process")
             .attr("PID", "The process ID of the crashed program")
             .content(pid_as_s.str().c_str())
             .closeElt();
+        #endif
       }
       while (std::getline(output, cmd_output)) {
         /* we trim any extra characters */
@@ -391,7 +424,9 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
             (cmd_output == "-1073741819") || (cmd_output == "-1073740791") ||
             (cmd_output == "-1073741571") || (cmd_output == "-532459699") ||
             (cmd_output == fault_code)) {
-          std::cout << "PID: " << pid << std::endl;
+          #ifdef __linux
+			std::cout << "PID: " << pid << std::endl;
+			#endif
           std::cout << "Exit Code: " << cmd_output << std::endl;
           std::cout << "Crashed with command: " << std::endl
                     << out_str_p
@@ -405,8 +440,10 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
             /* since we crashed we're going to finish writing to the
              * xml file
              */
-            std::ostringstream pid_as_s;
+            #ifdef __linux
+			std::ostringstream pid_as_s;
             pid_as_s << pid;
+			#endif
             std::ofstream xml_output;
             xml_output.open(write_file_n + ".crash.ansvif.log");
             Writer writer(xml_output);
@@ -437,8 +474,10 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
           }
           if (write_to_file == true) {
             /* logging hangs */
+			#ifdef __linux
             std::ostringstream pid_as_s;
             pid_as_s << pid;
+            #endif
             std::ofstream xml_output;
             xml_output.open(write_file_n + ".crash.ansvif.log");
             Writer writer(xml_output);

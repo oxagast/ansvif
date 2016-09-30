@@ -23,19 +23,19 @@ get_out_str_pc(std::string env_str, std::string valgrind_str,
       out_str_p = " (.\\printf.exe \\x" + binstr_to_hex(env_str) + "\") " +
                   "'" + path_str + "' (.\\printf.exe \\x" +
                   binstr_to_hex(sys_str) + ")" + always_arg + " " + fuzz_after +
-                  "; echo $LastExitCode"; // for windows compatibility
+                  "; echo $LastExitCode";
     }
     if (env_str == "") {
       out_str_p = "'" + path_str + "' (.\\printf.exe \\x" +
                   binstr_to_hex(sys_str) + ") " + always_arg + " " +
                   fuzz_after +
-                  "; echo $LastExitCode"; // also for win compatibility
+                  "; echo $LastExitCode";
     }
-    out_str = env_str + "{& '" + path_str + "' " + sys_str + " " + always_arg +
-              " " + fuzz_after;
+   out_str = "powershell -c " + env_str + "(Start-Job {& '" + path_str + "' " + sys_str + " " +
+              always_arg + " " + fuzz_after;
   }
   out_str = out_str + " > " + log_prefix +
-            ".output.ansvif.log; echo $LastExitCode}"; // get the signal
+            ".output.ansvif.log; echo $LastExitCode}";
   std::vector<std::string> out_all;
   out_all.push_back(out_str);
   out_all.push_back(out_str_p);

@@ -4,62 +4,28 @@
  * Marshall Whittaker / oxagast
  */
 
-#include <cerrno>
+//    __ _  _  __   ___  __  ____ ____ 
+//   /  ( \/ )/ _\ / __)/ _\/ ___(_  _)
+//  (  O )  (/    ( (_ /    \___ \ )(  
+//   \__(_/\_\_/\_/\___\_/\_(____/(__)
+
 #include <cstdio>
-#include <cstdlib>
-#include <iomanip>
+#include <iostream>
+#include <memory>
+#include <stdexcept>
 #include <string>
-#include <sys/stat.h>
-#include <sys/wait.h>
-#include <thread>
-#include <unistd.h>
 
-#define READ 0
-#define WRITE 1
-
-FILE *popen2(std::string command, std::string type, int &pid,
-             std::string low_lvl_user) {
-  pid_t child_pid;
-  int fd[1];
-  pipe(fd);
-  if ((child_pid = fork()) == -1) {
-    perror("fork");
+FILE* popen2_win(std::string command) {
+	command = "powershell -c " + command;
+  FILE *cmd_p = popen(command.c_str(), "r");
+  if (!cmd_p)
+  {
     exit(1);
   }
-  if (child_pid == 0) { // child begins
-    if (type == "r") {
-      close(fd[READ]);    // Close the READ
-      dup2(fd[WRITE], 1); // Redirect stdout to pipe
-    } else {
-      close(fd[WRITE]);  // Close the WRITE
-      dup2(fd[READ], 0); // Redirect stdin to pipe
-    }
-    execl("C:\\Windows\\SysWOW64\\WindowsPowerShell\\v1.0\\Powershell.exe",
-          "-c", command.c_str(), NULL); // runs it all
-    exit(0);
-  } else {
-    if (type == "r") {
-      close(fd[WRITE]); // Close the WRITE
-    } else {
-      close(fd[READ]); // Close the READ
-    }
+  return cmd_p;
+ }
+ 
+ int pclose2_win(FILE *fp) {
+	    pclose(fp);
+		return(0);
   }
-  pid = child_pid;
-  if (type == "r") {
-    return fdopen(fd[READ], "r");
-  }
-  return fdopen(fd[WRITE], "w");
-}
-
-int pclose2(FILE *fp, pid_t pid) // close it so we don't fuck outselves
-{
-  int stat;
-  fclose(fp);
-  while (waitpid(pid, &stat, 0) == 0) {
-    if (errno != EINTR) {
-      stat = -1;
-      break;
-    }
-  }
-  return stat;
-}

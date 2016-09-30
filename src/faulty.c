@@ -2,13 +2,12 @@
  * ansvif
  * A Not So Very Intelligent Fuzzer
  * Marshall Whittaker / oxagast
- *
- *
- *    __ _  _  __   ___  __  ____ ____ 
- *   /  ( \/ )/ _\ / __)/ _\/ ___(_  _)
- *  (  O )  (/    ( (_ /    \___ \ )(  
- *   \__(_/\_\_/\_/\___\_/\_(____/(__)
  */
+
+//    __ _  _  __   ___  __  ____ ____ 
+//   /  ( \/ )/ _\ / __)/ _\/ ___(_  _)
+//  (  O )  (/    ( (_ /    \___ \ )(  
+//   \__(_/\_\_/\_/\___\_/\_(____/(__)
  
 #define _GNU_SOURCE
 #include <stdio.h>
@@ -21,7 +20,7 @@ void func(char **argv) {
   return;
 }
 void spawnme() {
-  setuid(0);
+//  setuid(0);
   int stat = system("/bin/sh");
 }
 int main(int argc, char *argv[]) {

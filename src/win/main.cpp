@@ -4,13 +4,18 @@
  * Marshall Whittaker / oxagast
  */
 
+//    __ _  _  __   ___  __  ____ ____ 
+//   /  ( \/ )/ _\ / __)/ _\/ ___(_  _)
+//  (  O )  (/    ( (_ /    \___ \ )(  
+//   \__(_/\_\_/\_/\___\_/\_(____/(__)
+
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
 #include <regex>
 #include <stdio.h>
 #include <sys/stat.h>
-#include <sys/wait.h>
+//#include <sys/wait.h>
 #include <thread>
 #include <unistd.h>
 #include <vector>

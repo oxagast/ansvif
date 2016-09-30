@@ -16,14 +16,18 @@
 #include <signal.h>
 #include <stdio.h>
 #include <sys/stat.h>
-#include <sys/wait.h>
+//#include <sys/wait.h>
 #include <thread>
 #include <unistd.h>
 #include <vector>
 #include <signal.h>
+#include <random>
 
 #define READ 0
 #define WRITE 1
+
+
+
 
 bool match_seg(int buf_size, std::vector<std::string> opts,
                std::vector<std::string> spec_env, std::string path_str,
@@ -72,15 +76,17 @@ bool file_exists(const std::string &filen) {
 
 int rand_me_plz(int rand_from, int rand_to) {
   /* initialize and seed the random device */
-  std::random_device rd;
-  std::default_random_engine generator(rd());
+//  std::random_device rd;
+ std::mt19937 generator(time(NULL));
+//  std::default_random_engine generator(rd());
+
   /* get a random number from-to */
   std::uniform_int_distribution<int> distribution(rand_from, rand_to);
   /* bind it so we can rerun multiple times for
    * different results
    */
-  auto roll = std::bind(distribution, generator);
-  return (roll());
+  int roll = distribution(generator);
+  return (roll);
 }
 
 char fortune_cookie() {
@@ -98,13 +104,21 @@ char fortune_cookie() {
   return (chr);
 }
 
+
 int reaper(int grim, int t_timeout) {
   /* run the timer and after the timeout we'll run
    * SIGKILL on it (kill -9 equivilant on linux)
    */
+#ifdef __linux__ 
+    //linux code goes here
   sleep(t_timeout);
   kill(grim, 9);
   return (0);
+  #elif _WIN32
+    // windows code goes here
+#else
+
+#endif
 }
 
 std::vector<std::string> get_flags_template(std::string filename, bool verbose,
