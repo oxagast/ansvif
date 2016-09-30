@@ -15,7 +15,6 @@
 #include <regex>
 #include <stdio.h>
 #include <sys/stat.h>
-//#include <sys/wait.h>
 #include <thread>
 #include <unistd.h>
 #include <vector>
@@ -43,6 +42,7 @@ std::vector<std::string> get_other(std::string filename, bool verbose,
 void write_seg(std::string filename, std::string seg_line);
 
 int main(int argc, char *argv[]) { // initialize our main
+  srand(time(NULL));
   int opt;                         // initialize opt for how many options
   int num_threads = 2;             // how many threads are we using?
   int t_timeout = 3; // what is the seconds that the thread will time out in if

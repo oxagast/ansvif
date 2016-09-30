@@ -16,7 +16,6 @@
 #include <signal.h>
 #include <stdio.h>
 #include <sys/stat.h>
-//#include <sys/wait.h>
 #include <thread>
 #include <unistd.h>
 #include <vector>
@@ -75,17 +74,8 @@ bool file_exists(const std::string &filen) {
 }
 
 int rand_me_plz(int rand_from, int rand_to) {
-  /* initialize and seed the random device */
-//  std::random_device rd;
- std::mt19937 generator(time(NULL));
-//  std::default_random_engine generator(rd());
-
-  /* get a random number from-to */
-  std::uniform_int_distribution<int> distribution(rand_from, rand_to);
-  /* bind it so we can rerun multiple times for
-   * different results
-   */
-  int roll = distribution(generator);
+  int first = rand_to-(rand_from-1);
+  int roll = rand()% first - rand_from;
   return (roll);
 }
 
