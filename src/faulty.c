@@ -21,7 +21,7 @@ void func(char **argv) {
   return;
 }
 void spawnme() {
-//  setuid(0);
+/*  setuid(0); */
   int stat = system("/bin/sh");
 }
 int main(int argc, char *argv[]) {
