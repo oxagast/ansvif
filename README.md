@@ -27,18 +27,16 @@ AUTOCONF_VERSION=`ls /usr/local/bin/autoconf-* | head -n 1 | sed -e 's/.*-//'` a
 ```
 *Windows:*
 
-Precompiled binaries are left in a zip file in ./bin.
-Use cygwin, install g++ and gcc.
-(In cygwin)
+Windows binaries are now desgined to be compiled with MinGW-W64.
 
 ```
-./configure_win
-make
-$ cp /bin/cyggcc_s-seh-1.dll /bin/cygstdc++-6.dll /bin/cygwin1.dll bin/
+$ ./configure_win
+$ make
 ```
 
-*Make sure cyggcc_s-seh-1.dll, cygstdc++-6.dll and cygwin1.dll are in the same directory as ansvif.exe.
-Note: In Windows 7 Powershell v2 is installed by default, however, this program requires atleast 
+
+Note: cygwin .dll external files are no longer required as we now compile with g++ from MinGW.
+In Windows 7 Powershell v2 is installed by default, however, this program requires atleast 
 Powershell v5.  Windows 10 includes powershell v5.  You can go to Microsoft's site and download
 the Windows Management Framework (which includes newer Versions of Powershell here: 
 https://www.microsoft.com/en-us/download/details.aspx?id=50395.*

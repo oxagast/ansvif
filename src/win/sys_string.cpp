@@ -29,12 +29,14 @@ get_out_str(std::string env_str, std::string valgrind_str, std::string sys_str,
                   fuzz_after +
                   "; echo $LastExitCode"; // also for win compatibility
     }
-    out_str = "powershell -c " + env_str + "(Start-Job {& '" + path_str + "' " + sys_str + " " +
-              always_arg + " " + fuzz_after;
-  }
-  out_str =
-      out_str + "; echo $LastExitCode} | Receive-Job -Wait)"; // get the signal
-  std::vector<std::string> out_all;
+   // out_str = env_str + "(Start-Job {& '" + path_str + "' " + sys_str + " " +
+  //            always_arg + " " + fuzz_after;
+  out_str = "$(" + env_str + " " + path_str + " " + sys_str + " " + always_arg + " " + fuzz_after;
+ }
+  //out_str =
+  //    out_str + "; echo $LastExitCode} | Receive-Job -Wait)"; // get the signal
+  out_str = out_str + "); echo $lastexitcode";
+ std::vector<std::string> out_all;
   out_all.push_back(out_str);
   out_all.push_back(out_str_p);
   return (out_all);

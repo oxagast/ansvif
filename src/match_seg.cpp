@@ -331,7 +331,7 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
        * output and put its contense in 'output'
        */
  
-      #ifdef __linux
+ //     #ifdef __linux
       int pid;
       FILE *fp =
           popen2(out_str, "r", pid, low_lvl_user);
@@ -357,11 +357,13 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
       /* this takes care of killing off the child if it takes
        * too long
        */
-      std::thread reaper_thread(reaper, pid, t_timeout);
+      #ifdef __linux
+	   std::thread reaper_thread(reaper, pid, t_timeout);
       /* takes care of the reaper thread */
       reaper_thread.detach();
-      #endif
-	  #ifdef _WIN32
+	  #endif
+//      #endif
+/*	  #ifdef _WIN32
 //	        int pid;
       FILE *fp = popen2_win(out_str);
       char command_out[4096] = {0};
@@ -369,16 +371,18 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
       while (read(fileno(fp), command_out, sizeof(command_out) - 1) != 0) {
         output << std::string(command_out);
         /* make sure we don't overflow */
+/*
         memset(&command_out, 0, sizeof(command_out));
       }
       /* close out the command cleanly */
-      pclose2_win(fp);
+//      pclose2_win(fp);
 
       /* this here takes care of the command that is run after 
        * the fuzz
        */
  //     int run_com_pid;
-      if (run_command != "") {
+/*
+ if (run_command != "") {
         FILE *fp = popen2_win(run_command);
         pclose2_win(fp);
       }

@@ -2,6 +2,7 @@
 *~
 *.o
 *.a
+*.exe
 ansvif
 faulty
 find_suid
