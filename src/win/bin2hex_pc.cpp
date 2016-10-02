@@ -15,22 +15,29 @@
 #include <string>
 
 std::string binstr_to_hex_pc(std::string bin_str) {
-  std::stringstream hex_out; // initialize the hex to go out
-  std::string hexxy;         // initalize our string to put it in
+  /* initialize the hex to go out */
+  std::stringstream hex_out;
+  /* initialize our string to put it in with a filler of
+   * zero and upercase hexadecimal with a width of 2
+   */
+  std::string hexxy;
   hex_out << std::setw(2) << std::setfill('0') << std::hex
-          << std::uppercase; // set the filler to 0, uppercase hexadecimal and
-                             // width 2.
+          << std::uppercase;
+  /* for each of them put a % in front for the output to printf
+   * if we don't have anything in the buffer then we'll just put
+   * a space
+   */
   std::copy(bin_str.begin(), bin_str.end(),
             std::ostream_iterator<unsigned int>(
-                hex_out, "%"));   // for each of them, go put the % infront
-                                  // for the output to go to printf
-  if (hex_out.str() != "") {      // if we don't have anything in the buffer
-    hexxy = hex_out.str() + "20"; // put a space
+                hex_out, "%"));
+  if (hex_out.str() != "") {
+    hexxy = hex_out.str() + "20";
   }
   hexxy = "%" + hexxy;
   if (hexxy == "%20%20") {
     return "";
   } else {
-    return (hexxy); // return to sys_string in hex to be put into printf
+    /* return the hex */
+    return (hexxy);
   }
 }

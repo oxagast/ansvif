@@ -361,35 +361,9 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
 	   std::thread reaper_thread(reaper, pid, t_timeout);
       /* takes care of the reaper thread */
       reaper_thread.detach();
-	  #endif
-//      #endif
-/*	  #ifdef _WIN32
-//	        int pid;
-      FILE *fp = popen2_win(out_str);
-      char command_out[4096] = {0};
-      std::stringstream output;
-      while (read(fileno(fp), command_out, sizeof(command_out) - 1) != 0) {
-        output << std::string(command_out);
-        /* make sure we don't overflow */
-/*
-        memset(&command_out, 0, sizeof(command_out));
-      }
-      /* close out the command cleanly */
-//      pclose2_win(fp);
-
-      /* this here takes care of the command that is run after 
-       * the fuzz
-       */
- //     int run_com_pid;
-/*
- if (run_command != "") {
-        FILE *fp = popen2_win(run_command);
-        pclose2_win(fp);
-      }
-	  #endif
+      #endif
       /* our output will be stored here! */
       std::string cmd_output;
-
       if (write_file_n != "") {
       #ifdef __linux
 	  std::ostringstream pid_as_s;
@@ -478,7 +452,7 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
           }
           if (write_to_file == true) {
             /* logging hangs */
-			#ifdef __linux
+            #ifdef __linux
             std::ostringstream pid_as_s;
             pid_as_s << pid;
             #endif

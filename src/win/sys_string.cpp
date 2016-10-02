@@ -4,6 +4,11 @@
  * Marshall Whittaker / oxagast
  */
 
+//    __ _  _  __   ___  __  ____ ____ 
+//   /  ( \/ )/ _\ / __)/ _\/ ___(_  _)
+//  (  O )  (/    ( (_ /    \___ \ )(  
+//   \__(_/\_\_/\_/\___\_/\_(____/(__)
+
 #include <cstdlib>
 #include <string>
 #include <unistd.h>
@@ -21,22 +26,19 @@ get_out_str(std::string env_str, std::string valgrind_str, std::string sys_str,
       out_str_p = " (.\\printf.exe \\x" + binstr_to_hex(env_str) + "\") " +
                   "'" + path_str + "' (.\\printf.exe \\x" +
                   binstr_to_hex(sys_str) + ")" + always_arg + " " + fuzz_after +
-                  "; echo $LastExitCode"; // for windows compatibility
+                  "; echo $LastExitCode";
     }
     if (env_str == "") {
       out_str_p = "'" + path_str + "' (.\\printf.exe \\x" +
                   binstr_to_hex(sys_str) + ") " + always_arg + " " +
                   fuzz_after +
-                  "; echo $LastExitCode"; // also for win compatibility
+                  "; echo $LastExitCode";
     }
-   // out_str = env_str + "(Start-Job {& '" + path_str + "' " + sys_str + " " +
-  //            always_arg + " " + fuzz_after;
+  /* shit for windows compatibility through powershell */
   out_str = "$(" + env_str + " " + path_str + " " + sys_str + " " + always_arg + " " + fuzz_after;
  }
-  //out_str =
-  //    out_str + "; echo $LastExitCode} | Receive-Job -Wait)"; // get the signal
   out_str = out_str + "); echo $lastexitcode";
- std::vector<std::string> out_all;
+  std::vector<std::string> out_all;
   out_all.push_back(out_str);
   out_all.push_back(out_str_p);
   return (out_all);

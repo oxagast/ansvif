@@ -42,6 +42,7 @@ std::vector<std::string> get_other(std::string filename, bool verbose,
 void write_seg(std::string filename, std::string seg_line);
 
 int main(int argc, char *argv[]) { // initialize our main
+  /* initial random seed for all our randomization mess */
   srand(time(NULL));
   int opt;                         // initialize opt for how many options
   int num_threads = 2;             // how many threads are we using?

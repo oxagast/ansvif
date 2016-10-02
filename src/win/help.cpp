@@ -4,12 +4,18 @@
  * Marshall Whittaker / oxagast
  */
 
+//    __ _  _  __   ___  __  ____ ____ 
+//   /  ( \/ )/ _\ / __)/ _\/ ___(_  _)
+//  (  O )  (/    ( (_ /    \___ \ )(  
+//   \__(_/\_\_/\_/\___\_/\_(____/(__)
+
 #include <cstdlib>
 #include <iostream>
 #include <stdio.h>
 #include <string>
 
 void help_me(std::string mr_me, std::string ver) {
+  /* print all the help shit to STDOUT */
   std::cout
       << "ansvif v" << ver << " -- A Not So Very Intelligent Fuzzer"
       << std::endl
@@ -79,7 +85,9 @@ void help_me(std::string mr_me, std::string ver) {
       << " -P           Use % to represent binary in fuzz." << std::endl
       << " -v           Verbose." << std::endl
       << " -d           Debug."
-      << std::endl; // write all this help file shit out to STDOUT
-  exit(1); // exit with error 1 because we didn't really do anything but print
-           // help...
+      << std::endl;
+    /* exit with an error because we didn't do anything but
+     * print a help page
+     */
+    exit(1);
 }
