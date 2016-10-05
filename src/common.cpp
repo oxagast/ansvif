@@ -37,8 +37,8 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
                std::string junk_file_of_args, std::string always_arg_before,
                std::string always_arg_after, bool never_rand,
                std::string run_command, std::string fault_code, bool single_try,
-               bool percent_sign, bool verbose, bool debug, std::string ver);
-void help_me(std::string mr_me);
+               bool percent_sign, int static_args, bool verbose, bool debug, std::string ver);
+void help_me(std::string mr_me, std::string ver);
 std::vector<std::string> get_flags_man(std::string man_page,
                                        std::string man_loc, bool verbose,
                                        bool debug, bool dump_opts);
@@ -62,9 +62,20 @@ std::string remove_chars(const std::string &source, const std::string &chars) {
   return(result);
 }
 
-int toint(std::string ints) {
+int toint(std::string ints, std::string my_prog, std::string version) {
+     std::istringstream b_size(ints);
+  int is_int_b_s;
+  if (!(b_size >> is_int_b_s)) {
+    help_me(my_prog, version);
+  }
+  char buf_char_maybe_b_s;
+  if (b_size >> buf_char_maybe_b_s) {
+    help_me(my_prog, version);
+  } else {
   /* for compatibility with cygwin */
-  return atoi(ints.c_str()); 
+  return atoi(ints.c_str());
+  }
+  return(0);
 }
 
 bool file_exists(const std::string &filen) {

@@ -134,3 +134,8 @@ Other than that, just play around and have fun!
 
 Windows users must have ansvif running from Powershell and have the cygwin .dll's in the same dir.
 Linux code should be relatively stable.
+
+**Thanks**
+
+Thanks to dll999 for syscall fuzzing ideas.
+Thanks to god knows how many people on IRC and StackOverflow.

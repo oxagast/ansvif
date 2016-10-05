@@ -56,7 +56,7 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
                std::string junk_file_of_args, std::string always_arg_before,
                std::string always_arg_after, bool never_rand,
                std::string run_command, std::string fault_code, bool valgrind,
-               bool single_try, bool percent_sign, bool verbose, bool debug,
+               bool single_try, bool percent_sign, int static_args, bool verbose, bool debug,
                std::string ver) {
   bool segged = false;
   std::string valgrind_str;
@@ -115,12 +115,31 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
       /* loop around the options, roll the die, and put a
        * random argument in the vector
        */
+      if (static_args == -1) {
       for (int cmd_flag_l = 0; cmd_flag_l < opts_size;
            cmd_flag_l++) {
         if (rand_me_plz(0, 1) == 1) {
           junk_opts.push_back(
               opts.at(cmd_flag_l));
         }
+      }
+      }
+      if (static_args != -1) {
+        int junk_opts_size = 0;
+        for (int cmd_flag_l = 0; junk_opts_size < static_args;
+           cmd_flag_l++) {
+
+            if ((rand_me_plz(0, 1) == 1) && (cmd_flag_l < opts_size)) {
+            junk_opts.push_back(
+              opts.at(cmd_flag_l));
+                        junk_opts_size = junk_opts.size();
+        }
+
+        else {
+            junk_opts.push_back(" ");
+                        junk_opts_size = junk_opts.size();
+        }
+      }
       }
       for (int cmd_flag_a = 0; cmd_flag_a < my_penis_size;
            cmd_flag_a++) {

@@ -21,7 +21,7 @@
 #include <unistd.h>
 #include <vector>
 
-int toint(std::string ints);
+int toint(std::string ints, std::string my_prog, std::string version);
 void help_me(std::string mr_me, std::string ver);
 std::vector<std::string> get_flags_man(std::string man_page,
                                        std::string man_loc, bool verbose,
@@ -35,7 +35,7 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
                std::string junk_file_of_args, std::string always_arg_before,
                std::string always_arg_after, bool never_rand,
                std::string run_command, std::string fault_code, bool valgrind,
-               bool single_try, bool percent_sign, bool verbose, bool debug,
+               bool single_try, bool percent_sign, int static_args, bool verbose, bool debug,
                std::string ver);
 std::vector<std::string> get_flags_template(std::string filename, bool verbose,
                                             bool debug);
@@ -71,7 +71,8 @@ void sig_handler(int sig) {
 int main(int argc, char *argv[]) { // initialize our main
   /* initialize all our variables for startup! */
   /* how many options? */
-  int opt, thread_count_def = 2, thread_timeout_def = 3;
+  int opt, thread_count_def = 2, thread_timeout_def = 3,
+      static_args = 0;
   /* the options that are pulled out of the manpage or
    * template go into the opts vector, the environment
    * variables go into spec_env and the extra variables
@@ -128,7 +129,7 @@ int main(int argc, char *argv[]) { // initialize our main
   /* now we can start grabbing all the options! */
   while ((opt = getopt(
     argc, argv,
-    "m:p:t:e:c:f:o:b:s:x:R:A:F:S:L:W:B:C:1hrzvdDnVP")) != -1) {
+    "m:p:t:e:c:f:o:b:s:x:R:A:F:S:L:W:B:C:M:1hrzvdDnVP")) != -1) {
     switch (opt) {
     case 'v':
       verbose = true;
@@ -219,6 +220,9 @@ int main(int argc, char *argv[]) { // initialize our main
     case 'P':
       percent_sign = true;
       break;
+    case 'M':
+      static_args = toint(optarg, argv[0], ver);
+      break;
     default:
       help_me(argv[0], ver);
     }
@@ -259,42 +263,14 @@ int main(int argc, char *argv[]) { // initialize our main
    * happens to not be, then we'll send them to the help page,
    * otherwise we'll turn it into type int
    */
-  std::istringstream b_size(buf_size);
-  int is_int_b_s;
-  if (!(b_size >> is_int_b_s)) {
-    help_me(argv[0], ver);
-  }
-  char buf_char_maybe_b_s;
-  if (b_size >> buf_char_maybe_b_s) {
-    help_me(argv[0], ver);
-  } else {
-    int buf_size_int = toint(buf_size);
+int buf_size_int = toint(buf_size, argv[0], ver);
     /* make sure the thread count is an integar the same way
      * we did with the buffer size
-     */
-    int thread_count_int = thread_count_def;
-    std::istringstream t_count(num_threads);
-    int is_int_t_c;
-    if (!(t_count >> is_int_t_c)) {
-      help_me(argv[0], ver);
-    }
-    char buf_char_maybe_t_c;
-    if (t_count >> buf_char_maybe_t_c) {
-      help_me(argv[0], ver);
-    } else {
-      thread_count_int = toint(num_threads);
+     */  
+      int thread_count_int = thread_count_def;
+    thread_count_int = toint(num_threads, argv[0], ver);
       int thread_timeout_int = thread_timeout_def;
-      /* we're gonna do the same thing with the thread timeout */
-      std::istringstream th_timeout(t_timeout);
-      int is_int_t_t;
-      if (!(th_timeout >> is_int_t_t)) {
-        help_me(argv[0], ver);
-      }
-      char buf_char_maybe_t_t;
-      if (th_timeout >> buf_char_maybe_t_t) {
-        help_me(argv[0], ver);
-      } else {
-        thread_timeout_int = toint(t_timeout);
+        thread_timeout_int = toint(t_timeout, argv[0], ver);
         /* if we're not doing a single try then turn on 
          * threading 
          */
@@ -308,7 +284,7 @@ int main(int argc, char *argv[]) { // initialize our main
                 is_other, other_sep, thread_timeout_int, low_lvl_user,
                 junk_file_of_args, always_arg_before, always_arg_after,
                 never_rand, run_command, fault_code, valgrind, single_try,
-                percent_sign, verbose, debug,
+                percent_sign, static_args, verbose, debug,
                 ver));
             /* thrift shop */
           for (auto &all_thread : threads)
@@ -324,12 +300,11 @@ int main(int argc, char *argv[]) { // initialize our main
                     is_other, other_sep, thread_timeout_int, low_lvl_user,
                     junk_file_of_args, always_arg_before, always_arg_after,
                     never_rand, run_command, fault_code, valgrind, single_try,
-                    percent_sign, verbose, debug,
+                    percent_sign, static_args, verbose, debug,
                     ver);
         }
         /* exit cleanly! */
         exit(0);
       }
-    }
-  }
-}
+
+
