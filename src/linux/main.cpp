@@ -129,7 +129,7 @@ int main(int argc, char *argv[]) { // initialize our main
   /* now we can start grabbing all the options! */
   while ((opt = getopt(
     argc, argv,
-    "m:p:t:e:c:f:o:b:s:x:R:A:F:S:L:W:B:C:M:1hrzvdDnVP")) != -1) {
+    "m:p:t:e:c:f:o:b:s:x:R:A:F:S:L:W:B:M:C:1hrzvdDnVP")) != -1) {
     switch (opt) {
     case 'v':
       verbose = true;

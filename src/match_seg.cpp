@@ -95,7 +95,7 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
       } else {
         /* any data entered */
         rand_spec_one = 0;
-        rand_spec_two = 16;
+        rand_spec_two = 18;
       }
       /* initilize our optiosn vectors, our environment string
        * and our system call string
@@ -115,7 +115,7 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
       /* loop around the options, roll the die, and put a
        * random argument in the vector
        */
-      if (static_args == -1) {
+      if (static_args == 0) {
       for (int cmd_flag_l = 0; cmd_flag_l < opts_size;
            cmd_flag_l++) {
         if (rand_me_plz(0, 1) == 1) {
@@ -124,7 +124,7 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
         }
       }
       }
-      if (static_args != -1) {
+      if (static_args != 0) {
         int junk_opts_size = 0;
         for (int cmd_flag_l = 0; junk_opts_size < static_args;
            cmd_flag_l++) {

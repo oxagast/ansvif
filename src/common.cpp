@@ -44,6 +44,7 @@ void help_me(std::string mr_me, std::string ver);
 std::vector<std::string> get_flags_man(std::string man_page,
                                        std::string man_loc, bool verbose,
                                        bool debug, bool dump_opts);
+int rand_me_plz(int rand_from, int rand_to);
 
 std::string remove_chars(const std::string &source, const std::string &chars) {
   /* initialize an empty removal string */
@@ -84,12 +85,6 @@ bool file_exists(const std::string &filen) {
   struct stat buf;
   /* return if the file exists or not */
   return (stat(filen.c_str(), &buf) == 0);
-}
-
-int rand_me_plz(int rand_from, int rand_to) {
-  int first = rand_to-(rand_from-1);
-  int roll = rand()% first - rand_from;
-  return (roll);
 }
 
 int reaper(int grim, int t_timeout) {

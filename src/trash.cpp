@@ -152,6 +152,19 @@ std::string trash_generator(int trash, int buf, std::string user_junk,
       return ("OOR");
   }
   if (trash == 16) {
+    std::stringstream int_trash;
+    int_trash << rand_me_plz(0,9999);
+    junk = int_trash.str();
+    std::cout << junk;
+  }
+  if (trash == 17) {
+         std::stringstream int_trash, float_trash;
+    int_trash << rand_me_plz(0,9999);
+    float_trash << rand_me_plz(0,9999);
+    
+     junk = int_trash.str() + "." + float_trash.str();
+  }
+  if (trash == 18) {
     junk = opt_other_str;
   }
   /* return the junk to put in between the args */
