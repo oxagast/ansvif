@@ -6,6 +6,7 @@
 ansvif
 faulty
 find_suid
+syscalls
 !/man/*
 !/bin/
 /bin/*
@@ -30,4 +31,3 @@ Makefile.in
 config.log
 config.status
 aclocal.m4
-src/linux/syscalls/syscalls

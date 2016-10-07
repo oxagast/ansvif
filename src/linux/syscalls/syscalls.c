@@ -16,7 +16,7 @@ int main(int argc, char *argv[]) {
     }
     if (strcmp(argv[1], "chmod") == 0) {
       /* int chmod(const char *pathname, mode_t mode); */
-      printf("%s", argv[1]);
+      printf("%s\n", argv[1]);
       ret_code = chmod(argv[2], argv[3]);
     }
   } else {
