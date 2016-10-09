@@ -95,7 +95,7 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
       } else {
         /* any data entered */
         rand_spec_one = 0;
-        rand_spec_two = 18;
+        rand_spec_two = 19;
       }
       /* initilize our optiosn vectors, our environment string
        * and our system call string

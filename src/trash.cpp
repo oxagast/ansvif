@@ -163,6 +163,9 @@ std::string trash_generator(int trash, int buf, std::string user_junk,
      junk = int_trash.str() + "." + float_trash.str();
   }
   if (trash == 18) {
+      junk = "\"\"";
+  }
+  if (trash == 19) {
     junk = opt_other_str;
   }
   /* return the junk to put in between the args */

@@ -101,7 +101,7 @@ int main(int argc, char *argv[]) { // initialize our main
    * catch as well as the other default ones.
    */
   std::string t_timeout = "3", man_loc = "8", num_threads = "2",
-    buf_size, mp, template_file, strip_shell = "`<>\n|&\[]\()\{}:;\\'\"$",
+    buf_size, mp, template_file, strip_shell = "`<>\n|&\[]\()\{}:;\\'$",
     u_strip_shell, write_file_n = "", path_str = "", other_sep = "", low_lvl_user =
     "nobody", junk_file_of_args = "", always_arg_before = "", always_arg_after =
     "", run_command = "", man_page = "", fault_code = "134";
