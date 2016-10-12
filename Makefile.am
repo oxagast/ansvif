@@ -12,7 +12,7 @@ find_suid_SOURCES = src/linux/find_suid.cpp
 faulty_SOURCES = src/faulty.c
 faulty_CFLAGS = -ansi -fno-stack-protector
 syscalls_SOURCES = src/linux/syscalls.cpp
-syscalls_CFLAGS = -Wno-int-conversion
+syscalls_CFLAGS = -ansi
 ansvifdir = bin
 AM_CXXFLAGS = -Wall
 check: all

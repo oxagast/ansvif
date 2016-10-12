@@ -1,3 +1,14 @@
+/*
+ * ansvif
+ * A Not So Very Intelligent Fuzzer
+ * Marshall Whittaker / oxagast
+ */
+
+//    __ _  _  __   ___  __  ____ ____ 
+//   /  ( \/ )/ _\ / __)/ _\/ ___(_  _)
+//  (  O )  (/    ( (_ /    \___ \ )(  
+//   \__(_/\_\_/\_/\___\_/\_(____/(__)
+
 #include <random>
 #include <functional>
 int rand_me_plz(int rand_from, int rand_to) {

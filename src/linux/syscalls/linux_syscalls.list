@@ -1,6 +1,3 @@
-Thanks to dll999 for the syscall fuzzing idea.
-
-
 accept
 accept4
 access

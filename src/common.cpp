@@ -88,16 +88,15 @@ bool file_exists(const std::string &filen) {
 }
 
 int reaper(int grim, int t_timeout) {
+#ifdef __linux
   /* run the timer and after the timeout we'll run
    * SIGKILL on it (kill -9 equivilant on linux)
    */
-#ifdef __linux__ 
-    //linux code goes here
   sleep(t_timeout);
   kill(grim, 9);
   return (0);
   #elif _WIN32
-    // windows code goes here
+  /* windows doesn't support kill 9 */
 #else
 
 #endif
