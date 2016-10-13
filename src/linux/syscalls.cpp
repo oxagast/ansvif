@@ -22,12 +22,34 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <linux/capability.h>
+#include <sys/epoll.h>
 
 int calls(std::string caller, std::string arg1, std::string arg2,
           std::string arg3, std::string arg4, std::string arg5) {
   std::cout << caller << std::endl;
   int ret = -1;
-  if (caller == "alarm") {
+  if (caller == "accept") {
+    /*  ret_code = accept(int sockfd, struct sockaddr *addr, socklen_t
+     * *addrlen); 
+     */
+    int accept(int sockfd, struct sockaddr arg1, socklen_t arg2);
+  }
+  else if (caller == "accept4") {
+    /* ret_code = accept4(int sockfd, struct sockaddr *addr, socklen_t *addrlen,
+     * int flags); 
+     */
+    int accept4(int sockfd, struct sockaddr arg1, socklen_t arg2, int flags);
+  }
+  else if (caller == "access") {
+    /* int access(const char *pathname, int mode); */
+   ret = access(arg1.c_str(), atoi(arg2.c_str()));
+  }
+  else if (caller == "acct") {
+  /* int acct(const char *filename); */
+    ret = acct(arg1.c_str());
+  }
+  else if (caller == "alarm") {
+    /* unsigned int alarm(int seconds); */
     alarm(atol(arg1.c_str()));
   }
   else if (caller == "bind") {
@@ -52,6 +74,10 @@ int calls(std::string caller, std::string arg1, std::string arg2,
     /* int chdir(const char *path); */
     ret = chdir(arg1.c_str());
   }
+  else if (caller == "chmod") {
+    /* int chmod(const char *pathname, mode_t mode); */
+    ret = chmod(arg1.c_str(), atoi(arg2.c_str()));
+  }
   else if (caller == "chroot") {
     /* int chroot(const char *path); */
     ret = chroot(arg1.c_str());
@@ -64,10 +90,6 @@ int calls(std::string caller, std::string arg1, std::string arg2,
     /* int clock_gettime(clockid_t clk_id, struct timespec *tp); */
     int clock_gettime(clockid_t arg1, struct timespec arg2);
   }
-  else if (caller == "clock_settime") {
-    /* int clock_settime(clockid_t clk_id, const struct timespec *tp); */
-    int clock_settime(clockid_t arg1, const struct timespec arg2);
-  }
   else if (caller == "clock_nanosleep") {
     /* int clock_nanosleep(clockid_t clock_id, int flags,
      *                      const struct timespec *request,
@@ -76,6 +98,10 @@ int calls(std::string caller, std::string arg1, std::string arg2,
     int clock_nanosleep(clockid_t arg1, int flags,
                            const struct timespec arg2,
                            struct timespec arg3);
+  }
+  else if (caller == "clock_settime") {
+    /* int clock_settime(clockid_t clk_id, const struct timespec *tp); */
+    int clock_settime(clockid_t arg1, const struct timespec arg2);
   }
   else if (caller == "clone") {
     /* long clone(unsigned long flags, void *child_stack,
@@ -97,25 +123,25 @@ int calls(std::string caller, std::string arg1, std::string arg2,
     /* int creat(const char *pathname, mode_t mode); */
     ret = creat(arg1.c_str(), atoi(arg2.c_str()));
   }
-  else if (caller == "accept") {
-    /*  ret_code = accept(int sockfd, struct sockaddr *addr, socklen_t
-     * *addrlen); 
-     */
-    int accept(int sockfd, struct sockaddr arg1, socklen_t arg2);
+  else if (caller == "dup") {
+    /* int dup(int oldfd) */
+    ret = dup(atoi(arg1.c_str()));
   }
-  else if (caller == "accept4") {
-    /* ret_code = accept4(int sockfd, struct sockaddr *addr, socklen_t *addrlen,
-     * int flags); 
-     */
-    int accept4(int sockfd, struct sockaddr arg1, socklen_t arg2, int flags);
-}
-  else if (caller == "access") {
-    /* int access(const char *pathname, int mode); */
-   ret = access(arg1.c_str(), atoi(arg2.c_str()));
+  else if (caller == "dup2") {
+    /* int dup2(int oldfd, int newfd) */
+    ret = dup2(atoi(arg1.c_str()), atoi(arg2.c_str()));
   }
-  else if (caller == "acct") {
-  /* int acct(const char *filename); */
-    ret = acct(arg1.c_str());
+  else if (caller == "dup3") {
+    /* int dup3(int oldfd, int newfd, int flags); */
+    ret = dup3(atoi(arg1.c_str()), atoi(arg2.c_str()), atoi(arg3.c_str()));
+  }
+  else if (caller == "epoll_create") {
+    /* int epoll_create(int size); */
+    ret = epoll_create(atoi(arg1.c_str()));
+  }
+  else if (caller == "epoll_create1") {
+    /* int epoll_create1(int flags); */
+    ret = epoll_create1(atoi(arg1.c_str()));
   }
   else if (caller == "faccessat") {
     /* int faccessat(int dirfd, const char *pathname, int mode, int flags); */
@@ -128,10 +154,6 @@ int calls(std::string caller, std::string arg1, std::string arg2,
      */
     ret = fchownat(atoi(arg1.c_str()), arg2.c_str(), atoi(arg3.c_str()),
                    atoi(arg4.c_str()), atoi(arg5.c_str()));
-  }
-  else if (caller == "chmod") {
-    /* int chmod(const char *pathname, mode_t mode); */
-    ret = chmod(arg1.c_str(), atoi(arg2.c_str()));
   }
   else {
     std::cout << "Syscall not found..." << std::endl;
