@@ -23,22 +23,23 @@
 #include <unistd.h>
 #include <linux/capability.h>
 #include <sys/epoll.h>
+#include <sys/eventfd.h>
 
 int calls(std::string caller, std::string arg1, std::string arg2,
           std::string arg3, std::string arg4, std::string arg5) {
   std::cout << caller << std::endl;
-  int ret = -1;
+  int ret = 255;
   if (caller == "accept") {
     /*  ret_code = accept(int sockfd, struct sockaddr *addr, socklen_t
      * *addrlen); 
      */
-    int accept(int sockfd, struct sockaddr arg1, socklen_t arg2);
+    int accept(int sockfd, struct sockaddr *arg1, socklen_t *arg2);
   }
   else if (caller == "accept4") {
     /* ret_code = accept4(int sockfd, struct sockaddr *addr, socklen_t *addrlen,
      * int flags); 
      */
-    int accept4(int sockfd, struct sockaddr arg1, socklen_t arg2, int flags);
+    int accept4(int sockfd, struct sockaddr *arg1, socklen_t *arg2, int flags);
   }
   else if (caller == "access") {
     /* int access(const char *pathname, int mode); */
@@ -56,19 +57,19 @@ int calls(std::string caller, std::string arg1, std::string arg2,
     /* int bind(int sockfd, const struct sockaddr *addr,
      *           socklen_t addrlen);
      */
-    int bind(int sockfd, const struct sockaddr arg1, socklen_t arg2);
+    int bind(int sockfd, const struct sockaddr *arg1, socklen_t *arg2);
   }
   else if (caller == "bpf") {
     /* int bpf(int cmd, union bpf_attr *attr, unsigned int size); */
-    int bpf(int cmd, union bpf_attr arg1, unsigned int size);
+    int bpf(int cmd, union bpf_attr *arg1, unsigned int size);
   }
   else if (caller == "capget") {
     /* int capget(cap_user_header_t hdrp, cap_user_data_t datap); */
-    int capget(cap_user_header_t arg1, cap_user_data_t arg2);
+    int capget(cap_user_header_t *arg1, cap_user_data_t *arg2);
   }
   else if (caller == "capset") {
     /* int capset(cap_user_header_t hdrp, const cap_user_data_t datap); */
-    int capset(cap_user_header_t arg1, const cap_user_data_t arg2);
+    int capset(cap_user_header_t *arg1, const cap_user_data_t *arg2);
   }
   else if (caller == "chdir") {
     /* int chdir(const char *path); */
@@ -84,24 +85,24 @@ int calls(std::string caller, std::string arg1, std::string arg2,
   }
   else if (caller == "clock_getres") {
     /* int clock_getres(clockid_t clk_id, struct timespec *res); */
-    int clock_getres(clockid_t arg1, struct timespec arg2);
+    int clock_getres(clockid_t *arg1, struct timespec *arg2);
   }
   else if (caller == "clock_gettime") {
     /* int clock_gettime(clockid_t clk_id, struct timespec *tp); */
-    int clock_gettime(clockid_t arg1, struct timespec arg2);
+    int clock_gettime(clockid_t *arg1, struct timespec *arg2);
   }
   else if (caller == "clock_nanosleep") {
     /* int clock_nanosleep(clockid_t clock_id, int flags,
      *                      const struct timespec *request,
      *                      struct timespec *remain);
      */
-    int clock_nanosleep(clockid_t arg1, int flags,
-                           const struct timespec arg2,
-                           struct timespec arg3);
+    int clock_nanosleep(clockid_t *arg1, int flags,
+                           const struct timespec *arg2,
+                           struct timespec *arg3);
   }
   else if (caller == "clock_settime") {
     /* int clock_settime(clockid_t clk_id, const struct timespec *tp); */
-    int clock_settime(clockid_t arg1, const struct timespec arg2);
+    int clock_settime(clockid_t arg1, const struct timespec *arg2);
   }
   else if (caller == "clone") {
     /* long clone(unsigned long flags, void *child_stack,
@@ -110,13 +111,13 @@ int calls(std::string caller, std::string arg1, std::string arg2,
      */
     long clone(unsigned long flags, void *child_stack,
                  void *ptid, void *ctid,
-                 struct pt_regs arg1);
+                 struct pt_regs *arg1);
   }
   else if (caller == "connect") {
     /* int connect(int sockfd, const struct sockaddr *addr,
      *              socklen_t addrlen);
      */
-    int connect(int sockfd, const struct sockaddr arg1,
+    int connect(int sockfd, const struct sockaddr *arg1,
                    socklen_t arg2);
   }
   else if (caller == "creat") {
@@ -143,10 +144,42 @@ int calls(std::string caller, std::string arg1, std::string arg2,
     /* int epoll_create1(int flags); */
     ret = epoll_create1(atoi(arg1.c_str()));
   }
+  else if (caller == "epoll_ctl") {
+    /* int epoll_ctl(int epfd, int op, int fd, struct epoll_event *event); */
+    int epoll_ctl(int epfd, int op, struct epoll_event *arg1);
+  }
+  else if (caller == "epoll_pwait") {
+    /* int epoll_pwait(int epfd, struct epoll_event *events,
+     *                 int maxevents, int timeout,
+     *                 const sigset_t *sigmask);
+     */
+    int epoll_pwait(int epfd, struct epoll_event *arg1,
+                      int maxevents, int timeout,
+                      const sigset_t *arg2);
+  }
+  else if (caller == "epoll_wait") {
+    /* int epoll_wait(int epfd, struct epoll_event *events,
+     *                 int maxevents, int timeout);
+     */
+    int epoll_wait(int epfd, struct epoll_event *arg1,
+                      int maxevents, int timeout);
+  }
+  else if (caller == "eventfd") {
+    /* int eventfd(unsigned int initval, int flags); */
+    int eventfd(unsigned int initval, int flags);
+  }
   else if (caller == "faccessat") {
     /* int faccessat(int dirfd, const char *pathname, int mode, int flags); */
     ret = faccessat(atoi(arg1.c_str()), arg2.c_str(), atoi(arg3.c_str()),
                     atoi(arg4.c_str()));
+  }
+  else if (caller == "fallocate") {
+    /* int fallocate(int fd, int mode, off_t offset, off_t len); */
+    int fallocate(int fd, int mode, off_t *arg1, off_t *arg2);
+  }
+  else if (caller == "posix_fadvise") {
+    /* int posix_fadvise(int fd, off_t offset, off_t len, int advice); */
+    int posix_fadvise(int fd, off_t *arg1, off_t *arg2, int advice);
   }
   else if (caller == "fchownat") {
     /* int fchownat(int dirfd, const char *pathname, uid_t owner, gid_t group,
