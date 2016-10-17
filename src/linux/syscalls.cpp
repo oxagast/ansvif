@@ -28,6 +28,15 @@
 #include <linux/bpf.h>
 #include <asm/ptrace.h>
 
+/*
+#include "linux/module.h"
+#include "linux/list.h"
+#include <asm/linkage.h>
+#include <generated/timeconst.h>
+problems with including the linux kernel headers
+*/
+
+
 struct epoll_event event;
 struct timespec res_ts, tp_ts, rq_ts, rm_ts, st_ts;
 sigset_t sigmask;
@@ -188,6 +197,26 @@ int calls(std::string caller, std::string arg1, std::string arg2,
     /* int posix_fadvise(int fd, off_t offset, off_t len, int advice); */
     ret = posix_fadvise(atoi(arg1.c_str()), atoi(arg2.c_str()), atoi(arg3.c_str()), atoi(arg4.c_str()));
   }
+  else if (caller == "fanotify_init") {
+    /* int fanotify_init(unsigned int flags, unsigned int event_f_flags); */
+     ret = fanotify_init(atoi(arg1.c_str()), atoi(arg2.c_str()));
+  }
+  else if (caller == "fchdir") {
+    /* int fchdir(int fd); */
+    ret = fchdir(atoi(arg1.c_str()));
+  }
+  else if (caller == "fchmod") {
+    /* int fchmod(int fd, mode_t mode); */
+    ret = fchmod(atoi(arg1.c_str()),atoi(arg2.c_str()));
+  }
+  else if (caller == "fchmodat") {
+    /* int fchmodat(int dirfd, const char *pathname, mode_t mode, int flags); */
+    ret = fchmodat(atoi(arg1.c_str()), arg2.c_str(), atoi(arg3.c_str()), atoi(arg4.c_str()));
+  }
+  else if (caller == "fchown") {
+    /* int fchown(int fd, uid_t owner, gid_t group); */
+    ret = fchown(atoi(arg1.c_str()), atoi(arg2.c_str()), atoi(arg3.c_str()));
+  }
   else if (caller == "fchownat") {
     /* int fchownat(int dirfd, const char *pathname, uid_t owner, gid_t group,
      * int flags); 
@@ -195,8 +224,17 @@ int calls(std::string caller, std::string arg1, std::string arg2,
     ret = fchownat(atoi(arg1.c_str()), arg2.c_str(), atoi(arg3.c_str()),
                    atoi(arg4.c_str()), atoi(arg5.c_str()));
   }
-  else if (caller == "fanotify_init") {
-      ret = fanotify_init(atoi(arg1.c_str()), atoi(arg2.c_str()));
+  else if (caller == "fdatasync") {
+    /* int fdatasync(int fd); */
+    ret = fdatasync(atoi(arg1.c_str()));
+  }
+  else if (caller == "finit_module") {
+    /* int finit_module(int fd, const char *param_values,
+     *                   int flags);
+     */
+/*
+    ret = finit_module(atoi(arg1.c_str()), arg2.c_str(), atoi(arg3.c_str())); // problems with this on kernel headers
+*/
   }
   else {
     std::cout << "Syscall not found..." << std::endl;
