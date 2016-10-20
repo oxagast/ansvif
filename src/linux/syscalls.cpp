@@ -383,37 +383,31 @@ int main(int argc, char *argv[]) {
   if (argv[1] == NULL) {
     exit(1);
   }
-  if (argv[2] != NULL) {
-    if(!strcmp(argv[2], "\"\"")) {
+ if ((argv[2] == NULL) || strcmp(argv[2], "\"\"") == 0) {
     arg1.assign(nullptr, 0);
-    
   } else {
     arg1 = std::string(argv[2]);
-  }}
-  if (argv[3] != NULL) {
-       if(!strcmp(argv[2], "\"\"")) {
+  }
+  if ((argv[3] == NULL) || strcmp(argv[3], "\"\"") == 0) {
     arg2.assign(nullptr, 0);
   } else {
     arg2 = std::string(argv[3]);
-  }}
-  if (argv[4] != NULL) {
-   if(!strcmp(argv[2], "\"\"")) {
+  }
+  if ((argv[4] == NULL) || strcmp(argv[4], "\"\"") == 0) {
     arg3.assign(nullptr, 0);
   } else {
     arg3 = std::string(argv[4]);
-  }}
-  if (argv[5] != NULL) {
-       if(!strcmp(argv[2], "\"\"")) {
+  }
+  if ((argv[5] == NULL) || strcmp(argv[5], "\"\"") == 0) {
     arg4.assign(nullptr, 0);
   } else {
     arg4 = std::string(argv[5]);
-  }}
-  if (argv[6] != NULL) {
-       if(!strcmp(argv[2], "\"\"")) {
+  }
+  if ((argv[6] == NULL) || strcmp(argv[6], "\"\"") == 0) {
     arg5.assign(nullptr, 0);
   } else {
     arg5 = std::string(argv[6]);
-  }}
+  }
   if (argc >= 2) {
     long ret_code = calls(std::string(argv[1]), arg1, arg2, arg3, arg4, arg5);
     return (ret_code);
