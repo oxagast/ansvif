@@ -76,8 +76,9 @@ $ ./ansvif -m mount -c /bin/mount -e examples/mount_e.txt -x examples/mount_o.tx
 $ ./ansvif -t examples/blank.txt -F tmp/tmphtml -x examples/htmltags.txt -c /usr/bin/iceweasel -b\
 128 -A "file:///home/username/src/ansvif/tmp/tmphtml"  -f 2 -n -R "sleep 3 && killall\
 iceweasel" -S ">"
-$ cat src/linux/syscalls/implemented | xargs -I {X} -P 20 ./ansvif -b 24 -c ./syscalls -B "{X} "\
- -f 1 -z -t examples/space.txt
+$ cat examples/linux_syscalls_implemented.list | xargs -P \
+`cat examples/linux_syscalls_implemented.list | wc -l` -I {calls} ./ansvif -t examples/space.txt \
+-B "{calls} " -c ./syscalls -o syscall_crash -f 1 -z -d -b 16
 ```
 
 *Windows:*

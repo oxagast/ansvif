@@ -349,8 +349,6 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
        * when we go to match.  we match with stringstream to get
        * output and put its contense in 'output'
        */
- 
- //     #ifdef __linux
       int pid;
       FILE *fp =
           popen2(out_str, "r", pid, low_lvl_user);

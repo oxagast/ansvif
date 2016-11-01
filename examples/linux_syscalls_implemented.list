@@ -41,3 +41,6 @@ fstatfs
 fsync
 ftruncate
 futimesat
+getcwd
+getegid
+getgid
