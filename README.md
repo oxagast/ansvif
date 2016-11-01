@@ -39,7 +39,8 @@ Note: cygwin .dll external files are no longer required as we now compile with g
 In Windows 7 Powershell v2 is installed by default, however, this program requires atleast 
 Powershell v5.  Windows 10 includes powershell v5.  You can go to Microsoft's site and download
 the Windows Management Framework (which includes newer Versions of Powershell here: 
-https://www.microsoft.com/en-us/download/details.aspx?id=50395.*
+
+https://www.microsoft.com/en-us/download/details.aspx?id=50395
 
 **Testing:**
 
