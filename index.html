@@ -16,7 +16,7 @@
     <header>
       <div class="container">
         <h1>ansvif</h1>
-        <h2>Feeds garbage arguments and data into programs trying to induce a fault.  Good for finding bugs.</h2>
+        <h2>A Not So Very Intelligent Fuzzer: An advanced cross platform fuzzing framework designed to find vulnerabilities in C/C++ code. Fuzzing (linux) syscalls is also possible.</h2>
 
         <section id="downloads">
           <a href="https://github.com/oxagast/ansvif/zipball/master" class="btn">Download as .zip</a>
@@ -100,13 +100,29 @@ Useage:
 
   Examples:
    Linux/BSD:
-  $ echo "Marshall" ./ansvif -t examples/template -c ./faulty -b 64
+
+Fuzzing /bin/mount (a suid 0 process) example:
+
   $ ./ansvif -m mount -c /bin/mount -e examples/mount_e.txt -x examples/mount_o.txt\
     -f 8 -b 2048
+
+Iceweasel (Firefox) fuzzing example:
+
   $ ./ansvif -t examples/blank.txt -F tmp/tmphtml -x examples/htmltags.txt -c /usr/bin/iceweasel -b\
     128 -A "file:///home/username/src/ansvif/tmp/tmphtml"  -f 2 -n -R "sleep 3 && killall\
     iceweasel" -S ">"
-  Windows:
+
+Syscall fuzzing example:
+
+  $ cat examples/linux_syscalls_implemented.list | xargs -P \
+    `cat examples/linux_syscalls_implemented.list | wc -l` -I {calls} ./ansvif -t examples/space.txt \
+    -B "{calls} " -c ./syscalls -o syscall_crash -f 1 -z -d -b 16
+
+
+Windows:
+
+Google Chrome fuzzing example:
+
   PS C:\ansvif\bin\ansvif_win> .\ansvif -t ..\..\examples\space -F ..\..\tmp\tmphtml -x `
                                ..\..\examples\htmltags -c `
                                'C:\Program Files (x86)\Google\Chrome\Application\chrome.exe' `
