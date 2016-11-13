@@ -9,7 +9,7 @@
 
 **Dependancies:**
 
-automake autoconf-archive zlib1g-dev g++ gcc
+automake autoconf-archive zlib1g-dev libcrypto++  g++ gcc
 
 *Linux:*
 ```
