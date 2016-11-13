@@ -73,9 +73,10 @@ size_t len_ptr;
 //struct user_desc u_info;
 unsigned node;
 //struct getcpu_cache tcache;
- size_t cwd_size;
- struct linux_dirent *dirp;
- 
+size_t cwd_size;
+struct linux_dirent *dirp;
+struct itimerval *curr_value;
+socklen_t *addrlen_two;
 long calls(std::string caller, std::string arg1, std::string arg2,
           std::string arg3, std::string arg4, std::string arg5) {
   std::cout << caller << std::endl;
@@ -370,7 +371,32 @@ long calls(std::string caller, std::string arg1, std::string arg2,
    gid_t getegid(void);
   }
   else if (caller == "getgid") {
+    /* gid_t getgid(void); */
     gid_t getgid(void);
+  }
+  else if (caller == "geteuid") {
+    /* uid_t geteuid(void); */
+    uid_t geteuid(void);
+  }
+  else if (caller == "getgroups") {
+    /* int getgroups(int size, gid_t list[]); */
+    gid_t *group;
+    long ngroups_max;
+    ngroups_max = sysconf(_SC_NGROUPS_MAX) + 1;
+    group = (gid_t *)malloc(ngroups_max *sizeof(gid_t));
+    ret = getgroups(atoi(arg1.c_str()), group);
+  }
+  else if (caller == "getitimer") {
+    /* int getitimer(int which, struct itimerval *curr_value); */
+    ret = getitimer(atoi(arg1.c_str()), curr_value);
+  }
+  else if (caller == "getpeername") {
+    /* int getpeername(int sockfd, struct sockaddr *addr, socklen_t *addrlen); */
+    ret = getpeername(atoi(arg1.c_str()), &acc, addrlen_two);
+  }
+  else if (caller == "getpagesize") {
+    /* int getpagesize(void); */
+    ret = getpagesize();
   }
   else {
     std::cout << "Syscall not found..." << std::endl;

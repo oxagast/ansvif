@@ -4205,6 +4205,18 @@ fi
 
 done
 
+for ac_header in crypto
+do :
+  ac_fn_cxx_check_header_mongrel "$LINENO" "crypto" "ac_cv_header_crypto" "$ac_includes_default"
+if test "x$ac_cv_header_crypto" = xyes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_CRYPTO 1
+_ACEOF
+
+fi
+
+done
+
 ac_config_files="$ac_config_files Makefile"
 
 am__api_version='1.15'
