@@ -67,8 +67,8 @@ A Not So Very Intelligent Fuzzer.
 Compliation:
 
  Dependancies:
-  automake autoconf-archive zlib1g-dev g++ gcc
-
+  automake autoconf-archive zlib1g-dev g++ gcc crypto++
+  
  Linux:
   $ aclocal && autoconf && automake -a && ./configure && make
  OpenBSD:
@@ -80,13 +80,9 @@ Compliation:
     AUTOCONF_VERSION=`ls /usr/local/bin/autoconf-* | head -n 1 | sed -e 's/.*-//'` automake -a\
     && CXX=eg++ ./configure && make
  Windows:
-  Precompiled binaries are left in a zip file in ./bin.
-  Use cygwin, install g++ and gcc.
-  (In cygwin)
-  ./configure_win
-  make
-  $ cp /bin/cyggcc_s-seh-1.dll /bin/cygstdc++-6.dll /bin/cygwin1.dll bin/
-  Make sure cyggcc_s-seh-1.dll, cygstdc++-6.dll and cygwin1.dll are in the same directory as ansvif.exe.
+   Now Windows code is designed to be compiled with MinGW-W64.
+  $ ./configure_win
+  $ make
 
   If you would like to try out the example code, you can compile faulty.c with:
   $ gcc faulty.c -o faulty
@@ -181,8 +177,8 @@ Recommendations:
 
 
 Notes:
-  Windows users must have ansvif running from Powershell and have the cygwin .dll's in the same dir.
-  Linux code should be relatively stable.
+  Windows users must have ansvif running from Powershell.
+  Linux and Windows code should be relatively stable.
 </code></pre>
 
 <h3>
