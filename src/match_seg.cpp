@@ -43,12 +43,12 @@ void write_junk_file(std::string filename, std::vector<std::string> opt_other,
                      bool never_rand, std::string other_sep, bool verbose);
 std::vector<std::string>
 get_out_str(std::string env_str, std::string valgrind_str, std::string sys_str,
-            std::string path_str, std::string always_arg_after,
+            std::string path_str, std::string always_arg_before, std::string always_arg_after,
             std::string fuzz_after, std::string log_prefix);
 std::vector<std::string>
 get_out_str_pc(std::string env_str, std::string valgrind_str,
                std::string sys_str, std::string path_str,
-               std::string always_arg_after, std::string fuzz_after,
+               std::string always_arg_before, std::string always_arg_after, std::string fuzz_after,
                std::string log_prefix);
 bool match_seg(int buf_size, std::vector<std::string> opts,
                std::vector<std::string> spec_env, std::string path_str,
@@ -104,7 +104,7 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
        * and our system call string
        */
       std::vector<std::string> junk_opts_env, junk_opts;
-      std::string env_str, sys_str = always_arg_before + " ";
+      std::string env_str, sys_str;
       if (junk_file_of_args != "") {
         /* write a junk file */
         write_junk_file(junk_file_of_args, opt_other, buf_size, rand_spec_one,
@@ -301,11 +301,13 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
          * subroutine, $? is done in sys_string.cpp
          */
         out_all = get_out_str_pc(env_str, valgrind_str, sys_str, path_str,
-                                 always_arg_after, fuzz_after, write_file_n);
+                                 always_arg_before, always_arg_after,
+                                 fuzz_after, write_file_n);
       }
       if (percent_sign == false) {
         out_all = get_out_str(env_str, valgrind_str, sys_str, path_str,
-                              always_arg_after, fuzz_after, write_file_n);
+                              always_arg_before, always_arg_after, fuzz_after,
+                              write_file_n);
       }
       /* coming to the stuff from sys_string either
        * normal or printf output
@@ -349,7 +351,6 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
          * when we go to match.  we match with stringstream to get
          * output and put its contense in 'output'
          */
-
         int pid;
         FILE *fp = popen2(out_str, "r", pid, low_lvl_user);
         char command_out[4096] = {0};
@@ -361,7 +362,6 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
         }
         /* close out the command cleanly */
         pclose2(fp, pid);
-
         /* this here takes care of the command that is run after
          * the fuzz
          */
