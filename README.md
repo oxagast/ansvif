@@ -1,15 +1,26 @@
 #ansvif
-        ############################################
-        ############################################
-        ##    A Not So Very Intelligent Fuzzer    ##
-        ############################################
-        ############################################
+                                   ############################################
+                                   ############################################
+                                   ##    A Not So Very Intelligent Fuzzer    ##
+                                   ##    __ _  _  __   ___  __  ____ ____    ##
+                                   ##   /  ( \/ )/ _\ / __)/ _\/ ___(_  _)   ##
+                                   ##  (  O )  (/    ( (_ /    \___ \ )(     ##
+                                   ##   \__(_/\_\_/\_/\___\_/\_(____/(__)    ##
+                                   ##           Marshall Whittaker           ##
+                                   ############################################
+                                   ############################################
 
-**Compliation:**
+
+*As the complexity of a system rises, as does the potential for problems within that system.*
+
+*--Whittaker's Law*
+
 
 **Dependancies:**
 
 automake autoconf-archive zlib1g-dev libcrypto++  g++ gcc
+
+**Compliation:**
 
 *Linux:*
 ```
@@ -140,8 +151,8 @@ Other than that, just play around and have fun!
 
 **Notes:**
 
-Windows users must have ansvif running from Powershell and have the cygwin .dll's in the same dir.
-Linux code should be relatively stable.
+Windows users must have ansvif running from Powershell.
+Linux and Windows code should be relatively stable.
 Syscall fuzzing under linux is under heavy development.
 
 
