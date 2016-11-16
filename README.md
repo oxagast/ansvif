@@ -14,7 +14,7 @@
 
 **Dependancies:**
 
-automake autoconf-archive zlib1g-dev libcrypto++  g++ gcc
+automake autoconf-archive zlib1g-dev libcrypto++  g++ gcc crypto++
 
 *Linux:*
 ```
