@@ -10,11 +10,11 @@
 *--Whittaker's Law*
 
 
-**Compliation:**
-
 **Dependancies:**
 
 automake autoconf-archive zlib1g-dev libcrypto++  g++ gcc
+
+**Compliation:**
 
 *Linux:*
 ```
@@ -141,8 +141,8 @@ Other than that, just play around and have fun!
 
 **Notes:**
 
-Windows users must have ansvif running from Powershell and have the cygwin .dll's in the same dir.
-Linux code should be relatively stable.
+Windows users must have ansvif running from Powershell.
+Linux and Windows code should be relatively stable.
 Syscall fuzzing under linux is under heavy development.
 
 
