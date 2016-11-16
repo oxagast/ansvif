@@ -625,6 +625,8 @@ ac_subst_vars='am__EXEEXT_FALSE
 am__EXEEXT_TRUE
 LTLIBOBJS
 LIBOBJS
+WITH_SYSCALLS_FALSE
+WITH_SYSCALLS_TRUE
 AM_BACKSLASH
 AM_DEFAULT_VERBOSITY
 AM_DEFAULT_V
@@ -724,6 +726,7 @@ ac_user_opts='
 enable_option_checking
 enable_dependency_tracking
 enable_silent_rules
+enable_syscalls
 '
       ac_precious_vars='build_alias
 host_alias
@@ -1368,6 +1371,7 @@ Optional Features:
                           speeds up one-time build
   --enable-silent-rules   less verbose build output (undo: "make V=1")
   --disable-silent-rules  verbose build output (undo: "make V=0")
+  --disable-syscalls    Disable Syscalls compiliation
 
 Some influential environment variables:
   CC          C compiler command
@@ -5114,6 +5118,38 @@ END
   fi
 fi
 
+# This adds the option of compiling without using the ctemplate library,
+# which has proved troublesome for compilation on some platforms
+# Check whether --enable-syscalls was given.
+if test "${enable_syscalls+set}" = set; then :
+  enableval=$enable_syscalls; case "${enableval}" in
+  yes) WITH_SYSCALLS=true ;;
+  no)  WITH_SYSCALLS=false ;;
+  *) as_fn_error $? "bad value ${enableval} for --disable-syscalls" "$LINENO" 5 ;;
+esac
+else
+  WITH_SYSCALLS=false
+fi
+
+ if test "$WITH_SYSCALLS" = "true"; then
+  WITH_SYSCALLS_TRUE=
+  WITH_SYSCALLS_FALSE='#'
+else
+  WITH_SYSCALLS_TRUE='#'
+  WITH_SYSCALLS_FALSE=
+fi
+
+# try to compile syscalls if they're enabled
+if test "$WITH_SYSCALLS" = "true"; then
+
+$as_echo "#define WITH_SYSCALLS /**/" >>confdefs.h
+
+    { $as_echo "$as_me:${as_lineno-$LINENO}: syscalls enabled, we will try to compile them" >&5
+$as_echo "$as_me: syscalls enabled, we will try to compile them" >&6;}
+else
+    { $as_echo "$as_me:${as_lineno-$LINENO}: syscalls module is disabled" >&5
+$as_echo "$as_me: syscalls module is disabled" >&6;}
+fi
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
 # tests run on this system so they can be shared between configure
@@ -5287,6 +5323,10 @@ else
   am__EXEEXT_FALSE=
 fi
 
+if test -z "${WITH_SYSCALLS_TRUE}" && test -z "${WITH_SYSCALLS_FALSE}"; then
+  as_fn_error $? "conditional \"WITH_SYSCALLS\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
 
 : "${CONFIG_STATUS=./config.status}"
 ac_write_fail=0
