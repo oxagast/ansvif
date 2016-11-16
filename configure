@@ -1371,7 +1371,7 @@ Optional Features:
                           speeds up one-time build
   --enable-silent-rules   less verbose build output (undo: "make V=1")
   --disable-silent-rules  verbose build output (undo: "make V=0")
-  --disable-syscalls    Disable Syscalls compiliation
+  --enable-syscalls       Enable Syscalls compiliation (experimental)
 
 Some influential environment variables:
   CC          C compiler command

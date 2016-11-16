@@ -14,6 +14,10 @@ automake autoconf-archive zlib1g-dev libcrypto++  g++ gcc
 *Linux:*
 ```
 $ aclocal && autoconf && automake -a && ./configure && make
+
+Or, if you would like to play with the syscall fuzzer:
+
+$ aclocal && autoconf && automake -a && ./configure --enable-syscalls && make
 ```
 *OpenBSD:*
 ```

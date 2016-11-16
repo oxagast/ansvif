@@ -17,7 +17,7 @@ AM_INIT_AUTOMAKE([subdir-objects])
 # This adds the option of compiling without using the ctemplate library,
 # which has proved troublesome for compilation on some platforms
 AC_ARG_ENABLE(syscalls,
-[  --disable-syscalls    Disable Syscalls compiliation],
+[  --enable-syscalls       Enable Syscalls compiliation (experimental)],
 [case "${enableval}" in
   yes) WITH_SYSCALLS=true ;;
   no)  WITH_SYSCALLS=false ;;
