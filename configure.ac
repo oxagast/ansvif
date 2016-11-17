@@ -21,7 +21,7 @@ AC_ARG_ENABLE(syscalls,
 [case "${enableval}" in
   yes) WITH_SYSCALLS=true ;;
   no)  WITH_SYSCALLS=false ;;
-  *) AC_MSG_ERROR(bad value ${enableval} for --disable-syscalls) ;;
+  *) AC_MSG_ERROR(bad value ${enableval} for --enable-syscalls) ;;
 esac],[WITH_SYSCALLS=false])
 AM_CONDITIONAL([WITH_SYSCALLS], [test "$WITH_SYSCALLS" = "true"])
 # try to compile syscalls if they're enabled
