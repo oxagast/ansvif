@@ -14,7 +14,8 @@ syscalls
 !/tmp/*
 /tmp/1
 !/bin/ansvif_*
-/bin/ansvif_*/
+/bin/ansvif_*/usr/bin/ansvif
+/bin/ansvif_*/usr/bin/find_suid
 !/bin/ansvif_*/DEBIAN
 !/bin/ansvif_*/DEBIAN/control
 !/bin/ansvif_*/usr/share/man/man1/*gz

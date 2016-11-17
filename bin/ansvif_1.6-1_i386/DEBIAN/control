@@ -1,0 +1,12 @@
+Package: ansvif
+Version: 1.6-1
+Section: base
+Priority: optional
+Architecture: i386
+Depends: zlib1g
+Recommends: gcc, g++, gdb
+Suggests: valgrind
+Maintainer: Marshall Whittaker <marshallwhittaker@gmail.com>
+Description: fuzzes other programs for bugs
+ A Not So Very Intelligent Fuzzer
+ ansvif is a tool designed to help researchers find code vulnerabilities and bugs.
