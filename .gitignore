@@ -23,10 +23,10 @@ syscalls
 /bin/rpmbuild/RPMS/*
 /bin/rpmbuild/SOURCES/*
 /bin/rpmbuild/SRPMS/*
+!/bin/rpmbuild/SPECS/ansvif.spec
 !/bin/ansvif_*/DEBIAN
 !/bin/ansvif_*/DEBIAN/control
 !/bin/ansvif_*/usr/share/man/man1/*gz
-!/bin/rpmbuilds/SPECS/ansvif.spec
 compile
 install-sh
 depcomp
