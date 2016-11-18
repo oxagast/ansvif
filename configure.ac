@@ -31,4 +31,9 @@ if test "$WITH_SYSCALLS" = "true"; then
 else
     AC_MSG_NOTICE([syscalls module is disabled])
 fi
+AM_CONDITIONAL(OS_IS_REDHAT, [ test `cat /etc/os-release | grep REDHAT | head -n 1 | wc -l` -eq "1"])
+if test "$OS_IS_REDHAT" = "1"; then
+    AC_DEFINE([__REDHAT], [], ["build for redhat"])
+    AC_MSG_NOTICE([trying to build for a redhat based system])
+fi
 AC_OUTPUT

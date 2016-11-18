@@ -11,8 +11,14 @@
 
 #define CRYPTOPP_ENABLE_NAMESPACE_WEAK 1
 #include "../include/xmlwriter/xml_writer.hpp"
+#ifdef __REDHAT
+#include <cryptopp/hex.h>
+#include <cryptopp/md5.h>
+#endif
+#ifdef __DEBIAN
 #include <crypto++/hex.h>
 #include <crypto++/md5.h>
+#endif
 #include <cstdlib>
 #include <cstring>
 #include <fstream>
@@ -319,6 +325,7 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
       junk_opts.shrink_to_fit();
       junk_opts_env.clear();
       junk_opts_env.shrink_to_fit();
+#ifdef __linux
       /* Make sure that we don't go and do things
        * we've already tried over and over, this
        * speeds things up quite a bit
@@ -338,6 +345,7 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
         used_token.push_back(h_output);
       } else {
         used_token.push_back(h_output);
+#endif
         if (debug == true) {
           /* write ALL the junk to STDOUT since we're in
            * debug mode
@@ -490,7 +498,9 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
               xml_output.close();
             }
           }
+#ifdef __linux
         }
+#endif
       }
       if (single_try == true) {
         /* do all that shit but only once! */
