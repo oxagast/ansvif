@@ -42,11 +42,13 @@ AUTOCONF_VERSION=`ls /usr/local/bin/autoconf-* | head -n 1 | sed -e 's/.*-//'` a
 ```
 *Windows:*
 
-Windows binaries are now desgined to be compiled with MinGW-W64.
+Windows binaries are now desgined to be compiled with MinGW-W64 (since we use threading download
+a version of MinGW-W64 g++ with seh.
 
 ```
-$ ./configure_win
-$ make
+(Go to where you installed MinGW-W64 and click mingw-64.bat)
+g++.exe src/common.cpp src/win/bin2hex.cpp src/win/bin2hex_pc.cpp src/win/popen2.cpp src/win/main.cpp src/win/help.cpp src/match_seg.cpp src/win/sys_string.cpp src/win/sys_string_pc.cpp src/win/man_read.cpp src/randomizer.cpp src/trash.cpp -I./ -I./include -std=c++11 -lstdc++ -lpthread -O2 -o ansvif.exe -static -static-libgcc -static-libstdc++
+gcc src/win/printf.c -o printf.exe
 ```
 
 
