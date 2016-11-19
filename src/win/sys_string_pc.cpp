@@ -19,8 +19,8 @@ std::string binstr_to_hex_pc(std::string bin_str_pc);
 std::vector<std::string>
 get_out_str_pc(std::string env_str, std::string valgrind_str,
                std::string sys_str, std::string path_str,
-               std::string always_arg, std::string fuzz_after,
-               std::string log_prefix) {
+               std::string always_arg_b, std::string always_arg,
+               std::string fuzz_after, std::string log_prefix) {
   std::string out_str;
   std::string out_str_p;
   if (sys_str != "") {
@@ -36,7 +36,7 @@ get_out_str_pc(std::string env_str, std::string valgrind_str,
                   fuzz_after +
                   "; echo $LastExitCode";
     }
-   out_str = "powershell -c " + env_str + "(Start-Job {& '" + path_str + "' " + sys_str + " " +
+   out_str = "powershell -c " + env_str + "(Start-Job {& '" + path_str + "' " + always_arg_b + " " + sys_str + " " +
               always_arg + " " + fuzz_after;
   }
   out_str = out_str + " > " + log_prefix +

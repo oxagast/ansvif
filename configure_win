@@ -3,9 +3,9 @@ printf "\n" >> Makefile;
 printf "default: ansvif\n" >> Makefile;
 printf "\n" >> Makefile;
 printf "ansvif:\n" >> Makefile;
-printf "\tg++ src/common.cpp src/win/bin2hex.cpp src/win/bin2hex_pc.cpp src/win/popen2.cpp src/win/main.cpp src/win/help.cpp src/match_seg.cpp src/win/sys_string.cpp src/win/sys_string_pc.cpp src/win/man_read.cpp src/randomization.cpp -I./ -I./include -std=c++11 -lstdc++ -lpthread -O2 -o ansvif.exe -static -static-libgcc -static-libstdc++\n" >> Makefile
-printf "\tg++ src/win/printf.c -O2 -o printf.exe\n" >> Makefile;
-printf "\tgcc -o faulty.exe ./src/faulty.c\n" >> Makefile;
+printf "\t/cygdrive/c/Program\ Files/mingw-w64/x86_64-6.2.0-posix-seh-rt_v5-rev1/mingw64/bin/g++.exe src/common.cpp src/win/bin2hex.cpp src/win/bin2hex_pc.cpp src/win/popen2.cpp src/win/main.cpp src/win/help.cpp src/match_seg.cpp src/win/sys_string.cpp src/win/sys_string_pc.cpp src/win/man_read.cpp src/randomizer.cpp -I./ -I./include -std=c++11 -lstdc++ -lpthread -O2 -o ansvif.exe -static -static-libgcc -static-libstdc++\n" >> Makefile
+printf "\t/cygdrive/c/Program\ Files/mingw-w64/x86_64-6.2.0-posix-seh-rt_v5-rev1/mingw64/bin/g++.exe src/win/printf.c -O2 -o printf.exe\n" >> Makefile;
+printf "\t/cygdrive/c/Program\ Files/mingw-w64/x86_64-6.2.0-posix-seh-rt_v5-rev1/mingw64/bin/gcc.exe -o faulty.exe ./src/faulty.c\n" >> Makefile;
 printf "\n" >> Makefile;
 printf "clean:\n" >> Makefile;
 printf "\trm Makefile ansvif.exe faulty.exe printf.exe src/*.o\n" >> Makefile;

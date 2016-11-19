@@ -19,7 +19,7 @@
 #include <unistd.h>
 #include <vector>
 
-int toint(std::string ints);
+int toint(std::string ints, std::string my_prog, std::string version);
 void help_me(std::string mr_me, std::string ver);
 std::vector<std::string> get_flags_man(std::string man_page,
                                        std::string man_loc, bool verbose,
@@ -33,7 +33,7 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
                std::string junk_file_of_args, std::string always_arg_before,
                std::string always_arg_after, bool never_rand,
                std::string run_command, std::string fault_code, bool valgrind,
-               bool single_try, bool percent_sign, bool verbose, bool debug,
+               bool single_try, bool percent_sign, int static_args, bool verbose, bool debug,
                std::string ver);
 std::vector<std::string> get_flags_template(std::string filename, bool verbose,
                                             bool debug);
@@ -46,6 +46,7 @@ int main(int argc, char *argv[]) { // initialize our main
   srand(time(NULL));
   int opt;                         // initialize opt for how many options
   int num_threads = 2;             // how many threads are we using?
+  int static_args = 0;
   int t_timeout = 3; // what is the seconds that the thread will time out in if
                      // it takes too long?
   std::vector<std::string> opts; // the options that are pulled out of the
@@ -197,6 +198,9 @@ int main(int argc, char *argv[]) { // initialize our main
     case 'P':
       percent_sign = true;
       break;
+    case 'M':
+      static_args = toint(optarg, argv[0], ver);
+      break;
     default:
       help_me(argv[0], ver);
     }
@@ -248,7 +252,7 @@ int main(int argc, char *argv[]) { // initialize our main
   if (b_size >> buf_char_maybe) { // then also...
     help_me(argv[0], ver);        // send them to the nuthouse
   } else {
-    int buf_size_int = toint(buf_size); // otherwise we're going to turn the
+    int buf_size_int = toint(buf_size, argv[0], ver); // otherwise we're going to turn the
                                         // buf size into an integar
     if (single_try ==
         false) { // if single try isn't turned on then we're going to use...
@@ -259,7 +263,7 @@ int main(int argc, char *argv[]) { // initialize our main
             rand_all, write_to_file, write_file_n, rand_buf, opt_other,
             is_other, other_sep, t_timeout, low_lvl_user, junk_file_of_args,
             always_arg_before, always_arg_after, never_rand, run_command,
-            fault_code, valgrind, single_try, percent_sign, verbose, debug,
+            fault_code, valgrind, single_try, percent_sign, static_args, verbose, debug,
             ver)); // Thrift Shop
       for (auto &all_thread : threads)
         all_thread.join(); // is that your grandma's coat?
@@ -269,7 +273,7 @@ int main(int argc, char *argv[]) { // initialize our main
                 write_to_file, write_file_n, rand_buf, opt_other, is_other,
                 other_sep, t_timeout, low_lvl_user, junk_file_of_args,
                 always_arg_before, always_arg_after, never_rand, run_command,
-                fault_code, valgrind, single_try, percent_sign, verbose, debug,
+                fault_code, valgrind, single_try, percent_sign, static_args, verbose, debug,
                 ver); // if we're only doing a single run then we'll just
                       // directly call the match_seg subroutine
     }
