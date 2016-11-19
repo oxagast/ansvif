@@ -43,7 +43,7 @@ AUTOCONF_VERSION=`ls /usr/local/bin/autoconf-* | head -n 1 | sed -e 's/.*-//'` a
 *Windows:*
 
 Windows binaries are now desgined to be compiled with MinGW-W64 (since we use threading download
-a version of MinGW-W64 g++ with seh.
+a version of MinGW-W64 g++ with seh).
 
 ```
 (Go to where you installed MinGW-W64 and click mingw-64.bat)
