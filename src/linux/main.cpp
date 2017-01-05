@@ -72,7 +72,7 @@ int main(int argc, char *argv[]) { // initialize our main
   /* initialize all our variables for startup! */
   /* how many options? */
   int opt, thread_count_def = 2, thread_timeout_def = 3,
-      static_args = 0;
+      static_args = 0, buf_size_int = -1;
   /* the options that are pulled out of the manpage or
    * template go into the opts vector, the environment
    * variables go into spec_env and the extra variables
@@ -129,7 +129,7 @@ int main(int argc, char *argv[]) { // initialize our main
   /* now we can start grabbing all the options! */
   while ((opt = getopt(
     argc, argv,
-    "m:p:t:e:c:f:o:b:s:x:R:A:F:S:L:W:B:M:C:1hrzvdDnVP")) != -1) {
+    "m:p:t:e:c:f:o:b:s:x:R:A:F:S:L:W:B:M:C:y1hrzvdDnVP")) != -1) {
     switch (opt) {
     case 'v':
       verbose = true;
@@ -223,6 +223,9 @@ int main(int argc, char *argv[]) { // initialize our main
     case 'M':
       static_args = toint(optarg, argv[0], ver);
       break;
+    case 'y':
+      buf_size_int = 0;
+      break;
     default:
       help_me(argv[0], ver);
     }
@@ -263,7 +266,15 @@ int main(int argc, char *argv[]) { // initialize our main
    * happens to not be, then we'll send them to the help page,
    * otherwise we'll turn it into type int
    */
-int buf_size_int = toint(buf_size, argv[0], ver);
+  if ((buf_size_int == 0) && (buf_size != "")) {
+    help_me(argv[0], ver);
+  }
+  if ((buf_size_int == -1) && (buf_size != "")) {
+    buf_size_int = toint(buf_size, argv[0], ver);
+  }
+  if (buf_size_int == -1) {
+    help_me(argv[0], ver);
+  }
     /* make sure the thread count is an integar the same way
      * we did with the buffer size
      */  

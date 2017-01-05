@@ -346,6 +346,10 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
       } else {
         used_token.push_back(h_output);
 #endif
+       if (buf_size == 0) {
+          out_str = path_str + " " + always_arg_before + " " + always_arg_after;
+          out_str_p = path_str + " " + always_arg_before + " " + always_arg_after;
+        }
         if (debug == true) {
           /* write ALL the junk to STDOUT since we're in
            * debug mode

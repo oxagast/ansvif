@@ -83,6 +83,7 @@ void help_me(std::string mr_me, std::string ver) {
       << "              throw error code 64." << std::endl
       << " -P           Use % to represent binary in fuzz." << std::endl
       << " -M           Max arguments to use in the fuzz." << std::endl
+      << " -y           Short for -b 0 and usually only useful with -A or -B" << std::endl
       << " -v           Verbose." << std::endl
       << " -d           Debug."
       << std::endl;

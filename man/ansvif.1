@@ -102,6 +102,9 @@ Try to induce a crash once, and if a crash is not induced, throw error code 64.
 .B \-P
 Use % to represent binary in fuzz.
 
+.B \-y
+Short for -b 0 (zero buffer size), and usually only useful when in conjunction with -A or -B.
+
 .B \-v
 Be verbose.
 
@@ -109,12 +112,21 @@ Be verbose.
 Show debugging stuff.
 
 .SH EXAMPLES
+Fuzzing the suid mount command under linux:
+
 ansvif \-m mount \-c /bin/mount -e examples/mount_e.txt \-x examples/mount_o.txt\
     \-f 8 \-b 2048
+
+Fuzzing Firefox:
 
 ansvif \-t examples/blank.txt \-F tmp/tmphtml \-x examples/htmltags.txt \-c /usr/bin/iceweasel \-b\
     128 \-A "file:///home/username/src/ansvif/tmp/tmphtml"  \-f 2 \-n -R "sleep 3 && killall\
     iceweasel" \-S ">"
+
+Fuzzing VLC in conjuction with radamsa:
+
+ansvif -t ../examples/space.txt \-y -o ../vlc \-c /usr/bin/vlc \-R "../../radamsa/bin/radamsa\
+ < Sample.mkv > vlc.mkv; sleep 4 && killall vlc" \-A "Sample.mkv"
 .SH SEE ALSO
 find(1), find_suid(1)
 .SH BUGS

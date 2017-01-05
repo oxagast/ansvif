@@ -43,6 +43,7 @@ FILE *popen2(std::string command, std::string type, int &pid,
        * this fixes not being able to reap processes that
        * are suid
        */
+      //command = "DISPLAY=localhost:1 " + command;
       execl("/bin/su", "su", "-c", "/bin/sh", "-c", command.c_str(),
             low_lvl_user.c_str(),
             NULL);
