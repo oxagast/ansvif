@@ -144,6 +144,11 @@ PS C:\ansvif\bin\ansvif_win> .\ansvif -t ..\..\examples\space -F ..\..\tmp\tmpht
 ```
 
 **Recommendations:**
+It is recommended that if you are doing long fuzzes or file fuzzing, if possible
+put the files (including the binary you are fuzzing if possible) in memory.
+This means, put them somewhere like /var/run/shm where disk thrash will be
+minimal, and fuzzing will be somewhat faster, especially if large files are being
+handled.
 
 **DO NOT RUN THIS CODE IN A PRODUCTION ENVIRONMENT!**
 If you try setting faulty.c's output to suid(0) then *PLEASE* do it in a virtual machine.
