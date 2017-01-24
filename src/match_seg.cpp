@@ -358,6 +358,14 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
                     << out_str_p << std::endl
                     << std::endl;
         }
+        /* this here takes care of the command that is run after
+         * the fuzz
+         */
+        if (run_command != "") {
+          int run_com_pid;
+          FILE *fp = popen2(run_command, "r", run_com_pid, low_lvl_user);
+          pclose2(fp, run_com_pid);
+        }
         /* inititalize the child and open the child process fork
          * 4096 bytes should be enough to handle whatever pops out
          * when we go to match.  we match with stringstream to get
@@ -374,14 +382,6 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
         }
         /* close out the command cleanly */
         pclose2(fp, pid);
-        /* this here takes care of the command that is run after
-         * the fuzz
-         */
-        int run_com_pid;
-        if (run_command != "") {
-          FILE *fp = popen2(run_command, "r", run_com_pid, low_lvl_user);
-          pclose2(fp, run_com_pid);
-        }
 /* this takes care of killing off the child if it takes
  * too long
  */
