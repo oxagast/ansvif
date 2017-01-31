@@ -1,7 +1,10 @@
 #ansvif
 *A Not So Very Intelligent Fuzzer*
+
 Marshall Whittaker
+
 oxagast
+
 marshall@i.code.pwnz.org
 
 *As the complexity of a system rises, as does the potential for problems within that system.*
