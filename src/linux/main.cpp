@@ -121,7 +121,7 @@ int main(int argc, char *argv[]) { // initialize our main
     debug = false, is_other = false, dump_opts = false, never_rand = false,
     valgrind = false, single_try = false, percent_sign = false;
   /* what version of ansvif are we running? */
-    std::string ver = "1.6.1";
+    std::string ver = "1.6.2";
   /* first off we're going to start the signal handler incase they
    * do ctrl+c or something
    */
