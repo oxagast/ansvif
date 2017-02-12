@@ -36,7 +36,7 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
                std::string junk_file_of_args, std::string always_arg_before,
                std::string always_arg_after, bool never_rand,
                std::string run_command, std::string fault_code, bool valgrind,
-               bool single_try, bool percent_sign, int static_args, bool verbose, bool debug);
+               bool single_try, bool percent_sign, int static_args, bool keep_going, bool verbose, bool debug);
 std::vector<std::string> get_flags_template(std::string filename, bool verbose,
                                             bool debug);
 std::vector<std::string> get_other(std::string filename, bool verbose,
@@ -119,7 +119,7 @@ int main(int argc, char *argv[]) { // initialize our main
   bool template_opt = false, man_opt = false, rand_all = false, rand_buf = false,
     write_to_file = false, u_strip_shell_set = false, verbose = false,
     debug = false, is_other = false, dump_opts = false, never_rand = false,
-    valgrind = false, single_try = false, percent_sign = false;
+    valgrind = false, single_try = false, percent_sign = false, keep_going = false;
 
   /* first off we're going to start the signal handler incase they
    * do ctrl+c or something
@@ -128,7 +128,7 @@ int main(int argc, char *argv[]) { // initialize our main
   /* now we can start grabbing all the options! */
   while ((opt = getopt(
     argc, argv,
-    "m:p:t:e:c:f:o:b:s:x:R:A:F:S:L:W:B:M:C:y1hrzvdDnVP")) != -1) {
+    "m:p:t:e:c:f:o:b:s:x:R:A:F:S:L:W:B:M:C:y1hrzvdDnVPK")) != -1) {
     switch (opt) {
     case 'v':
       verbose = true;
@@ -225,6 +225,9 @@ int main(int argc, char *argv[]) { // initialize our main
     case 'y':
       buf_size_int = 0;
       break;
+    case 'K':
+      keep_going = true;
+      break;
     default:
       help_me(argv[0]);
     }
@@ -294,7 +297,7 @@ int main(int argc, char *argv[]) { // initialize our main
                 is_other, other_sep, thread_timeout_int, low_lvl_user,
                 junk_file_of_args, always_arg_before, always_arg_after,
                 never_rand, run_command, fault_code, valgrind, single_try,
-                percent_sign, static_args, verbose, debug));
+                percent_sign, static_args, keep_going, verbose, debug));
             /* thrift shop */
           for (auto &all_thread : threads)
             all_thread.join();
@@ -309,7 +312,7 @@ int main(int argc, char *argv[]) { // initialize our main
                     is_other, other_sep, thread_timeout_int, low_lvl_user,
                     junk_file_of_args, always_arg_before, always_arg_after,
                     never_rand, run_command, fault_code, valgrind, single_try,
-                    percent_sign, static_args, verbose, debug);
+                    percent_sign, static_args, keep_going, verbose, debug);
         }
         /* exit cleanly! */
         exit(0);

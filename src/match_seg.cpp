@@ -66,7 +66,7 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
                std::string junk_file_of_args, std::string always_arg_before,
                std::string always_arg_after, bool never_rand,
                std::string run_command, std::string fault_code, bool valgrind,
-               bool single_try, bool percent_sign, int static_args,
+               bool single_try, bool percent_sign, int static_args, bool keep_going,
                bool verbose, bool debug) {
   bool segged = false;
   std::vector<std::string> used_token;
@@ -393,11 +393,11 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
 #endif
         /* our output will be stored here! */
         std::string cmd_output;
+        #ifdef __linux
+        std::ostringstream pid_as_s;
+        pid_as_s << pid;
+        #endif
         if (write_file_n != "") {
-#ifdef __linux
-          std::ostringstream pid_as_s;
-          pid_as_s << pid;
-#endif
           /* all this xml stuff is for logging */
           std::ofstream xml_output;
           xml_output.open(write_file_n + ".crash.ansvif.log");
@@ -415,9 +415,15 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
           writer.openElt("Process")
               .attr("PID", "The process ID of the crashed program")
               .content(pid_as_s.str().c_str())
-              .closeElt();
+              .closeElt();;
 #endif
         }
+        std::string output_logfile = write_file_n + ".output.ansvif.log";
+        std::string crash_logfile = write_file_n + ".crash.ansvif.log";
+        std::string valgrind_logfile = write_file_n + ".valgrind.ansvif.log";
+        std::string output_logfile_pid = write_file_n + ".output." + pid_as_s.str().c_str() + ".ansvif.log";
+        std::string crash_logfile_pid = write_file_n + ".crash." + pid_as_s.str().c_str() + ".ansvif.log";
+        std::string valgrind_logfile_pid = write_file_n + ".valgrind." + pid_as_s.str().c_str() + ".ansvif.log";
         while (std::getline(output, cmd_output)) {
           /* we trim any extra characters */
           cmd_output.erase(cmd_output.find_last_not_of(" \n\r\t") + 1);
@@ -474,10 +480,18 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
                   .closeAll();
               xml_output.close();
               std::cout << "Crash logged." << std::endl;
+              /* move the logged files for pid */
+              rename(output_logfile.c_str(), output_logfile_pid.c_str());
+              rename(crash_logfile.c_str(), crash_logfile_pid.c_str());
               /* then exit cleanly because we crashed it! Get it? :) */
+              if (keep_going == false) {
               exit(0);
+              }
             } else {
+              if (keep_going == false) {
               exit(0);
+              }
+              return false;
             }
             if (write_to_file == true) {
 /* logging hangs */
@@ -486,7 +500,7 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
               pid_as_s << pid;
 #endif
               std::ofstream xml_output;
-              xml_output.open(write_file_n + ".crash.ansvif.log");
+              xml_output.open(output_logfile_pid.c_str());
               Writer writer(xml_output);
               writer.openElt("Command")
                   .attr("run", "What the command hung with")
@@ -518,8 +532,10 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
         exit(64);
       }
     }
+    if (keep_going == false) {
     /* otherwise we exit cleanly */
     exit(0);
+    }
   }
 
   else {
@@ -527,4 +543,8 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
     std::cerr << "Command not found at path..." << std::endl;
     exit(1);
   }
+  if (keep_going == false) {
+    return (false);
+  }
+  return (true);
 }
