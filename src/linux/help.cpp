@@ -13,8 +13,9 @@
 #include <iostream>
 #include <stdio.h>
 #include <string>
+#include "src/linux/main.h"
 
-void help_me(std::string mr_me, std::string ver) {
+void help_me(std::string mr_me) {
   std::cout
       << "ansvif v" << ver << " -- A Not So Very Intelligent Fuzzer"
       << std::endl

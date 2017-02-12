@@ -20,9 +20,10 @@
 #include <thread>
 #include <unistd.h>
 #include <vector>
+#include "src/linux/main.h"
 
-int toint(std::string ints, std::string my_prog, std::string version);
-void help_me(std::string mr_me, std::string ver);
+int toint(std::string ints, std::string my_prog);
+void help_me(std::string mr_me);
 std::vector<std::string> get_flags_man(std::string man_page,
                                        std::string man_loc, bool verbose,
                                        bool debug, bool dump_opts);
@@ -35,8 +36,7 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
                std::string junk_file_of_args, std::string always_arg_before,
                std::string always_arg_after, bool never_rand,
                std::string run_command, std::string fault_code, bool valgrind,
-               bool single_try, bool percent_sign, int static_args, bool verbose, bool debug,
-               std::string ver);
+               bool single_try, bool percent_sign, int static_args, bool verbose, bool debug);
 std::vector<std::string> get_flags_template(std::string filename, bool verbose,
                                             bool debug);
 std::vector<std::string> get_other(std::string filename, bool verbose,
@@ -45,7 +45,7 @@ void write_seg(std::string filename, std::string seg_line);
 
 /* globals to be passed to sig_handler because its easier this way */
 std::string write_file_n, junk_file_of_args;
-
+std::string ver = "1.6.2";  /* ansvif version */
 void sig_handler(int sig) {
   /* flush the screen buffer  then sleep before printing 
    * the message about killing threads
@@ -120,8 +120,7 @@ int main(int argc, char *argv[]) { // initialize our main
     write_to_file = false, u_strip_shell_set = false, verbose = false,
     debug = false, is_other = false, dump_opts = false, never_rand = false,
     valgrind = false, single_try = false, percent_sign = false;
-  /* what version of ansvif are we running? */
-    std::string ver = "1.6.2";
+
   /* first off we're going to start the signal handler incase they
    * do ctrl+c or something
    */
@@ -165,7 +164,7 @@ int main(int argc, char *argv[]) { // initialize our main
       write_file_n = optarg;
       break;
     case 'h':
-      help_me(argv[0], ver);
+      help_me(argv[0]);
       break;
     case 'r':
       rand_all = true;
@@ -221,13 +220,13 @@ int main(int argc, char *argv[]) { // initialize our main
       percent_sign = true;
       break;
     case 'M':
-      static_args = toint(optarg, argv[0], ver);
+      static_args = toint(optarg, argv[0]);
       break;
     case 'y':
       buf_size_int = 0;
       break;
     default:
-      help_me(argv[0], ver);
+      help_me(argv[0]);
     }
   }
   if (u_strip_shell_set == true) {
@@ -244,44 +243,44 @@ int main(int argc, char *argv[]) { // initialize our main
     /* send them to help because you can't have a manpage and
      * a template at the same time
      */
-    help_me(argv[0], ver);
+    help_me(argv[0]);
   } else if ((man_opt == false) && (template_opt == false)) {
     /* can't fuzz if we don't have a template or manpage as
      * a starting point, if you want nothing just touch a file
      * and use it as a template
      */
-    help_me(argv[0], ver);
+    help_me(argv[0]);
   } else if (path_str == "") {
     /* if they didn't specify a command path then error out */
-    help_me(argv[0], ver);
+    help_me(argv[0]);
   } else {
     /* like if the option they supplied doesn't exist... */
-    help_me(argv[0], ver);
+    help_me(argv[0]);
   }
   if ((junk_file_of_args != "") && (is_other == false)) {
     /* this will fix the -F no -x bug */
-    help_me(argv[0], ver);
+    help_me(argv[0]);
   }
   /* make sure the buffer size is really an integar and if it
    * happens to not be, then we'll send them to the help page,
    * otherwise we'll turn it into type int
    */
   if ((buf_size_int == 0) && (buf_size != "")) {
-    help_me(argv[0], ver);
+    help_me(argv[0]);
   }
   if ((buf_size_int == -1) && (buf_size != "")) {
-    buf_size_int = toint(buf_size, argv[0], ver);
+    buf_size_int = toint(buf_size, argv[0]);
   }
   if (buf_size_int == -1) {
-    help_me(argv[0], ver);
+    help_me(argv[0]);
   }
     /* make sure the thread count is an integar the same way
      * we did with the buffer size
      */  
       int thread_count_int = thread_count_def;
-    thread_count_int = toint(num_threads, argv[0], ver);
+    thread_count_int = toint(num_threads, argv[0]);
       int thread_timeout_int = thread_timeout_def;
-        thread_timeout_int = toint(t_timeout, argv[0], ver);
+        thread_timeout_int = toint(t_timeout, argv[0]);
         /* if we're not doing a single try then turn on 
          * threading 
          */
@@ -295,8 +294,7 @@ int main(int argc, char *argv[]) { // initialize our main
                 is_other, other_sep, thread_timeout_int, low_lvl_user,
                 junk_file_of_args, always_arg_before, always_arg_after,
                 never_rand, run_command, fault_code, valgrind, single_try,
-                percent_sign, static_args, verbose, debug,
-                ver));
+                percent_sign, static_args, verbose, debug));
             /* thrift shop */
           for (auto &all_thread : threads)
             all_thread.join();
@@ -311,8 +309,7 @@ int main(int argc, char *argv[]) { // initialize our main
                     is_other, other_sep, thread_timeout_int, low_lvl_user,
                     junk_file_of_args, always_arg_before, always_arg_after,
                     never_rand, run_command, fault_code, valgrind, single_try,
-                    percent_sign, static_args, verbose, debug,
-                    ver);
+                    percent_sign, static_args, verbose, debug);
         }
         /* exit cleanly! */
         exit(0);

@@ -31,6 +31,7 @@
 #include <thread>
 #include <unistd.h>
 #include <vector>
+#include "src/linux/main.h"
 
 std::string remove_chars(const std::string &source, const std::string &chars);
 int reaper(int grim, int t_timeout);
@@ -66,7 +67,7 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
                std::string always_arg_after, bool never_rand,
                std::string run_command, std::string fault_code, bool valgrind,
                bool single_try, bool percent_sign, int static_args,
-               bool verbose, bool debug, std::string ver) {
+               bool verbose, bool debug) {
   bool segged = false;
   std::vector<std::string> used_token;
   std::string valgrind_str;

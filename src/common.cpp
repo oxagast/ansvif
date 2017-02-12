@@ -21,6 +21,7 @@
 #include <vector>
 #include <signal.h>
 #include <random>
+#include "src/linux/main.h"
 
 #define READ 0
 #define WRITE 1
@@ -39,8 +40,8 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
                std::string junk_file_of_args, std::string always_arg_before,
                std::string always_arg_after, bool never_rand,
                std::string run_command, std::string fault_code, bool single_try,
-               bool percent_sign, int static_args, bool verbose, bool debug, std::string ver);
-void help_me(std::string mr_me, std::string ver);
+               bool percent_sign, int static_args, bool verbose, bool debug);
+void help_me(std::string mr_me);
 std::vector<std::string> get_flags_man(std::string man_page,
                                        std::string man_loc, bool verbose,
                                        bool debug, bool dump_opts);
@@ -65,15 +66,15 @@ std::string remove_chars(const std::string &source, const std::string &chars) {
   return(result);
 }
 
-int toint(std::string ints, std::string my_prog, std::string version) {
+int toint(std::string ints, std::string my_prog) {
      std::istringstream b_size(ints);
   int is_int_b_s;
   if (!(b_size >> is_int_b_s)) {
-    help_me(my_prog, version);
+    help_me(my_prog);
   }
   char buf_char_maybe_b_s;
   if (b_size >> buf_char_maybe_b_s) {
-    help_me(my_prog, version);
+    help_me(my_prog);
   } else {
   /* for compatibility with cygwin */
   return atoi(ints.c_str());
