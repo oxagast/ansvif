@@ -134,6 +134,7 @@ PS C:\ansvif\bin\ansvif_win> .\ansvif -t ..\..\examples\space -F ..\..\tmp\tmpht
   -V Use Valgrind if installed.
   -1 Try to make it fault once, if it doesn't happen, throw error code 64.  Useful for scripting.
   -P Use % to represent binary in fuzz.
+  -K Keep fuzzing after a crash in the target.
   -v Verbose.
   -d Debug data.
   -h Shows the help page.
