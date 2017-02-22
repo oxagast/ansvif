@@ -71,6 +71,9 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
   bool segged = false;
   std::vector<std::string> used_token;
   std::string valgrind_str;
+  std::string output_logfile = write_file_n + ".output.ansvif.log";
+  std::string crash_logfile = write_file_n + ".crash.ansvif.log";
+  std::string valgrind_logfile = write_file_n + ".valgrind.ansvif.log";
   if (valgrind == true) {
     if (write_file_n != "") {
       /* if valgrind is active then we'll tel lit to use
@@ -96,6 +99,9 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
      * is actually an executable file
      */
     while (segged == false) {
+      unlink(crash_logfile.c_str());
+      unlink(output_logfile.c_str());
+      unlink(valgrind_logfile.c_str());
       /* initialize two random pieces */
       int rand_spec_one, rand_spec_two;
       if (rand_all == true) {
@@ -418,9 +424,6 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
               .closeElt();;
 #endif
         }
-        std::string output_logfile = write_file_n + ".output.ansvif.log";
-        std::string crash_logfile = write_file_n + ".crash.ansvif.log";
-        std::string valgrind_logfile = write_file_n + ".valgrind.ansvif.log";
         std::string output_logfile_pid = write_file_n + ".output." + pid_as_s.str().c_str() + ".ansvif.log";
         std::string crash_logfile_pid = write_file_n + ".crash." + pid_as_s.str().c_str() + ".ansvif.log";
         std::string valgrind_logfile_pid = write_file_n + ".valgrind." + pid_as_s.str().c_str() + ".ansvif.log";
@@ -432,15 +435,16 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
                       << "Code :" << cmd_output << ":" << std::endl;
           }
           /* here is where we're matching the fault codes of the crash */
-          if ((cmd_output == "132") || (cmd_output == "134") ||
-              (cmd_output == "139") || (cmd_output == "135") ||
-              (cmd_output == "136") || (cmd_output == "159") ||
+          if ((cmd_output == "magic_token_CRASHCODE 132") || (cmd_output == "magic_token_CRASHCODE 134") ||
+              (cmd_output == "magic_token_CRASHCODE 139") || (cmd_output == "magic_token_CRASHCODE 135") ||
+              (cmd_output == "magic_token_CRASHCODE 136") || (cmd_output == "magic_token_CRASHCODE 159") ||
               (cmd_output == "-1073741819") || (cmd_output == "-1073740791") ||
               (cmd_output == "-1073741571") || (cmd_output == "-532459699") ||
               (cmd_output == fault_code)) {
 #ifdef __linux
             std::cout << "PID: " << pid << std::endl;
 #endif
+            cmd_output.replace(0,22, "");
             std::cout << "Exit Code: " << cmd_output << std::endl;
             std::cout << "Crashed with command: " << std::endl
                       << out_str_p << std::endl;

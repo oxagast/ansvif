@@ -49,12 +49,12 @@ get_out_str(std::string env_str, std::string valgrind_str, std::string sys_str,
     /* not logging here */
     out_str =
         out_str +
-        "  >/dev/null 2>&1; echo $?";
+        "  >/dev/null 2>&1; echo magic_token_CRASHCODE $?";
   }
   else {
     /* logging here */
     out_str = out_str + " >" + log_prefix +
-              ".output.ansvif.log 2>&1; echo $?";
+              ".output.ansvif.log 2>&1; echo magic_token_CRASHCODE $?";
   }
   /* here we declare out_all and put the out_str and out_str_p
    * printf compatible stuff into the vector to be fed back into
