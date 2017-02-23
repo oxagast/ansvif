@@ -21,7 +21,7 @@
 #include <vector>
 #include <signal.h>
 #include <random>
-#include "src/linux/main.h"
+#include "src/main.h"
 
 #define READ 0
 #define WRITE 1

@@ -8,8 +8,9 @@
 //   /  ( \/ )/ _\ / __)/ _\/ ___(_  _)
 //  (  O )  (/    ( (_ /    \___ \ )(  
 //   \__(_/\_\_/\_/\___\_/\_(____/(__)
-
-#include "../../include/gzstream/gzstream.h"
+#ifdef __linux
+#include "../include/gzstream/gzstream.h"
+#endif
 #include <cstring>
 #include <regex>
 #include <thread>
@@ -22,6 +23,7 @@ bool file_exists(const std::string &filen);
 std::vector<std::string> get_flags_man(std::string man_page,
                                        std::string man_loc, bool verbose,
                                        bool debug, bool dump_opts) {
+#ifdef __linux
   /* declare our variables */
   std::string filename;
   std::vector<std::string> opt_vec;
@@ -108,4 +110,10 @@ std::vector<std::string> get_flags_man(std::string man_page,
   }
   /* return the options we've extracted out of the manpages */
   return (opt_vec);
+#endif
+#ifdef _WIN32
+   /* just error out :( */
+  std::cout << "Not implemented in Windows, sorry..." << std::endl;
+  exit(1);
+#endif
 }

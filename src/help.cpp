@@ -13,8 +13,9 @@
 #include <iostream>
 #include <stdio.h>
 #include <string>
+#include "src/main.h"
 
-void help_me(std::string mr_me, std::string ver) {
+void help_me(std::string mr_me) {
   /* print all the help shit to STDOUT */
   std::cout
       << "ansvif v" << ver << " -- A Not So Very Intelligent Fuzzer"
@@ -34,10 +35,12 @@ void help_me(std::string mr_me, std::string ver) {
          "mount_envs"
       << std::endl
       << " -c [path]    Specifies the command path." << std::endl
+#ifdef __linux
       << " -p [integer] Specifies the manpage location (as an integer, usually "
          "1 or 8)."
       << std::endl
       << " -m [command] Specifies the commands manpage." << std::endl
+#endif
       << " -D           Dump what we can out of the manpage to stdout."
       << std::endl
       << " -f [integer] Number of threads to use.  Default is 2." << std::endl
@@ -73,9 +76,15 @@ void help_me(std::string mr_me, std::string ver) {
       << " -R \"ls\"      Always run this command after the fuzz." << std::endl
       << " -C \"13\"      Non default crash recognition error codes."
       << std::endl
+#ifdef _WIN32
       << "              Defaults are -1073741819, -1073740791, -1073741571, and"
       << std::endl
-      << "              -532459699." << std::endl
+      << "              -532459699."
+#endif
+#ifdef __linux
+      << "              Defaults are 132, 136, 139, 135, 134, and 159."
+#endif
+      << std::endl
       << " -W [integer] Thread timeout." << std::endl
       << " -V           Valgrind is not supported under Windows." << std::endl
       << " -1           Try to induce a crash once, and if a crash is not "

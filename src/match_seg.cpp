@@ -31,7 +31,7 @@
 #include <thread>
 #include <unistd.h>
 #include <vector>
-#include "src/linux/main.h"
+#include "src/main.h"
 
 std::string remove_chars(const std::string &source, const std::string &chars);
 int reaper(int grim, int t_timeout);
@@ -432,7 +432,11 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
           cmd_output.erase(cmd_output.find_last_not_of(" \n\r\t") + 1);
           if (verbose == true) {
             std::cout << std::endl
-                      << "Code :" << cmd_output << ":" << std::endl;
+#ifdef __linux
+            << "Code :" << cmd_output.replace(0,22, "") << ":" << std::endl;
+#else
+            << "Code :" << cmd_output << ":" << std::endl;
+#endif
           }
           /* here is where we're matching the fault codes of the crash */
           if ((cmd_output == "magic_token_CRASHCODE 132") || (cmd_output == "magic_token_CRASHCODE 134") ||
@@ -443,8 +447,8 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
               (cmd_output == fault_code)) {
 #ifdef __linux
             std::cout << "PID: " << pid << std::endl;
-#endif
             cmd_output.replace(0,22, "");
+#endif
             std::cout << "Exit Code: " << cmd_output << std::endl;
             std::cout << "Crashed with command: " << std::endl
                       << out_str_p << std::endl;

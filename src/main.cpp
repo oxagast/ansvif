@@ -20,7 +20,7 @@
 #include <thread>
 #include <unistd.h>
 #include <vector>
-#include "src/linux/main.h"
+#include "src/main.h"
 
 int toint(std::string ints, std::string my_prog);
 void help_me(std::string mr_me);
@@ -71,14 +71,19 @@ void sig_handler(int sig) {
 int main(int argc, char *argv[]) { // initialize our main
   /* initialize all our variables for startup! */
   /* how many options? */
-  int opt, thread_count_def = 2, thread_timeout_def = 3,
-      static_args = 0, buf_size_int = -1;
+  int opt;
+  int thread_count_def = 2;
+  int thread_timeout_def = 3;
+  int static_args = 0;
+  int buf_size_int = -1;
   /* the options that are pulled out of the manpage or
    * template go into the opts vector, the environment
    * variables go into spec_env and the extra variables
    * that are invoked with -x go into opt_other
    */
-  std::vector<std::string> opts, spec_env, opt_other;
+  std::vector<std::string> opts;
+  std::vector<std::string> spec_env;
+  std::vector<std::string> opt_other;
   /* here we're initializing the variables for the thread
    * timeout, the manpage location (8 is the default because
    * thats where most manpages are stored, but 1 could also
@@ -100,11 +105,34 @@ int main(int argc, char *argv[]) { // initialize our main
    * can supply a fault code to the program that it should
    * catch as well as the other default ones.
    */
-  std::string t_timeout = "3", man_loc = "8", num_threads = "2",
-    buf_size, mp, template_file, strip_shell = "`<>\n|&\[]\()\{}:;\\'$",
-    u_strip_shell, write_file_n = "", path_str = "", other_sep = "", low_lvl_user =
-    "nobody", junk_file_of_args = "", always_arg_before = "", always_arg_after =
-    "", run_command = "", man_page = "", fault_code = "134";
+  std::string t_timeout = "3";
+  std::string man_loc = "8";
+  std::string num_threads = "2";
+  std::string buf_size;
+  std::string mp;
+  std::string template_file;
+#ifdef __linux
+  std::string strip_shell = "`<>\n|&\[]\()\{}:;\\'$";
+#endif
+#ifdef _WIN32
+  std::string strip_shell = "[]:|<>+;=.?\n\r\\0";
+#endif
+  std::string u_strip_shell;
+  std::string write_file_n = "";
+  std::string path_str = "";
+  std::string other_sep = "";
+  std::string low_lvl_user = "nobody";
+  std::string junk_file_of_args = "";
+  std::string always_arg_before = "";
+  std::string always_arg_after = "";
+  std::string run_command = "";
+  std::string man_page = "";
+#ifdef __linux
+  std::string fault_code = "134";
+#endif
+#ifdef _WIN32
+  std::string fault_code = "-1073741819"
+#endif
   /* declare some more variables as boolean, the template_opt,
    * manpage option, if random is always used, if we're randomizing
    * the buffer size, if we're writing to a file (logging), if the
@@ -116,10 +144,21 @@ int main(int argc, char *argv[]) { // initialize our main
    * do a single dry run, if we're going to need the % sign (this is
    * good for web browser fuzzing)
    */
-  bool template_opt = false, man_opt = false, rand_all = false, rand_buf = false,
-    write_to_file = false, u_strip_shell_set = false, verbose = false,
-    debug = false, is_other = false, dump_opts = false, never_rand = false,
-    valgrind = false, single_try = false, percent_sign = false, keep_going = false;
+  bool template_opt = false;
+  bool man_opt = false;
+  bool rand_all = false;
+  bool rand_buf = false;
+  bool write_to_file = false;
+  bool u_strip_shell_set = false;
+  bool verbose = false;
+  bool debug = false;
+  bool is_other = false;
+  bool dump_opts = false;
+  bool never_rand = false;
+  bool valgrind = false;
+  bool single_try = false;
+  bool percent_sign = false;
+  bool keep_going = false;
 
   /* first off we're going to start the signal handler incase they
    * do ctrl+c or something

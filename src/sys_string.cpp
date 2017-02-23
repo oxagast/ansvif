@@ -26,6 +26,7 @@ get_out_str(std::string env_str, std::string valgrind_str, std::string sys_str,
    */
   std::string out_str, out_str_p;
   /* no shooting blanks plz */
+#ifdef __linux
   if (sys_str != "") {
     if (env_str != "") {
       out_str_p =
@@ -56,6 +57,27 @@ get_out_str(std::string env_str, std::string valgrind_str, std::string sys_str,
     out_str = out_str + " >" + log_prefix +
               ".output.ansvif.log 2>&1; echo magic_token_CRASHCODE $?";
   }
+#endif
+#ifdef _WIN32
+  if (sys_str != "") {
+    if (env_str != "") {
+      out_str_p = " (.\\printf.exe \\x" + binstr_to_hex(env_str) + "\") " +
+                  "'" + path_str + " " + always_arg_b + "' (.\\printf.exe \\x" +
+                  binstr_to_hex(sys_str) + ")" + always_arg + " " + fuzz_after +
+                  "; echo $LastExitCode";
+    }
+    if (env_str == "") {
+      out_str_p = "'" + path_str + " " + always_arg_b + "' (.\\printf.exe \\x" +
+                  binstr_to_hex(sys_str) + ") " + always_arg + " " +
+                  fuzz_after +
+                  "; echo $LastExitCode";
+    }
+  /* shit for windows compatibility through powershell */
+  out_str = "$(" + env_str + " " + path_str + " " + always_arg_b + " " + sys_str + 
+  " " + always_arg + " " + fuzz_after;
+ }
+  out_str = out_str + "); echo $lastexitcode";
+#endif
   /* here we declare out_all and put the out_str and out_str_p
    * printf compatible stuff into the vector to be fed back into
    * the calling routine
