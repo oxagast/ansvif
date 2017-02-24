@@ -67,7 +67,7 @@ void help_me(std::string mr_me) {
       << " -L           Privilege changing not implimented in Windows yet.  "
          "Defaults"
       << std::endl		 
-	  << "nobody."
+	  << "          nobody."
       << std::endl
       << " -A \"foo\"     Always put this string after the command."
       << std::endl
