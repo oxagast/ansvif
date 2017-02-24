@@ -16,7 +16,9 @@
 #include <signal.h>
 #include <stdio.h>
 #include <sys/stat.h>
+#ifdef __linux
 #include <sys/wait.h>
+#endif
 #include <thread>
 #include <unistd.h>
 #include <vector>
@@ -131,7 +133,7 @@ int main(int argc, char *argv[]) { // initialize our main
   std::string fault_code = "134";
 #endif
 #ifdef _WIN32
-  std::string fault_code = "-1073741819"
+  std::string fault_code = "-1073741819";
 #endif
   /* declare some more variables as boolean, the template_opt,
    * manpage option, if random is always used, if we're randomizing

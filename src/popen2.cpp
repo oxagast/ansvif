@@ -12,15 +12,19 @@
 #include <iomanip>
 #include <string>
 #include <sys/stat.h>
+#ifdef __linux
 #include <sys/wait.h>
+#endif
 #include <thread>
 #include <unistd.h>
 
 #define READ 0
 #define WRITE 1
 
+
 FILE *popen2(std::string command, std::string type, int &pid,
              std::string low_lvl_user) {
+#ifdef __linux
   pid_t child_pid;
   int fd[2];
   pid = pipe(fd);
@@ -66,13 +70,31 @@ FILE *popen2(std::string command, std::string type, int &pid,
   return fdopen(fd[READ], "r");
   }
   return fdopen(fd[WRITE], "w");
+#endif
+#ifdef _WIN32
+  command = "cmd /c C:\\Windows\\SysWOW64\\WindowsPowerShell\\v1.0\\Powershell.exe -v 5 -c " + command;
+   /* char ps_buffer[128]; */
+   FILE *process_pipe;
+  /* Run DIR so that it writes its output to a pipe. Open this
+   * pipe with read text attribute so that we can read it 
+   * like a text file. 
+   */
+   if( (process_pipe = _popen( command.c_str(), "rt" )) == NULL )
+      return ( process_pipe );
+   /* std::cout << command << std::endl; */
+  return (process_pipe);
+#endif
 }
+
+
+
 
 /* we have to close it all our so we don't fuck
  * ourselves on OOM later
  */
 int pclose2(FILE *fp, pid_t pid) 
 {
+#ifdef __linux
   int stat;
   fclose(fp);
   while (waitpid(pid, &stat, 0) == 0) {
@@ -83,4 +105,16 @@ int pclose2(FILE *fp, pid_t pid)
   }
   /* return our status and end pclose2 */
   return stat;
+#endif
+#ifdef _WIN32
+/* we have to close it all our so we don't fuck
+ * ourselves on OOM later
+ */
+  /* return our status and end pclose2 */
+   if (feof( fp))
+   {
+   _pclose( fp );
+   }
+  return -1;
+#endif
 }

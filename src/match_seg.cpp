@@ -424,9 +424,11 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
               .closeElt();;
 #endif
         }
+#ifdef __linux
         std::string output_logfile_pid = write_file_n + ".output." + pid_as_s.str().c_str() + ".ansvif.log";
         std::string crash_logfile_pid = write_file_n + ".crash." + pid_as_s.str().c_str() + ".ansvif.log";
         std::string valgrind_logfile_pid = write_file_n + ".valgrind." + pid_as_s.str().c_str() + ".ansvif.log";
+#endif
         while (std::getline(output, cmd_output)) {
           /* we trim any extra characters */
           cmd_output.erase(cmd_output.find_last_not_of(" \n\r\t") + 1);
@@ -489,8 +491,10 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
               xml_output.close();
               std::cout << "Crash logged." << std::endl;
               /* move the logged files for pid */
+#ifdef __linux
               rename(output_logfile.c_str(), output_logfile_pid.c_str());
               rename(crash_logfile.c_str(), crash_logfile_pid.c_str());
+#endif
               /* then exit cleanly because we crashed it! Get it? :) */
               if (keep_going == false) {
               exit(0);
@@ -508,7 +512,12 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
               pid_as_s << pid;
 #endif
               std::ofstream xml_output;
+#ifdef __linux
               xml_output.open(output_logfile_pid.c_str());
+#endif
+#ifdef _WIN32
+              xml_output.open(output_logfile.c_str());
+#endif
               Writer writer(xml_output);
               writer.openElt("Command")
                   .attr("run", "What the command hung with")

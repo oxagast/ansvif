@@ -65,7 +65,9 @@ void help_me(std::string mr_me) {
          "',:-' etc."
       << std::endl
       << " -L           Privilege changing not implimented in Windows yet.  "
-         "Defaults nobody."
+         "Defaults"
+      << std::endl		 
+	  << "nobody."
       << std::endl
       << " -A \"foo\"     Always put this string after the command."
       << std::endl
@@ -93,6 +95,9 @@ void help_me(std::string mr_me) {
       << "              throw error code 64." << std::endl
       << " -P           Use % to represent binary in fuzz." << std::endl
       << " -M           Max arguments to use in the fuzz." << std::endl
+	  << " -y           Short for -b 0 and usually only useful with -A or -B"
+	  << std::endl
+	  << " -K           Keep going after a crash." << std::endl
       << " -v           Verbose." << std::endl
       << " -d           Debug."
       << std::endl;

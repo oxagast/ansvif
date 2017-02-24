@@ -16,6 +16,8 @@
 #include <thread>
 #include <unistd.h>
 #include <vector>
+#include <stdio.h>
+#include <iostream>
 
 std::string remove_chars(const std::string &source, const std::string &chars);
 bool file_exists(const std::string &filen);
