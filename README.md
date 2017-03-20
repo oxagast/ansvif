@@ -166,4 +166,5 @@ Syscall fuzzing under linux is under heavy development.
 **Thanks**
 
 Thanks to dll999 for syscall fuzzing ideas.
+Thanks to moo from #2600 on 2600net for a few recommendations on the wiki writeup.
 Thanks to god knows how many people on IRC and StackOverflow.
