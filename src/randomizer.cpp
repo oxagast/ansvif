@@ -16,7 +16,7 @@ int rand_me_plz(int rand_from, int rand_to) {
   int first = rand_to-(rand_from-1);
   int rolled = rand()% first - rand_from;
 #endif
-#ifdef __linux
+#ifdef __unix__
     std::random_device rd;
   std::default_random_engine generator(rd()); // seed random
   std::uniform_int_distribution<int> distribution(rand_from,

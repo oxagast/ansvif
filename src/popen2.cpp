@@ -12,7 +12,7 @@
 #include <iomanip>
 #include <string>
 #include <sys/stat.h>
-#ifdef __linux
+#ifdef __unix__
 #include <sys/wait.h>
 #endif
 #include <thread>
@@ -24,7 +24,7 @@
 
 FILE *popen2(std::string command, std::string type, int &pid,
              std::string low_lvl_user) {
-#ifdef __linux
+#ifdef __unix__
   pid_t child_pid;
   int fd[2];
   pid = pipe(fd);
@@ -94,7 +94,7 @@ FILE *popen2(std::string command, std::string type, int &pid,
  */
 int pclose2(FILE *fp, pid_t pid) 
 {
-#ifdef __linux
+#ifdef __unix__
   int stat;
   fclose(fp);
   while (waitpid(pid, &stat, 0) == 0) {

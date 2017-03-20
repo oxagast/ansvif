@@ -27,7 +27,7 @@ get_out_str(std::string env_str, std::string valgrind_str, std::string sys_str,
    */
   std::string out_str, out_str_p;
   /* no shooting blanks plz */
-#ifdef __linux
+#ifdef __unix__
   if (sys_str != "") {
     if (env_str != "") {
       out_str_p =
@@ -101,7 +101,7 @@ get_out_str_pc(std::string env_str, std::string valgrind_str,
    */
   std::string out_str, out_str_p;
   /* make sure we're not shooting blanks */
-#ifdef __linux
+#ifdef __unix__
   if (sys_str != "") {
     if (env_str != "") {
       /* this is if we have an environment string */

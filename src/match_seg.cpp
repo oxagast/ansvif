@@ -392,14 +392,14 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
 /* this takes care of killing off the child if it takes
  * too long
  */
-#ifdef __linux
+#ifdef __unix__
         std::thread reaper_thread(reaper, pid, t_timeout);
         /* takes care of the reaper thread */
         reaper_thread.detach();
 #endif
         /* our output will be stored here! */
         std::string cmd_output;
-        #ifdef __linux
+        #ifdef __unix__
         std::ostringstream pid_as_s;
         pid_as_s << pid;
         #endif
@@ -417,14 +417,14 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
               .attr("path", "Path of the file fuzzed")
               .content(path_str.c_str())
               .closeElt();
-#ifdef __linux
+#ifdef __unix__
           writer.openElt("Process")
               .attr("PID", "The process ID of the crashed program")
               .content(pid_as_s.str().c_str())
               .closeElt();;
 #endif
         }
-#ifdef __linux
+#ifdef __unix__
         std::string output_logfile_pid = write_file_n + ".output." + pid_as_s.str().c_str() + ".ansvif.log";
         std::string crash_logfile_pid = write_file_n + ".crash." + pid_as_s.str().c_str() + ".ansvif.log";
         std::string valgrind_logfile_pid = write_file_n + ".valgrind." + pid_as_s.str().c_str() + ".ansvif.log";
@@ -434,7 +434,7 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
           cmd_output.erase(cmd_output.find_last_not_of(" \n\r\t") + 1);
           if (verbose == true) {
             std::cout << std::endl
-#ifdef __linux
+#ifdef __unix__
             << "Code :" << cmd_output.replace(0,22, "") << ":" << std::endl;
 #else
             << "Code :" << cmd_output << ":" << std::endl;
@@ -447,7 +447,7 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
               (cmd_output == "-1073741819") || (cmd_output == "-1073740791") ||
               (cmd_output == "-1073741571") || (cmd_output == "-532459699") ||
               (cmd_output == fault_code)) {
-#ifdef __linux
+#ifdef __unix__
             std::cout << "PID: " << pid << std::endl;
             cmd_output.replace(0,22, "");
 #endif
@@ -463,7 +463,7 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
 /* since we crashed we're going to finish writing to the
  * xml file
  */
-#ifdef __linux
+#ifdef __unix__
               std::ostringstream pid_as_s;
               pid_as_s << pid;
 #endif
@@ -491,7 +491,7 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
               xml_output.close();
               std::cout << "Crash logged." << std::endl;
               /* move the logged files for pid */
-#ifdef __linux
+#ifdef __unix__
               rename(output_logfile.c_str(), output_logfile_pid.c_str());
               rename(crash_logfile.c_str(), crash_logfile_pid.c_str());
 #endif
@@ -507,12 +507,12 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
             }
             if (write_to_file == true) {
 /* logging hangs */
-#ifdef __linux
+#ifdef __unix__
               std::ostringstream pid_as_s;
               pid_as_s << pid;
 #endif
               std::ofstream xml_output;
-#ifdef __linux
+#ifdef __unix__
               xml_output.open(output_logfile_pid.c_str());
 #endif
 #ifdef _WIN32
@@ -534,7 +534,7 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
               xml_output.close();
             }
           }
-#ifdef __linux
+#ifdef __unix__
         }
 #endif
       }

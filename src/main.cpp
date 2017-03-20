@@ -16,7 +16,7 @@
 #include <signal.h>
 #include <stdio.h>
 #include <sys/stat.h>
-#ifdef __linux
+#ifdef __unix__
 #include <sys/wait.h>
 #endif
 #include <thread>
@@ -113,7 +113,7 @@ int main(int argc, char *argv[]) { // initialize our main
   std::string buf_size;
   std::string mp;
   std::string template_file;
-#ifdef __linux
+#ifdef __unix__
   std::string strip_shell = "`<>\n|&\[]\()\{}:;\\'$";
 #endif
 #ifdef _WIN32
@@ -129,7 +129,7 @@ int main(int argc, char *argv[]) { // initialize our main
   std::string always_arg_after = "";
   std::string run_command = "";
   std::string man_page = "";
-#ifdef __linux
+#ifdef __unix__
   std::string fault_code = "134";
 #endif
 #ifdef _WIN32
