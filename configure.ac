@@ -31,9 +31,17 @@ if test "$WITH_SYSCALLS" = "true"; then
 else
     AC_MSG_NOTICE([syscalls module is disabled])
 fi
-AM_CONDITIONAL(OS_IS_REDHAT, [ test `cat /etc/os-release | grep REDHAT | head -n 1 | wc -l` -eq "1"])
+AM_CONDITIONAL(OS_IS_REDHAT, [ test `test -e /etc/os-release; echo $?` -eq "0" ])
 if test "$OS_IS_REDHAT" = "1"; then
     AC_DEFINE([__REDHAT], [], ["build for redhat"])
     AC_MSG_NOTICE([trying to build for a redhat based system])
+fi
+AM_CONDITIONAL(OS_IS_DEBIAN, [ test `test -e /etc/debian-version; echo $?` -eq "0" ])
+if test "$OS_IS_DEBIAN" = "1"; then
+    AC_DEFINE([__DEBIAN], [], ["build for debian"])
+    AC_MSG_NOTICE([trying to build for a debian based system])
+else
+    AC_DEFINE([__UNKNOWN], [], ["build for unknown"])
+    AC_MSG_NOTICE([trying to build for a unknown based system])
 fi
 AC_OUTPUT

@@ -11,6 +11,7 @@
 
 #define CRYPTOPP_ENABLE_NAMESPACE_WEAK 1
 #include "../include/xmlwriter/xml_writer.hpp"
+#ifdef __linux
 #ifdef __REDHAT
 #include <cryptopp/hex.h>
 #include <cryptopp/md5.h>
@@ -18,6 +19,7 @@
 #ifdef __DEBIAN
 #include <crypto++/hex.h>
 #include <crypto++/md5.h>
+#endif
 #endif
 #include <cstdlib>
 #include <cstring>
@@ -534,7 +536,7 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
               xml_output.close();
             }
           }
-#ifdef __unix__
+#ifdef __linux
         }
 #endif
       }

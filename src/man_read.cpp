@@ -8,7 +8,7 @@
 //   /  ( \/ )/ _\ / __)/ _\/ ___(_  _)
 //  (  O )  (/    ( (_ /    \___ \ )(  
 //   \__(_/\_\_/\_/\___\_/\_(____/(__)
-#ifdef __unix__
+#ifdef __linux
 #include "../include/gzstream/gzstream.h"
 #endif
 #include <cstring>
@@ -25,7 +25,7 @@ bool file_exists(const std::string &filen);
 std::vector<std::string> get_flags_man(std::string man_page,
                                        std::string man_loc, bool verbose,
                                        bool debug, bool dump_opts) {
-#ifdef __unix__
+#ifdef __linux
   /* declare our variables */
   std::string filename;
   std::vector<std::string> opt_vec;
@@ -116,6 +116,9 @@ std::vector<std::string> get_flags_man(std::string man_page,
 #ifdef _WIN32
    /* just error out :( */
   std::cout << "Not implemented in Windows, sorry..." << std::endl;
+  exit(1);
+#else
+  std::cout << "Not implemented on Unknown operating system, sorry..." << std::endl;
   exit(1);
 #endif
 }
