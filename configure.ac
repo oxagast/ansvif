@@ -40,8 +40,10 @@ AM_CONDITIONAL(OS_IS_DEBIAN, [ test `test -e /etc/debian-version; echo $?` -eq "
 if test "$OS_IS_DEBIAN" = "1"; then
     AC_DEFINE([__DEBIAN], [], ["build for debian"])
     AC_MSG_NOTICE([trying to build for a debian based system])
-else
+fi
+AM_CONDITIONAL(OS_IS_UNKNOWN, [ test `test -e /dummy; echo $?` -eq "0" ])
+if test "$OS_IS_UNKNOWN" = "1"; then
     AC_DEFINE([__UNKNOWN], [], ["build for unknown"])
-    AC_MSG_NOTICE([trying to build for a unknown based system])
+    AC_MSG_NOTICE([trying to build for a unknown system])
 fi
 AC_OUTPUT

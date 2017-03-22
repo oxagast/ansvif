@@ -11,14 +11,17 @@ libgzstream_a_SOURCES = include/gzstream/gzstream.h include/gzstream/gzstream.C
 ansvif_SOURCES = src/common.cpp src/bin2hex.cpp src/popen2.cpp src/main.cpp src/help.cpp src/match_seg.cpp src/sys_string.cpp src/man_read.cpp src/trash.cpp src/randomizer.cpp include/gzstream/gzstream.h include/xmlwriter/xml_writer.hpp src/main.h
 if OS_IS_REDHAT
 ansvif_LDADD = -lgzstream -lcryptopp -lstdc++ -lpthread -lz -L.
-elsif OS_IS_DEBIAN
+endif
+if OS_IS_DEBIAN
 ansvif_LDADD = -lgzstream -lcrypto++ -lstdc++ -lpthread -lz -L.
-elsif OS_IS_UNKNOWN
+endif
+if OS_IS_UNKNOWN
 ansvif_LDADD = -lgzstream -lstdc++ -lpthread -lz -L.
 endif
 if OS_IS_REDHAT
 ansvif_CPPFLAGS = -O3 -D __REDHAT
-elsif OS_IS_DEBIAN
+endif
+if OS_IS_DEBIAN
 ansvif_CPPFLAGS = -O3 -D __DEBIAN
 else
 ansvif_CPPFLAGS = -O3 -D __DEBIAN
