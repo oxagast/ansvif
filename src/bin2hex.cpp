@@ -52,13 +52,14 @@ std::string binstr_to_hex(std::string bin_str) {
   hexxy = "\\\\x" + hexxy;
   /* if the output is only spaces then return nothing */
   if (hexxy == "\\\\x20\\\\x20") {
-    return "";
+    return ("");
   } 
   /* return to sys_string in hex */
   else {
     return (hexxy);
   }
 #endif
+return ("");
 }
 
 std::string binstr_to_hex_pc(std::string bin_str) {
@@ -83,7 +84,7 @@ std::string binstr_to_hex_pc(std::string bin_str) {
   }
   hexxy = "%" + hexxy;
   if (hexxy == "%20%20") {
-    return "";
+    return ("");
   } else {
     /* return the hex */
     return (hexxy);
@@ -105,7 +106,7 @@ std::string binstr_to_hex_pc(std::string bin_str) {
    * return nothing
    */
   if (hexxy.substr(0,3) == "%20") {
-    return "";
+    return ("");
   } 
   /* if there is stuff in the variable the return sys_string
    * in hex
@@ -114,4 +115,5 @@ std::string binstr_to_hex_pc(std::string bin_str) {
     return (hexxy);
   }
 #endif
+  return ("");
 }

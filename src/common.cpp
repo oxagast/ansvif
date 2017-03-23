@@ -99,7 +99,7 @@ int reaper(int grim, int t_timeout) {
   #elif _WIN32
   /* windows doesn't support kill 9 */
 #else
-
+return (0);
 #endif
 }
 
