@@ -18,9 +18,8 @@ if OS_IS_DEBIAN
 ansvif_LDADD = -lgzstream -lcrypto++ -lstdc++ -lpthread -lz -L.
 ansvif_CPPFLAGS = -O3 -D __DEBIAN -Wall
 ansvif_LDFLAGS = -I./include/gzstream -I./include/xml_writer -I./src/linux
-endif
-if OS_IS_UNKNOWN
-ansvif_LDADD = -lstdc++ -lz -L.
+else
+ansvif_LDADD = -lestdc++ -lz -L.
 ansvif_LDFLAGS = -I./include/gzstream -I./include/xml_writer -I./src/linux -pthread
 ansvif_CPPFLAGS = -O3 -D __DEBIAN -Wl,--no-as-needed
 endif
