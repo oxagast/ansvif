@@ -1,4 +1,4 @@
-AC_INIT([ansvif], [1.6], [marshall@i.code.pwnz.org])
+AC_INIT([ansvif], [1.6.3], [marshall@i.code.pwnz.org])
 AC_PROG_CC
 AC_PROG_CXX
 AC_LANG([C++])
