@@ -20,29 +20,27 @@ automake autoconf-archive zlib1g-dev libcrypto++  g++ gcc
 
 *Linux:*
 ```
-$ aclocal && autoconf && automake -a && ./configure && make
-
+$ autoreconf -fmi && make check
+```
 Or, if you would like to play with the syscall fuzzer:
-
-$ aclocal && autoconf && automake -a && ./configure --enable-syscalls && make
+```
+$ aclocal && autoconf && automake -a && ./configure --enable-syscalls && make && make check
 ```
 *OpenBSD:*
+
+Assuming you installed g++ from ports (as you will need to for C++11):
+
 ```
-$ AUTOMAKE_VERSION=`ls /usr/local/bin/automake-* | head -n 1 | sed -e 's/.*-//'`\
-AUTOCONF_VERSION=`ls /usr/local/bin/autoconf-* | head -n 1 | sed -e 's/.*-//'`\
-aclocal && AUTOMAKE_VERSION=`ls /usr/local/bin/automake-* | head -n 1 | sed -e 's/.*-//'`\
-AUTOCONF_VERSION=`ls /usr/local/bin/autoconf-* | head -n 1 | sed -e 's/.*-//'`\
-autoconf && AUTOMAKE_VERSION=`ls /usr/local/bin/automake-* | head -n 1 | sed -e 's/.*-//'`\
-AUTOCONF_VERSION=`ls /usr/local/bin/autoconf-* | head -n 1 | sed -e 's/.*-//'` automake -a\
-&& CXX=eg++ ./configure && make
+$ CXX=$(find / -name 'eg++' 2>/dev/null | grep ports | head -n 1) AUTOCONF_VERSION=2.69 AUTOMAKE_VERSION=1.15 autoreconf -fmi
 ```
 *Windows:*
 
 Windows binaries are now desgined to be compiled with MinGW-W64 (since we use threading download
 a version of MinGW-W64 g++ with seh).
 
-```
 (Go to where you installed MinGW-W64 and click mingw-64.bat)
+
+```
 g++.exe src/common.cpp src/win/bin2hex.cpp src/win/bin2hex_pc.cpp src/win/popen2.cpp src/win/main.cpp src/win/help.cpp src/match_seg.cpp src/win/sys_string.cpp src/win/sys_string_pc.cpp src/win/man_read.cpp src/randomizer.cpp src/trash.cpp -I./ -I./include -std=c++11 -lstdc++ -lpthread -O2 -o ansvif.exe -static -static-libgcc -static-libstdc++
 gcc src/win/printf.c -o printf.exe
 ```
