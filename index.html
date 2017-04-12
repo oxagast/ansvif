@@ -66,6 +66,7 @@ $ autoconf
 $ automake -a
 $ ./configure
 $ make
+$ make check
 </code></pre>
 
 <h3>
@@ -81,7 +82,7 @@ Compliation:
   automake autoconf-archive zlib1g-dev g++ gcc crypto++
   
  Linux:
-  $ aclocal && autoconf && automake -a && ./configure && make
+  $ aclocal && autoconf && automake -a && ./configure && make && make check
  OpenBSD:
   $ CXX=$(find / -name 'eg++' 2>/dev/null | grep ports | head -n 1) AUTOCONF_VERSION=2.69 \
     AUTOMAKE_VERSION=1.15 autoreconf -fmi
