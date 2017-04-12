@@ -1,5 +1,5 @@
 Name:           ansvif
-Version:        1.6.2
+Version:        1.7
 Release:        1%{?dist}
 Summary:        A Not So Very Intelligent Fuzzer
 
