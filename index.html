@@ -83,13 +83,9 @@ Compliation:
  Linux:
   $ aclocal && autoconf && automake -a && ./configure && make
  OpenBSD:
-  $ AUTOMAKE_VERSION=`ls /usr/local/bin/automake-* | head -n 1 | sed -e 's/.*-//'`\
-    AUTOCONF_VERSION=`ls /usr/local/bin/autoconf-* | head -n 1 | sed -e 's/.*-//'`\
-    aclocal && AUTOMAKE_VERSION=`ls /usr/local/bin/automake-* | head -n 1 | sed -e 's/.*-//'`\
-    AUTOCONF_VERSION=`ls /usr/local/bin/autoconf-* | head -n 1 | sed -e 's/.*-//'`\
-    autoconf && AUTOMAKE_VERSION=`ls /usr/local/bin/automake-* | head -n 1 | sed -e 's/.*-//'`\
-    AUTOCONF_VERSION=`ls /usr/local/bin/autoconf-* | head -n 1 | sed -e 's/.*-//'` automake -a\
-    && CXX=eg++ ./configure && make
+  $ CXX=$(find / -name 'eg++' 2>/dev/null | grep ports | head -n 1) AUTOCONF_VERSION=2.69 \
+    AUTOMAKE_VERSION=1.15 autoreconf -fmi
+  $ make check
  Windows:
    Now Windows code is designed to be compiled with MinGW-W64.
   $ ./configure_win
