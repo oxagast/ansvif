@@ -25,7 +25,7 @@ ansvif_CPPFLAGS = -O3 -D __DEBIAN -Wl,--no-as-needed
 endif
 find_suid_SOURCES = src/linux/find_suid.cpp
 faulty_SOURCES = src/faulty.c
-faulty_CFLAGS = -ansi -fno-stack-protector
+faulty_CFLAGS = -ansi -fno-stack-protector -D_GNU_SOURCE -Wno-implicit-function-declaration
 if WITH_SYSCALLS
 syscalls_SOURCES = src/linux/syscalls.cpp
 syscalls_CPPFLAGS = -ansi -Wno-unused-result -Wno-nonnull
