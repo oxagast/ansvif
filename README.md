@@ -59,16 +59,7 @@ If you would like to try out the example code, you can compile faulty.c with:
 ```
 $ gcc faulty.c -o faulty
 ```
-
-Using the example code:
-  You can point the memory back at address `\xff\x05\x40\x00\x00\x00\x00\x00` (the
-  subroutine containing the code that spawns bash) with:
-  `$ ./faulty -a $(perl -e 'print "A"x24;print "\x00\xff\x05\x40\x00\x00\x00\x00\x00"')`
-  The address may be a little different under your distro, check gdb if you really
-  want to try it out.  The code above /should/ drop you at a bash prompt.
-  If the code is set to a mode where all are able to execute as another user, it will
-  attempt to spawn a root shell.
-  or simply run `make test`.
+You can also simply run `make test`.
 
 **Useage:**
 
