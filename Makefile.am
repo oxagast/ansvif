@@ -16,19 +16,19 @@ ansvif_LDFLAGS = -I./include/gzstream -I./include/xml_writer -I./src/linux
 endif
 if OS_IS_DEBIAN
 ansvif_LDADD = -lgzstream -lcrypto++ -lstdc++ -lpthread -lz -L.
-ansvif_CPPFLAGS = -O3 -D __DEBIAN -Wall
+ansvif_CPPFLAGS = -O3 -D __DEBIAN -Wall -std=c++11
 ansvif_LDFLAGS = -I./include/gzstream -I./include/xml_writer -I./src/linux
 else
 ansvif_LDADD = -lestdc++ -lz -L.
 ansvif_LDFLAGS = -I./include/gzstream -I./include/xml_writer -I./src/linux -pthread
-ansvif_CPPFLAGS = -O3 -D __DEBIAN -Wl,--no-as-needed
+ansvif_CPPFLAGS = -O3 -D __DEBIAN -Wl,--no-as-needed -std=c++11
 endif
 find_suid_SOURCES = src/linux/find_suid.cpp
 faulty_SOURCES = src/faulty.c
 faulty_CFLAGS = -ansi -fno-stack-protector -D_GNU_SOURCE -Wno-implicit-function-declaration
 if WITH_SYSCALLS
 syscalls_SOURCES = src/linux/syscalls.cpp
-syscalls_CPPFLAGS = -ansi -Wno-unused-result -Wno-nonnull
+syscalls_CPPFLAGS = -ansi -Wno-unused-result -Wno-nonnull -std=c++11
 endif
 ansvifdir = bin
 check: all
