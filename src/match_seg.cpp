@@ -443,11 +443,17 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
 #endif
           }
           /* here is where we're matching the fault codes of the crash */
-          if ((cmd_output == "magic_token_CRASHCODE 132") || (cmd_output == "magic_token_CRASHCODE 134") ||
-              (cmd_output == "magic_token_CRASHCODE 139") || (cmd_output == "magic_token_CRASHCODE 135") ||
-              (cmd_output == "magic_token_CRASHCODE 136") || (cmd_output == "magic_token_CRASHCODE 159") ||
-              (cmd_output == "-1073741819") || (cmd_output == "-1073740791") ||
-              (cmd_output == "-1073741571") || (cmd_output == "-532459699") ||
+          if ((cmd_output == "magic_token_CRASHCODE 132") ||  // linux
+              (cmd_output == "magic_token_CRASHCODE 134") ||  // linux
+              (cmd_output == "magic_token_CRASHCODE 139") ||  // linux freebsd openbsd (seg fault)
+              (cmd_output == "magic_token_CRASHCODE 135") ||  // linux
+              (cmd_output == "magic_token_CRASHCODE 136") ||  // linux
+              (cmd_output == "magic_token_CRASHCODE 159") ||  // linux
+              (cmd_output == "magic_token_CRASHCODE 138") ||  // freebsd (sig bus)
+              (cmd_output == "-1073741819") ||  // windows
+              (cmd_output == "-1073740791") ||  // windows
+              (cmd_output == "-1073741571") ||  // windows
+              (cmd_output == "-532459699") ||   // windows
               (cmd_output == fault_code)) {
 #ifdef __unix__
             std::cout << "PID: " << pid << std::endl;
