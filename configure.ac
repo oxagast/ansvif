@@ -33,17 +33,22 @@ else
 fi
 AM_CONDITIONAL(OS_IS_REDHAT, [ test `test -e /etc/os-release; echo $?` -eq "0" ])
 if test "$OS_IS_REDHAT" = "1"; then
-    AC_DEFINE([__REDHAT], [], ["build for redhat"])
-    AC_MSG_NOTICE([trying to build for a redhat based system])
+    AC_DEFINE([__REDHAT], [], ["build for RedHat"])
+    AC_MSG_NOTICE([trying to build for a RedHat based system])
 fi
 AM_CONDITIONAL(OS_IS_DEBIAN, [ test `test -e /etc/debian-version; echo $?` -eq "0" ])
 if test "$OS_IS_DEBIAN" = "1"; then
-    AC_DEFINE([__DEBIAN], [], ["build for debian"])
-    AC_MSG_NOTICE([trying to build for a debian based system])
+    AC_DEFINE([__DEBIAN], [], ["build for Debian"])
+    AC_MSG_NOTICE([trying to build for a Debian based system])
+fi
+AM_CONDITIONAL(OS_IS_FREEBSD, [ test `uname -o` == "FreeBSD" ])
+if test "$IS_IS_FREEBSD" = "1"; then
+    AC_DEFINE([__UNKNOWN], [], ["build for FreeBSD"])
+    AC_MSG_NOTICE([trying to build for a FreeBSD based system])
 fi
 AM_CONDITIONAL(OS_IS_UNKNOWN, [ test `test -e /dummy; echo $?` -eq "0" ])
 if test "$OS_IS_UNKNOWN" = "1"; then
-    AC_DEFINE([__UNKNOWN], [], ["build for unknown"])
+    AC_DEFINE([__UNKNOWN], [], ["build for Unknown"])
     AC_MSG_NOTICE([trying to build for a unknown system])
 fi
 AC_OUTPUT
