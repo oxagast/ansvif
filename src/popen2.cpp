@@ -17,6 +17,11 @@
 #endif
 #include <thread>
 #include <unistd.h>
+#ifdef __FREEBSD
+#include <stdlib.h>
+#include <cstdio>
+#include <errno.h>
+#endif
 
 #define READ 0
 #define WRITE 1
