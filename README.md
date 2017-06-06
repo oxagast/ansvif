@@ -20,7 +20,7 @@ automake autoconf-archive zlib1g-dev libcrypto++  g++ gcc
 
 *Linux:*
 ```
-$ autoreconf -fmi && make check
+$ aclocal && autoconf && automake -a && ./configure && make && make check
 ```
 Or, if you would like to play with the syscall fuzzer:
 ```
@@ -59,7 +59,7 @@ If you would like to try out the example code, you can compile faulty.c with:
 ```
 $ gcc faulty.c -o faulty
 ```
-You can also simply run `make test`.
+You can also simply run `make check`.
 
 **Useage:**
 
