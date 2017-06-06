@@ -8,7 +8,7 @@ bin_PROGRAMS = ansvif find_suid faulty
 endif
 noinst_LIBRARIES = libgzstream.a
 libgzstream_a_SOURCES = include/gzstream/gzstream.h include/gzstream/gzstream.C
-ansvif_SOURCES = src/common.cpp src/bin2hex.cpp src/popen2.cpp src/main.cpp src/help.cpp src/match_seg.cpp src/sys_string.cpp src/man_read.cpp src/trash.cpp src/randomizer.cpp include/gzstream/gzstream.h include/xmlwriter/xml_writer.hpp src/main.h
+ansvif_SOURCES = src/log.cpp src/common.cpp src/bin2hex.cpp src/popen2.cpp src/main.cpp src/help.cpp src/match_seg.cpp src/sys_string.cpp src/man_read.cpp src/trash.cpp src/randomizer.cpp include/gzstream/gzstream.h include/xmlwriter/xml_writer.hpp src/main.h
 if OS_IS_REDHAT
 ansvif_LDADD = -lgzstream -lcryptopp -lstdc++ -lpthread -lz -L.
 ansvif_CPPFLAGS = -O3 -D __REDHAT -Wall -std=c++11

@@ -35,6 +35,13 @@
 #include <vector>
 #include "src/main.h"
 
+void log_hang(std::string write_file_n, std::string out_str_p, std::string out_str, std::string junk_file_of_args, int pid);
+void log_tail(std::string write_file_n, std::string junk_file_of_args, 
+               std::string output_logfile, std::string crash_logfile, 
+               std::string cmd_output, std::string out_str_p, std::string out_str,
+               int pid);
+void log_head(std::string write_file_n, std::string path_str, std::string cmd_output,
+              std::string out_str_p, std::string out_str, int pid);
 std::string remove_chars(const std::string &source, const std::string &chars);
 int reaper(int grim, int t_timeout);
 FILE *popen2(std::string command, std::string type, int &pid,
@@ -401,36 +408,10 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
 #endif
         /* our output will be stored here! */
         std::string cmd_output;
-        #ifdef __unix__
-        std::ostringstream pid_as_s;
-        pid_as_s << pid;
-        #endif
         if (write_file_n != "") {
-          /* all this xml stuff is for logging */
-          std::ofstream xml_output;
-          xml_output.open(write_file_n + ".crash.ansvif.log");
-          Writer writer(xml_output);
-          writer.openElt("ansvif");
-          writer.openElt("Version")
-              .attr("ver", "The ansvif version to fuzzing with")
-              .content(ver.c_str())
-              .closeElt();
-          writer.openElt("Program")
-              .attr("path", "Path of the file fuzzed")
-              .content(path_str.c_str())
-              .closeElt();
-#ifdef __unix__
-          writer.openElt("Process")
-              .attr("PID", "The process ID of the crashed program")
-              .content(pid_as_s.str().c_str())
-              .closeElt();;
-#endif
+          /* logging */
+          log_head(write_file_n, path_str, cmd_output, out_str_p, out_str, pid);
         }
-#ifdef __unix__
-        std::string output_logfile_pid = write_file_n + ".output." + pid_as_s.str().c_str() + ".ansvif.log";
-        std::string crash_logfile_pid = write_file_n + ".crash." + pid_as_s.str().c_str() + ".ansvif.log";
-        std::string valgrind_logfile_pid = write_file_n + ".valgrind." + pid_as_s.str().c_str() + ".ansvif.log";
-#endif
         while (std::getline(output, cmd_output)) {
           /* we trim any extra characters */
           cmd_output.erase(cmd_output.find_last_not_of(" \n\r\t") + 1);
@@ -471,75 +452,23 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
 /* since we crashed we're going to finish writing to the
  * xml file
  */
-#ifdef __unix__
-              std::ostringstream pid_as_s;
-              pid_as_s << pid;
-#endif
-              std::ofstream xml_output;
-              xml_output.open(write_file_n + ".crash.ansvif.log");
-              Writer writer(xml_output);
-              writer.openElt("Crash");
-              writer.openElt("Exit Code")
-                  .attr("code", "The programs exit code")
-                  .content(cmd_output.c_str())
-                  .closeElt();
-              writer.openElt("Command")
-                  .attr("run", "What the command crashed with")
-                  .content(out_str_p.c_str())
-                  .closeElt();
-              writer.openElt("Command")
-                  .attr("run_plain",
-                        "What the command crashed with (plaintext)")
-                  .content(out_str.c_str())
-                  .closeElt();
-              writer.openElt("File data")
-                  .attr("file", "File data used left here")
-                  .content(junk_file_of_args.c_str())
-                  .closeAll();
-              xml_output.close();
-              std::cout << "Crash logged." << std::endl;
-              /* move the logged files for pid */
-#ifdef __unix__
-              rename(output_logfile.c_str(), output_logfile_pid.c_str());
-              rename(crash_logfile.c_str(), crash_logfile_pid.c_str());
-#endif
+log_tail(write_file_n, junk_file_of_args, output_logfile, crash_logfile, cmd_output, out_str_p, out_str, pid);
               /* then exit cleanly because we crashed it! Get it? :) */
-              if (keep_going == false) {
-              exit(0);
+if (keep_going == false) {
+               /* stoppp */
+  exit(0);
               }
-            } else {
+            }
+            else {
               if (keep_going == false) {
+                 /* bye */
               exit(0);
               }
               return false;
             }
             if (write_to_file == true) {
 /* logging hangs */
-#ifdef __unix__
-              std::ostringstream pid_as_s;
-              pid_as_s << pid;
-#endif
-              std::ofstream xml_output;
-#ifdef __unix__
-              xml_output.open(output_logfile_pid.c_str());
-#endif
-#ifdef _WIN32
-              xml_output.open(output_logfile.c_str());
-#endif
-              Writer writer(xml_output);
-              writer.openElt("Command")
-                  .attr("run", "What the command hung with")
-                  .content(out_str_p.c_str())
-                  .closeElt();
-              writer.openElt("Command")
-                  .attr("run_plain", "What the command hung with (plaintext)")
-                  .content(out_str.c_str())
-                  .closeElt();
-              writer.openElt("File data")
-                  .attr("file", "File data used left here")
-                  .content(junk_file_of_args.c_str())
-                  .closeAll();
-              xml_output.close();
+log_hang(write_file_n, out_str_p, out_str, junk_file_of_args, pid);
             }
           }
 #ifdef __linux
