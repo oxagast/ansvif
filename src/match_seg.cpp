@@ -21,6 +21,7 @@
 #include <crypto++/md5.h>
 #endif
 #endif
+#include "src/main.h"
 #include <cstdlib>
 #include <cstring>
 #include <fstream>
@@ -33,15 +34,16 @@
 #include <thread>
 #include <unistd.h>
 #include <vector>
-#include "src/main.h"
 
-void log_hang(std::string write_file_n, std::string out_str_p, std::string out_str, std::string junk_file_of_args, int pid);
-void log_tail(std::string write_file_n, std::string junk_file_of_args, 
-               std::string output_logfile, std::string crash_logfile, 
-               std::string cmd_output, std::string out_str_p, std::string out_str,
-               int pid);
-void log_head(std::string write_file_n, std::string path_str, std::string cmd_output,
-              std::string out_str_p, std::string out_str, int pid);
+void log_hang(std::string write_file_n, std::string out_str_p,
+              std::string out_str, std::string junk_file_of_args, int pid);
+void log_tail(std::string write_file_n, std::string junk_file_of_args,
+              std::string output_logfile, std::string crash_logfile,
+              std::string cmd_output, std::string out_str_p,
+              std::string out_str, int pid);
+void log_head(std::string write_file_n, std::string path_str,
+              std::string cmd_output, std::string out_str_p,
+              std::string out_str, int pid);
 std::string remove_chars(const std::string &source, const std::string &chars);
 int reaper(int grim, int t_timeout);
 FILE *popen2(std::string command, std::string type, int &pid,
@@ -59,13 +61,14 @@ void write_junk_file(std::string filename, std::vector<std::string> opt_other,
                      bool never_rand, std::string other_sep, bool verbose);
 std::vector<std::string>
 get_out_str(std::string env_str, std::string valgrind_str, std::string sys_str,
-            std::string path_str, std::string always_arg_before, std::string always_arg_after,
-            std::string fuzz_after, std::string log_prefix);
+            std::string path_str, std::string always_arg_before,
+            std::string always_arg_after, std::string fuzz_after,
+            std::string log_prefix);
 std::vector<std::string>
 get_out_str_pc(std::string env_str, std::string valgrind_str,
                std::string sys_str, std::string path_str,
-               std::string always_arg_before, std::string always_arg_after, std::string fuzz_after,
-               std::string log_prefix);
+               std::string always_arg_before, std::string always_arg_after,
+               std::string fuzz_after, std::string log_prefix);
 bool match_seg(int buf_size, std::vector<std::string> opts,
                std::vector<std::string> spec_env, std::string path_str,
                std::string strip_shell, bool rand_all, bool write_to_file,
@@ -75,8 +78,8 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
                std::string junk_file_of_args, std::string always_arg_before,
                std::string always_arg_after, bool never_rand,
                std::string run_command, std::string fault_code, bool valgrind,
-               bool single_try, bool percent_sign, int static_args, bool keep_going,
-               bool verbose, bool debug) {
+               bool single_try, bool percent_sign, int static_args,
+               bool keep_going, bool verbose, bool debug) {
   bool segged = false;
   std::vector<std::string> used_token;
   std::string valgrind_str;
@@ -362,9 +365,10 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
       } else {
         used_token.push_back(h_output);
 #endif
-       if (buf_size == 0) {
+        if (buf_size == 0) {
           out_str = path_str + " " + always_arg_before + " " + always_arg_after;
-          out_str_p = path_str + " " + always_arg_before + " " + always_arg_after;
+          out_str_p =
+              path_str + " " + always_arg_before + " " + always_arg_after;
         }
         if (debug == true) {
           /* write ALL the junk to STDOUT since we're in
@@ -418,27 +422,29 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
           if (verbose == true) {
             std::cout << std::endl
 #ifdef __unix__
-            << "Code :" << cmd_output.replace(0,22, "") << ":" << std::endl;
+                      << "Code :" << cmd_output.replace(0, 22, "") << ":"
+                      << std::endl;
 #else
-            << "Code :" << cmd_output << ":" << std::endl;
+                    << "Code :" << cmd_output << ":" << std::endl;
 #endif
           }
           /* here is where we're matching the fault codes of the crash */
-          if ((cmd_output == "magic_token_CRASHCODE 132") ||  // linux
-              (cmd_output == "magic_token_CRASHCODE 134") ||  // linux
-              (cmd_output == "magic_token_CRASHCODE 139") ||  // linux freebsd openbsd (seg fault)
-              (cmd_output == "magic_token_CRASHCODE 135") ||  // linux
-              (cmd_output == "magic_token_CRASHCODE 136") ||  // linux
-              (cmd_output == "magic_token_CRASHCODE 159") ||  // linux
-              (cmd_output == "magic_token_CRASHCODE 138") ||  // freebsd (sig bus)
-              (cmd_output == "-1073741819") ||  // windows
-              (cmd_output == "-1073740791") ||  // windows
-              (cmd_output == "-1073741571") ||  // windows
-              (cmd_output == "-532459699") ||   // windows
+          if ((cmd_output == "magic_token_CRASHCODE 132") || // linux
+              (cmd_output == "magic_token_CRASHCODE 134") || // linux
+              (cmd_output ==
+               "magic_token_CRASHCODE 139") || // linux freebsd openbsd
+              (cmd_output == "magic_token_CRASHCODE 135") || // linux
+              (cmd_output == "magic_token_CRASHCODE 136") || // linux
+              (cmd_output == "magic_token_CRASHCODE 159") || // linux
+              (cmd_output == "magic_token_CRASHCODE 138") || // freebsd
+              (cmd_output == "-1073741819") ||               // windows
+              (cmd_output == "-1073740791") ||               // windows
+              (cmd_output == "-1073741571") ||               // windows
+              (cmd_output == "-532459699") ||                // windows
               (cmd_output == fault_code)) {
 #ifdef __unix__
             std::cout << "PID: " << pid << std::endl;
-            cmd_output.replace(0,22, "");
+            cmd_output.replace(0, 22, "");
 #endif
             std::cout << "Exit Code: " << cmd_output << std::endl;
             std::cout << "Crashed with command: " << std::endl
@@ -449,26 +455,27 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
                         << std::endl;
             }
             if (write_to_file == true) {
-/* since we crashed we're going to finish writing to the
- * xml file
- */
-log_tail(write_file_n, junk_file_of_args, output_logfile, crash_logfile, cmd_output, out_str_p, out_str, pid);
+              /* since we crashed we're going to finish writing to the
+               * xml file
+               */
+              log_tail(write_file_n, junk_file_of_args, output_logfile,
+                       crash_logfile, cmd_output, out_str_p, out_str, pid);
               /* then exit cleanly because we crashed it! Get it? :) */
-if (keep_going == false) {
-               /* stoppp */
-  exit(0);
-              }
-            }
-            else {
               if (keep_going == false) {
-                 /* bye */
-              exit(0);
+                /* stoppp */
+                exit(0);
+              }
+            } else {
+              if (keep_going == false) {
+                /* bye */
+                exit(0);
               }
               return false;
             }
             if (write_to_file == true) {
-/* logging hangs */
-log_hang(write_file_n, out_str_p, out_str, junk_file_of_args, pid);
+              /* logging hangs */
+              log_hang(write_file_n, out_str_p, out_str, junk_file_of_args,
+                       pid);
             }
           }
 #ifdef __linux
@@ -487,8 +494,8 @@ log_hang(write_file_n, out_str_p, out_str, junk_file_of_args, pid);
       }
     }
     if (keep_going == false) {
-    /* otherwise we exit cleanly */
-    exit(0);
+      /* otherwise we exit cleanly */
+      exit(0);
     }
   }
 

@@ -4,14 +4,16 @@
  * Marshall Whittaker / oxagast
  */
 
-//    __ _  _  __   ___  __  ____ ____ 
+//    __ _  _  __   ___  __  ____ ____
 //   /  ( \/ )/ _\ / __)/ _\/ ___(_  _)
-//  (  O )  (/    ( (_ /    \___ \ )(  
+//  (  O )  (/    ( (_ /    \___ \ )(
 //   \__(_/\_\_/\_/\___\_/\_(____/(__)
 
+#include "src/main.h"
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
+#include <random>
 #include <regex>
 #include <signal.h>
 #include <stdio.h>
@@ -19,13 +21,9 @@
 #include <thread>
 #include <unistd.h>
 #include <vector>
-#include <signal.h>
-#include <random>
-#include "src/main.h"
 
 #define READ 0
 #define WRITE 1
-
 
 std::string make_garbage(int trash, int buf, std::string opt_other_str,
                          bool is_other, bool never_rand);
@@ -40,7 +38,8 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
                std::string junk_file_of_args, std::string always_arg_before,
                std::string always_arg_after, bool never_rand,
                std::string run_command, std::string fault_code, bool single_try,
-               bool percent_sign, int static_args, bool, bool keep_going, bool verbose, bool debug);
+               bool percent_sign, int static_args, bool, bool keep_going,
+               bool verbose, bool debug);
 void help_me(std::string mr_me);
 std::vector<std::string> get_flags_man(std::string man_page,
                                        std::string man_loc, bool verbose,
@@ -63,11 +62,11 @@ std::string remove_chars(const std::string &source, const std::string &chars) {
       result += source[i];
     }
   }
-  return(result);
+  return (result);
 }
 
 int toint(std::string ints, std::string my_prog) {
-     std::istringstream b_size(ints);
+  std::istringstream b_size(ints);
   int is_int_b_s;
   if (!(b_size >> is_int_b_s)) {
     help_me(my_prog);
@@ -76,10 +75,10 @@ int toint(std::string ints, std::string my_prog) {
   if (b_size >> buf_char_maybe_b_s) {
     help_me(my_prog);
   } else {
-  /* for compatibility with cygwin */
-  return atoi(ints.c_str());
+    /* for compatibility with cygwin */
+    return atoi(ints.c_str());
   }
-  return(0);
+  return (0);
 }
 
 bool file_exists(const std::string &filen) {
@@ -96,10 +95,10 @@ int reaper(int grim, int t_timeout) {
   sleep(t_timeout);
   kill(grim, 9);
   return (0);
-  #elif _WIN32
-  /* windows doesn't support kill 9 */
+#elif _WIN32
+/* windows doesn't support kill 9 */
 #else
-return (0);
+  return (0);
 #endif
 }
 
@@ -121,15 +120,14 @@ std::vector<std::string> get_flags_template(std::string filename, bool verbose,
     /* this is incase they supplied a file that wasn't
      * available for some reason
      */
-    std::cerr << "Could not open template file..."
-              << std::endl;
+    std::cerr << "Could not open template file..." << std::endl;
     exit(1);
   }
   return (opt_vec); // return the vector with the options
 }
 
-std::vector<std::string> get_other(std::string filename,
-                                   bool verbose, bool debug) {
+std::vector<std::string> get_other(std::string filename, bool verbose,
+                                   bool debug) {
   /* this is all pretty much the same as above */
   std::vector<std::string> other_vec;
   std::string line;
@@ -167,11 +165,10 @@ void write_junk_file(std::string filename, std::vector<std::string> opt_other,
   std::ofstream w_f;
   w_f.open(filename, std::ios::out | std::ios::app);
   for (int start_buf = 0; start_buf <= buf_size; start_buf++) {
-    std::string oscar = opt_other.at(
-        rand_me_plz(0, opt_other.size() - 1));
-    std::string trash = make_garbage(rand_me_plz(rand_spec_one, rand_spec_two),
-                                     rand_me_plz(1, buf_size), "", false,
-                                     never_rand);
+    std::string oscar = opt_other.at(rand_me_plz(0, opt_other.size() - 1));
+    std::string trash =
+        make_garbage(rand_me_plz(rand_spec_one, rand_spec_two),
+                     rand_me_plz(1, buf_size), "", false, never_rand);
     w_f << oscar;
     if (trash != "OOR") {
       w_f << trash;

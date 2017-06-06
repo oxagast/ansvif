@@ -19,10 +19,10 @@
 #ifdef __unix__
 #include <sys/wait.h>
 #endif
+#include "src/main.h"
 #include <thread>
 #include <unistd.h>
 #include <vector>
-#include "src/main.h"
 
 int toint(std::string ints, std::string my_prog);
 void help_me(std::string mr_me);
@@ -38,7 +38,8 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
                std::string junk_file_of_args, std::string always_arg_before,
                std::string always_arg_after, bool never_rand,
                std::string run_command, std::string fault_code, bool valgrind,
-               bool single_try, bool percent_sign, int static_args, bool keep_going, bool verbose, bool debug);
+               bool single_try, bool percent_sign, int static_args,
+               bool keep_going, bool verbose, bool debug);
 std::vector<std::string> get_flags_template(std::string filename, bool verbose,
                                             bool debug);
 std::vector<std::string> get_other(std::string filename, bool verbose,
@@ -47,9 +48,9 @@ void write_seg(std::string filename, std::string seg_line);
 
 /* globals to be passed to sig_handler because its easier this way */
 std::string write_file_n, junk_file_of_args;
-std::string ver = "1.7.1";  /* ansvif version */
+std::string ver = "1.7.1"; /* ansvif version */
 void sig_handler(int sig) {
-  /* flush the screen buffer  then sleep before printing 
+  /* flush the screen buffer  then sleep before printing
    * the message about killing threads
    */
   std::cout.flush();
@@ -91,7 +92,7 @@ int main(int argc, char *argv[]) { // initialize our main
    * thats where most manpages are stored, but 1 could also
    * work.) as a string so we can check int later, the number
    * of threads we're using, the buffer size as a string so
-   * that we chan check later if it is really an integar, 
+   * that we chan check later if it is really an integar,
    * the string that holds the manpage, the location of the
    * template file, the characters we should strip that are
    * sh dependant (characters that would interfere with the
@@ -167,9 +168,9 @@ int main(int argc, char *argv[]) { // initialize our main
    */
   signal(SIGINT, sig_handler);
   /* now we can start grabbing all the options! */
-  while ((opt = getopt(
-    argc, argv,
-    "m:p:t:e:c:f:o:b:s:x:R:A:F:S:L:W:B:M:C:y1hrzvdDnVPK")) != -1) {
+  while ((opt = getopt(argc, argv,
+                       "m:p:t:e:c:f:o:b:s:x:R:A:F:S:L:W:B:M:C:y1hrzvdDnVPK")) !=
+         -1) {
     switch (opt) {
     case 'v':
       verbose = true;
@@ -318,45 +319,43 @@ int main(int argc, char *argv[]) { // initialize our main
   if (buf_size_int == -1) {
     help_me(argv[0]);
   }
-    /* make sure the thread count is an integar the same way
-     * we did with the buffer size
-     */  
-      int thread_count_int = thread_count_def;
-    thread_count_int = toint(num_threads, argv[0]);
-      int thread_timeout_int = thread_timeout_def;
-        thread_timeout_int = toint(t_timeout, argv[0]);
-        /* if we're not doing a single try then turn on 
-         * threading 
-         */
-        if (single_try == false) {
-          /* initialize threading! */
-          std::vector<std::thread> threads;
-          for (int cur_thread = 1; cur_thread <= thread_count_int; ++cur_thread)
-            threads.push_back(std::thread(
-                match_seg, buf_size_int, opts, spec_env, path_str, strip_shell,
-                rand_all, write_to_file, write_file_n, rand_buf, opt_other,
-                is_other, other_sep, thread_timeout_int, low_lvl_user,
-                junk_file_of_args, always_arg_before, always_arg_after,
-                never_rand, run_command, fault_code, valgrind, single_try,
-                percent_sign, static_args, keep_going, verbose, debug));
-            /* thrift shop */
-          for (auto &all_thread : threads)
-            all_thread.join();
-          /* is that your grandma's coat??? */
-        }
-        if (single_try == true) {
-          /* no threads or anything since we're only doing a
-           * single run
-           */
-          match_seg(buf_size_int, opts, spec_env, path_str, strip_shell,
-                    rand_all, write_to_file, write_file_n, rand_buf, opt_other,
-                    is_other, other_sep, thread_timeout_int, low_lvl_user,
-                    junk_file_of_args, always_arg_before, always_arg_after,
-                    never_rand, run_command, fault_code, valgrind, single_try,
-                    percent_sign, static_args, keep_going, verbose, debug);
-        }
-        /* exit cleanly! */
-        exit(0);
-      }
-
-
+  /* make sure the thread count is an integar the same way
+   * we did with the buffer size
+   */
+  int thread_count_int = thread_count_def;
+  thread_count_int = toint(num_threads, argv[0]);
+  int thread_timeout_int = thread_timeout_def;
+  thread_timeout_int = toint(t_timeout, argv[0]);
+  /* if we're not doing a single try then turn on
+   * threading
+   */
+  if (single_try == false) {
+    /* initialize threading! */
+    std::vector<std::thread> threads;
+    for (int cur_thread = 1; cur_thread <= thread_count_int; ++cur_thread)
+      threads.push_back(std::thread(
+          match_seg, buf_size_int, opts, spec_env, path_str, strip_shell,
+          rand_all, write_to_file, write_file_n, rand_buf, opt_other, is_other,
+          other_sep, thread_timeout_int, low_lvl_user, junk_file_of_args,
+          always_arg_before, always_arg_after, never_rand, run_command,
+          fault_code, valgrind, single_try, percent_sign, static_args,
+          keep_going, verbose, debug));
+    /* thrift shop */
+    for (auto &all_thread : threads)
+      all_thread.join();
+    /* is that your grandma's coat??? */
+  }
+  if (single_try == true) {
+    /* no threads or anything since we're only doing a
+     * single run
+     */
+    match_seg(buf_size_int, opts, spec_env, path_str, strip_shell, rand_all,
+              write_to_file, write_file_n, rand_buf, opt_other, is_other,
+              other_sep, thread_timeout_int, low_lvl_user, junk_file_of_args,
+              always_arg_before, always_arg_after, never_rand, run_command,
+              fault_code, valgrind, single_try, percent_sign, static_args,
+              keep_going, verbose, debug);
+  }
+  /* exit cleanly! */
+  exit(0);
+}

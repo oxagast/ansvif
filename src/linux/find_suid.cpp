@@ -4,9 +4,9 @@
  * Marshall Whittaker / oxagast
  */
 
-//    __ _  _  __   ___  __  ____ ____ 
+//    __ _  _  __   ___  __  ____ ____
 //   /  ( \/ )/ _\ / __)/ _\/ ___(_  _)
-//  (  O )  (/    ( (_ /    \___ \ )(  
+//  (  O )  (/    ( (_ /    \___ \ )(
 //   \__(_/\_\_/\_/\___\_/\_(____/(__)
 
 #include <dirent.h>
@@ -49,7 +49,7 @@ int main(int argc, char **argv) {
     /* if there is less than one argument than go
      * to the help page
      */
-  help_me(argv[0]);
+    help_me(argv[0]);
   /* initialize our varaibles like the string for the file
    * and the list of files vector
    */
@@ -58,18 +58,16 @@ int main(int argc, char **argv) {
   /* for each file in the list  we'll have the check path
    * and the path string
    */
-  for (int path_num = 1; path_num != argc;
-       path_num++) {
+  for (int path_num = 1; path_num != argc; path_num++) {
     std::string check_path = argv[path_num];
     std::string path_str;
-    if (check_path.substr(check_path.length() - 1) !=
-        "/") {
+    if (check_path.substr(check_path.length() - 1) != "/") {
       /* make sure that we have a '/' at the end */
       path_str = argv[path_num];
       path_str = path_str + "/";
-    } 
+    }
     /* otherwise we'll just use what they put if they
-     * already had the slash at the end of the path 
+     * already had the slash at the end of the path
      */
     else {
       path_str = argv[path_num];
@@ -86,8 +84,7 @@ int main(int argc, char **argv) {
      */
     if (the_dir != NULL) {
       while ((this_dir = readdir(the_dir))) {
-        file_list.push_back(std::string(
-            this_dir->d_name));
+        file_list.push_back(std::string(this_dir->d_name));
       }
       /* initialize the name variable for a filename placeholder */
       std::string name;
@@ -98,8 +95,7 @@ int main(int argc, char **argv) {
       /* we'll now loop through the files and put the file name into
        * the name variable placeholder
        */
-      for (int file_num = 0; file_num != file_list_size;
-           file_num++) {
+      for (int file_num = 0; file_num != file_list_size; file_num++) {
         name = file_list[file_num];
         std::string path_to_file = path_str + file_list[file_num];
         if (is_suid(path_to_file.c_str()) == true) {

@@ -4,16 +4,16 @@
  * Marshall Whittaker / oxagast
  */
 
-//    __ _  _  __   ___  __  ____ ____ 
+//    __ _  _  __   ___  __  ____ ____
 //   /  ( \/ )/ _\ / __)/ _\/ ___(_  _)
-//  (  O )  (/    ( (_ /    \___ \ )(  
+//  (  O )  (/    ( (_ /    \___ \ )(
 //   \__(_/\_\_/\_/\___\_/\_(____/(__)
 
+#include "src/main.h"
 #include <cstdlib>
 #include <iostream>
 #include <stdio.h>
 #include <string>
-#include "src/main.h"
 
 void help_me(std::string mr_me) {
   /* print all the help shit to STDOUT */
@@ -66,9 +66,8 @@ void help_me(std::string mr_me) {
       << std::endl
       << " -L           Privilege changing not implimented in Windows yet.  "
          "Defaults"
-      << std::endl		 
-	  << "              nobody."
       << std::endl
+      << "              nobody." << std::endl
       << " -A \"foo\"     Always put this string after the command."
       << std::endl
       << " -B \"bar\"     Always put this string before the command."
@@ -95,14 +94,13 @@ void help_me(std::string mr_me) {
       << "              throw error code 64." << std::endl
       << " -P           Use % to represent binary in fuzz." << std::endl
       << " -M           Max arguments to use in the fuzz." << std::endl
-	  << " -y           Short for -b 0 and usually only useful with -A or -B"
-	  << std::endl
-	  << " -K           Keep going after a crash." << std::endl
+      << " -y           Short for -b 0 and usually only useful with -A or -B"
+      << std::endl
+      << " -K           Keep going after a crash." << std::endl
       << " -v           Verbose." << std::endl
-      << " -d           Debug."
-      << std::endl;
-    /* exit with an error because we didn't do anything but
-     * print a help page
-     */
-    exit(1);
+      << " -d           Debug." << std::endl;
+  /* exit with an error because we didn't do anything but
+   * print a help page
+   */
+  exit(1);
 }

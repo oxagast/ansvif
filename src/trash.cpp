@@ -4,9 +4,9 @@
  * Marshall Whittaker / oxagast
  */
 
-//    __ _  _  __   ___  __  ____ ____ 
+//    __ _  _  __   ___  __  ____ ____
 //   /  ( \/ )/ _\ / __)/ _\/ ___(_  _)
-//  (  O )  (/    ( (_ /    \___ \ )(  
+//  (  O )  (/    ( (_ /    \___ \ )(
 //   \__(_/\_\_/\_/\___\_/\_(____/(__)
 
 #include <cstdlib>
@@ -30,9 +30,9 @@ char fortune_cookie() {
   const char *hex_digits = "0123456789ABCDEF";
   int i;
   for (i = 0; i < 1; i++) {
-      /* now we just get two random hex characters and
-       * return them to the routine
-       */
+    /* now we just get two random hex characters and
+     * return them to the routine
+     */
     chr = hex_digits[(rand_me_plz(0, 255))];
   }
   return (chr);
@@ -164,17 +164,17 @@ std::string trash_generator(int trash, int buf, std::string user_junk,
   }
   if (trash == 16) {
     std::stringstream int_trash;
-    int_trash << rand_me_plz(0,9999);
+    int_trash << rand_me_plz(0, 9999);
     junk = int_trash.str();
-    }
+  }
   if (trash == 17) {
-         std::stringstream int_trash, float_trash;
-    int_trash << rand_me_plz(0,9999);
-    float_trash << rand_me_plz(0,9999);
-     junk = int_trash.str() + "." + float_trash.str();
+    std::stringstream int_trash, float_trash;
+    int_trash << rand_me_plz(0, 9999);
+    float_trash << rand_me_plz(0, 9999);
+    junk = int_trash.str() + "." + float_trash.str();
   }
   if (trash == 18) {
-      junk = "\"\"";
+    junk = "\"\"";
   }
   if (trash == 19) {
     junk = opt_other_str;
@@ -191,8 +191,8 @@ std::string make_garbage(int trash, int buf, std::string opt_other_str,
     if (isatty(STDIN_FILENO)) {
       /* if it's a stdin then we'll call the tash generator */
       std::string user_stuff = "";
-      all_junk = trash_generator(trash, buf, user_stuff, opt_other_str,
-                                 never_rand);
+      all_junk =
+          trash_generator(trash, buf, user_stuff, opt_other_str, never_rand);
     } else {
       std::string user_stuff;
       getline(std::cin, user_stuff);
