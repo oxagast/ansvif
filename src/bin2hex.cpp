@@ -99,15 +99,15 @@ std::string binstr_to_hex_pc(std::string bin_str) {
   /* if nothing is in it but hex spaces then we will
    * return nothing
    */
+  /*
   if (hexxy.substr(0, 3) == "%20") {
     return ("");
   }
+  */
   /* if there is stuff in the variable the return sys_string
    * in hex
    */
-  else {
     return (hexxy);
-  }
 #endif
   return ("");
 }

@@ -2,9 +2,9 @@ AUTOMAKE_OPTIONS = foreign
 ACLOCAL_AMFLAGS = ${ACLOCAL_FLAGS}
 #SUBDIRS = tests
 if WITH_SYSCALLS
-bin_PROGRAMS = ansvif find_suid faulty syscalls
+bin_PROGRAMS = ansvif find_suid buffer_overflow string_format syscalls
 else
-bin_PROGRAMS = ansvif find_suid faulty
+bin_PROGRAMS = ansvif find_suid buffer_overflow string_format
 endif
 noinst_LIBRARIES = libgzstream.a
 libgzstream_a_SOURCES = include/gzstream/gzstream.h include/gzstream/gzstream.C
@@ -29,16 +29,20 @@ ansvif_LDFLAGS = -I./include/gzstream -I./include/xml_writer -I./src/linux -pthr
 ansvif_CPPFLAGS = -O3 -D __DEBIAN -Wl,--no-as-needed -std=c++11
 endif
 find_suid_SOURCES = src/linux/find_suid.cpp
-faulty_SOURCES = src/faulty.c
-faulty_CFLAGS = -ansi -fno-stack-protector -D_GNU_SOURCE -Wno-implicit-function-declaration
+buffer_overflow_SOURCES = src/buffer_overflow.c
+buffer_overflow_CFLAGS = -ansi -fno-stack-protector -D_GNU_SOURCE -Wno-implicit-function-declarationw
+string_format_SOURCES = src/string_format.c    
+string_format_CFLAGS = -ansi -D_GNU_SOURCE -Wno-format-security
 if WITH_SYSCALLS
 syscalls_SOURCES = src/linux/syscalls.cpp
 syscalls_CPPFLAGS = -ansi -Wno-unused-result -Wno-nonnull -std=c++11
 endif
 ansvifdir = bin
 check: all
-	./ansvif -t examples/space.txt -c ./faulty -b 32 -o checkfaulty && rm checkfaulty.*
+	./ansvif -t examples/space.txt -c ./buffer_overflow -b 32 -o checkfaulty && rm checkfaulty.*
 	@echo "*** CHECK 1 PASSED ***"
-	./ansvif -t examples/space.txt -c ./faulty -b 32
+	./ansvif -t examples/space.txt -c ./buffer_overflow -b 32
 	@echo "*** CHECK 2 PASSED ***"
+	./ansvif -t examples/space.txt -c ./string_format -b 32
+	@echo "*** CHECK 3 PASSED ***"
 	@echo "*** ALL TESTS PASSED ***"
