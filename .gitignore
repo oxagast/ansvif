@@ -7,6 +7,8 @@ ansvif
 faulty
 find_suid
 syscalls
+buffer_overflow
+string_format
 *.log
 !/man/*
 !/tmp/*
