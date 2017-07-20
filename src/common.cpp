@@ -39,7 +39,7 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
                std::string always_arg_after, bool never_rand,
                std::string run_command, std::string fault_code, bool single_try,
                bool percent_sign, int static_args, bool, bool keep_going,
-               bool verbose, bool debug);
+               std::string before_command, bool verbose, bool debug);
 void help_me(std::string mr_me);
 std::vector<std::string> get_flags_man(std::string man_page,
                                        std::string man_loc, bool verbose,

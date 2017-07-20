@@ -20,7 +20,7 @@ std::vector<std::string>
 get_out_str(std::string env_str, std::string valgrind_str, std::string sys_str,
             std::string path_str, std::string always_arg_b,
             std::string always_arg, std::string fuzz_after,
-            std::string log_prefix) {
+            std::string log_prefix, std::string before_command) {
   /* these are the strings that will go to be run in popen
    * out_str is normal, and out_str_p is pritnf compatible
    * for easy crash replay, except this is for % for
@@ -42,7 +42,7 @@ get_out_str(std::string env_str, std::string valgrind_str, std::string sys_str,
                   always_arg + " $(printf \"" + binstr_to_hex(fuzz_after) +
                   "\") ";
     }
-    out_str = env_str + " " + valgrind_str + " " + path_str + " " +
+    out_str = env_str + " " + valgrind_str + " " + before_command + " " + path_str + " " +
               always_arg_b + sys_str + " " + always_arg + fuzz_after;
   }
   if (log_prefix == "") {
@@ -87,7 +87,7 @@ std::vector<std::string>
 get_out_str_pc(std::string env_str, std::string valgrind_str,
                std::string sys_str, std::string path_str,
                std::string always_arg_b, std::string always_arg,
-               std::string fuzz_after, std::string log_prefix) {
+               std::string fuzz_after, std::string log_prefix, std::string before_command) {
   /* these are the strings that will go to be run in popen
    * out_str is normal, and out_str_p is pritnf compatible
    * for easy crash replay, except this is for % for
@@ -111,7 +111,7 @@ get_out_str_pc(std::string env_str, std::string valgrind_str,
                   "\") " + always_arg + " $(printf \"" +
                   binstr_to_hex(binstr_to_hex_pc(fuzz_after)) + "\") ";
     }
-    out_str = env_str + " " + valgrind_str + " " + path_str + " " +
+    out_str = env_str + " " + valgrind_str + " " + before_command + " " + path_str + " " +
               always_arg_b + binstr_to_hex_pc(sys_str) + " " + always_arg +
               binstr_to_hex_pc(fuzz_after);
   }

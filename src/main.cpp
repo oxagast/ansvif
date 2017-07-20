@@ -39,7 +39,7 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
                std::string always_arg_after, bool never_rand,
                std::string run_command, std::string fault_code, bool valgrind,
                bool single_try, bool percent_sign, int static_args,
-               bool keep_going, bool verbose, bool debug);
+               bool keep_going, std::string before_command, bool verbose, bool debug);
 std::vector<std::string> get_flags_template(std::string filename, bool verbose,
                                             bool debug);
 std::vector<std::string> get_other(std::string filename, bool verbose,
@@ -130,6 +130,7 @@ int main(int argc, char *argv[]) { // initialize our main
   std::string always_arg_after = "";
   std::string run_command = "";
   std::string man_page = "";
+  std::string before_command = "";
 #ifdef __unix__
   std::string fault_code = "134";
 #endif
@@ -169,7 +170,7 @@ int main(int argc, char *argv[]) { // initialize our main
   signal(SIGINT, sig_handler);
   /* now we can start grabbing all the options! */
   while ((opt = getopt(argc, argv,
-                       "m:p:t:e:c:f:o:b:s:x:R:A:F:S:L:W:B:M:C:y1hrzvdDnVPK")) !=
+                       "m:p:t:e:c:f:o:b:s:x:R:A:F:E:S:L:W:B:M:C:y1hrzvdDnVPK")) !=
          -1) {
     switch (opt) {
     case 'v':
@@ -270,6 +271,9 @@ int main(int argc, char *argv[]) { // initialize our main
     case 'K':
       keep_going = true;
       break;
+    case 'E':
+      before_command = optarg;
+      break;
     default:
       help_me(argv[0]);
     }
@@ -339,7 +343,7 @@ int main(int argc, char *argv[]) { // initialize our main
           other_sep, thread_timeout_int, low_lvl_user, junk_file_of_args,
           always_arg_before, always_arg_after, never_rand, run_command,
           fault_code, valgrind, single_try, percent_sign, static_args,
-          keep_going, verbose, debug));
+          keep_going, before_command, verbose, debug));
     /* thrift shop */
     for (auto &all_thread : threads)
       all_thread.join();
@@ -354,7 +358,7 @@ int main(int argc, char *argv[]) { // initialize our main
               other_sep, thread_timeout_int, low_lvl_user, junk_file_of_args,
               always_arg_before, always_arg_after, never_rand, run_command,
               fault_code, valgrind, single_try, percent_sign, static_args,
-              keep_going, verbose, debug);
+              keep_going, before_command, verbose, debug);
   }
   /* exit cleanly! */
   exit(0);

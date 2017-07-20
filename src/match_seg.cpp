@@ -48,9 +48,7 @@ std::string remove_chars(const std::string &source, const std::string &chars);
 int reaper(int grim, int t_timeout);
 FILE *popen2(std::string command, std::string type, int &pid,
              std::string low_lvl_user);
-FILE *popen2_win(std::string command);
 int pclose2(FILE *fp, pid_t pid);
-int pclose2_win(FILE *fp);
 void write_seg(std::string filename, std::string seg_line);
 int rand_me_plz(int rand_from, int rand_to);
 std::string make_garbage(int trash, int buf, std::string opt_other_str,
@@ -63,12 +61,12 @@ std::vector<std::string>
 get_out_str(std::string env_str, std::string valgrind_str, std::string sys_str,
             std::string path_str, std::string always_arg_before,
             std::string always_arg_after, std::string fuzz_after,
-            std::string log_prefix);
+            std::string log_prefix, std::string before_command);
 std::vector<std::string>
 get_out_str_pc(std::string env_str, std::string valgrind_str,
                std::string sys_str, std::string path_str,
                std::string always_arg_before, std::string always_arg_after,
-               std::string fuzz_after, std::string log_prefix);
+               std::string fuzz_after, std::string log_prefix, std::string before_command);
 bool match_seg(int buf_size, std::vector<std::string> opts,
                std::vector<std::string> spec_env, std::string path_str,
                std::string strip_shell, bool rand_all, bool write_to_file,
@@ -79,7 +77,7 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
                std::string always_arg_after, bool never_rand,
                std::string run_command, std::string fault_code, bool valgrind,
                bool single_try, bool percent_sign, int static_args,
-               bool keep_going, bool verbose, bool debug) {
+               bool keep_going, std::string before_command, bool verbose, bool debug) {
   bool segged = false;
   std::vector<std::string> used_token;
   std::string valgrind_str;
@@ -327,12 +325,12 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
          */
         out_all = get_out_str_pc(env_str, valgrind_str, sys_str, path_str,
                                  always_arg_before, always_arg_after,
-                                 fuzz_after, write_file_n);
+                                 fuzz_after, write_file_n, before_command);
       }
       if (percent_sign == false) {
         out_all = get_out_str(env_str, valgrind_str, sys_str, path_str,
                               always_arg_before, always_arg_after, fuzz_after,
-                              write_file_n);
+                              write_file_n, before_command);
       }
       /* coming to the stuff from sys_string either
        * normal or printf output
@@ -366,10 +364,18 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
         used_token.push_back(h_output);
 #endif
         if (buf_size == 0) {
-          out_str = path_str + " " + always_arg_before + " " + always_arg_after;
+          out_str = before_command + " " + path_str + " " + always_arg_before + " " + always_arg_after;
           out_str_p =
-              path_str + " " + always_arg_before + " " + always_arg_after;
+              before_command + " " + path_str + " " + always_arg_before + " " + always_arg_after;
+               if (write_file_n == "") {
+    /* incase we are logging don't leave a blank file */
+    out_str = out_str + " >/dev/null 2>&1; echo $?";
+  } else {
+    /* get the signal here and log */
+    out_str = out_str + " >" + write_file_n + ".output.ansvif.log 2>&1; echo $?";
+  }
         }
+        
         if (debug == true) {
           /* write ALL the junk to STDOUT since we're in
            * debug mode
