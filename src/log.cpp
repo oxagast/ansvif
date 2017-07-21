@@ -1,5 +1,5 @@
 #include "../include/xmlwriter/xml_writer.hpp"
-#include "src/main.h"
+#include "src/version.h"
 #include <cstdlib>
 #include <cstring>
 #include <fstream>

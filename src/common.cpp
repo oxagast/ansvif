@@ -9,7 +9,7 @@
 //  (  O )  (/    ( (_ /    \___ \ )(
 //   \__(_/\_\_/\_/\___\_/\_(____/(__)
 
-#include "src/main.h"
+#include "src/version.h"
 #include <cstdlib>
 #include <fstream>
 #include <iostream>

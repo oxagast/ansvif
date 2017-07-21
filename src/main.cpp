@@ -19,7 +19,7 @@
 #ifdef __unix__
 #include <sys/wait.h>
 #endif
-#include "src/main.h"
+#include "src/version.h"
 #include <thread>
 #include <unistd.h>
 #include <vector>

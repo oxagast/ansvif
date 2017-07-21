@@ -21,7 +21,7 @@
 #include <crypto++/md5.h>
 #endif
 #endif
-#include "src/main.h"
+#include "src/version.h"
 #include <cstdlib>
 #include <cstring>
 #include <fstream>

@@ -1,5 +1,5 @@
-#ifndef main_h
-#define main_h
+#ifndef version_h
+#define version_h
 
 #include <string>
 /* what version of ansvif are we running? */
