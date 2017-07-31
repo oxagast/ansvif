@@ -127,6 +127,7 @@ PS C:\ansvif\bin\ansvif_win> .\ansvif -t ..\..\examples\space -F ..\..\tmp\tmpht
   -M Max arguments to use in the fuzz.
   -y Short for -b 0 and usually only useful with -A or -B
   -K Keep fuzzing after a crash in the target.
+  -E A command to be run before the fuzzed progarm
   -v Verbose.
   -d Debug data.
   -h Shows the help page.
