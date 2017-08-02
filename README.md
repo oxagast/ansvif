@@ -26,6 +26,14 @@ Or, if you would like to play with the syscall fuzzer:
 ```
 $ aclocal && autoconf && automake -a && ./configure --enable-syscalls && make && make check
 ```
+*FreeBSD*
+
+Assuming you installed g++ from ports (as you will need to for C++11):
+
+```
+$ aclocal && autoconf && automake -a && ./configure && make && make check
+```
+
 *OpenBSD:*
 
 Assuming you installed g++ from ports (as you will need to for C++11):
@@ -41,7 +49,7 @@ a version of MinGW-W64 g++ with seh).
 (Go to where you installed MinGW-W64 and click mingw-64.bat)
 
 ```
-g++.exe src/common.cpp src/win/bin2hex.cpp src/win/bin2hex_pc.cpp src/win/popen2.cpp src/win/main.cpp src/win/help.cpp src/match_seg.cpp src/win/sys_string.cpp src/win/sys_string_pc.cpp src/win/man_read.cpp src/randomizer.cpp src/trash.cpp -I./ -I./include -std=c++11 -lstdc++ -lpthread -O2 -o ansvif.exe -static -static-libgcc -static-libstdc++
+g++.exe src/common.cpp src/win/bin2hex.cpp src/win/bin2hex_pc.cpp src/win/popen2.cpp src/win/main.cpp src/win/help.cpp src/match_fault.cpp src/win/sys_string.cpp src/win/sys_string_pc.cpp src/win/man_read.cpp src/randomizer.cpp src/trash.cpp -I./ -I./include -std=c++11 -lstdc++ -lpthread -O2 -o ansvif.exe -static -static-libgcc -static-libstdc++
 gcc src/win/printf.c -o printf.exe
 ```
 
