@@ -158,6 +158,7 @@ void write_seg(std::string filename, std::string line) {
 void write_junk_file(std::string filename, std::vector<std::string> opt_other,
                      int buf_size, int rand_spec_one, int rand_spec_two,
                      bool never_rand, std::string other_sep, bool verbose) {
+  /* Cashhhhhhhhh me ousside howbow dat?? */
   /* if there is an old file we should remove it first */
   remove(filename.c_str());
   /* initialize our junk and write oscar to the file */
