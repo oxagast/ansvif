@@ -23,11 +23,11 @@ void help_me(std::string mr_me) {
       << "Usage:" << std::endl
       << " " << mr_me << " -t template -c ./faulty -b 2048" << std::endl
       << "Options:" << std::endl
-      << " -t [file]    This file should hold line by line command arguments"
+      << " -t [file]    This file should hold line by line command arguments."
       << std::endl
       << "              as shown in the example file." << std::endl
       << " -e [file]    This file should hold line by line environment "
-         "variables"
+         "variables."
       << std::endl
       << "              as shown in the example file.  You can" << std::endl
       << "              usually get these by doing something like:" << std::endl
@@ -56,7 +56,7 @@ void help_me(std::string mr_me) {
       << "              characters are: <>\\n |&\[]\()\{}:;\\ and mandatory "
          "omitted"
       << std::endl
-      << "              characters are: >\\n"
+      << "              characters are: >\\n."
       << std::endl
       << " -o [file]    Log to this file." << std::endl
       << " -x [file]    Other opts to put in, such as usernames, etc."
@@ -97,9 +97,9 @@ void help_me(std::string mr_me) {
       << " -y           Short for -b 0 and usually only useful with -A or -B"
       << std::endl
       << " -K           Keep going after a crash." << std::endl
-      << " -E \"cmd\"     A command to be run before the fuzzed progarm" << std::endl
-      << " -v           Verbose." << std::endl
-      << " -d           Debug." << std::endl;
+      << " -E \"cmd\"     A command to be run before the fuzzed progarm." << std::endl
+      << " -v           Be verbose." << std::endl
+      << " -d           Debug data." << std::endl;
   /* exit with an error because we didn't do anything but
    * print a help page
    */
