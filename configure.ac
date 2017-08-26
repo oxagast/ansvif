@@ -31,6 +31,25 @@ if test "$WITH_SYSCALLS" = "true"; then
 else
     AC_MSG_NOTICE([syscalls module is disabled])
 fi
+
+AC_ARG_ENABLE(gtk,
+[  --enable-gtk       Enable GTK compiliation (experimental)],
+[case "${enableval}" in
+  yes) WITH_GTK=true ;;
+  no)  WITH_GTK=false ;;
+  *) AC_MSG_ERROR(bad value ${enableval} for --enable-gtk) ;;
+esac],[WITH_GTK=false])
+AM_CONDITIONAL([WITH_GTK], [test "$WITH_GTK" = "true"])
+# try to compile syscalls if they're enabled
+if test "$WITH_GTK" = "true"; then
+    AC_DEFINE([WITH_GTK], [], ["build GTK module"])
+    AC_MSG_NOTICE([GTK enabled, we will try to compile them])
+    PKG_CHECK_MODULES(GTK, gtk+-2.0 >= 2.0)
+else
+    AC_MSG_NOTICE([GTK module is disabled])
+fi
+
+
 AM_CONDITIONAL(OS_IS_REDHAT, [ test `test -e /etc/os-release; echo $?` -eq "0" ])
 if test "$OS_IS_REDHAT" = "1"; then
     AC_DEFINE([__REDHAT], [], ["build for RedHat"])

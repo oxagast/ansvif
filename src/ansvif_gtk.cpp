@@ -21,8 +21,9 @@ std::string template_file = "";
 std::string binary_file = "";
 
 int fuzz_call() {
-  std::string ansvif_call = "../ansvif " + buffer_size + binary_file + template_file;
-//  std::cout << ansvif_call << std::endl;
+  /* put together the call to ansvif */
+  std::string ansvif_call = "./ansvif " + buffer_size + binary_file + template_file + " & ";
+  /* exec ansvif */
   execl("/bin/sh", "/bin/sh", "-c", ansvif_call.c_str(), NULL);  
   return (0);
 }
@@ -61,8 +62,6 @@ int select_binary() {
   G_CALLBACK(binary_selected), (gpointer)bin_file);
   g_signal_connect_swapped(GTK_FILE_SELECTION(bin_file)->cancel_button,
                           "clicked", G_CALLBACK(gtk_widget_destroy), bin_file);
-  //gtk_file_selection_set_filename(GTK_FILE_SELECTION(templ_file),
-  //	                  "examples/all_flags.cpp");
   gtk_widget_show(bin_file);
   gtk_main();
   return 0;

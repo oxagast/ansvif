@@ -1,6 +1,9 @@
 AUTOMAKE_OPTIONS = foreign
 ACLOCAL_AMFLAGS = ${ACLOCAL_FLAGS}
 #SUBDIRS = tests
+if WITH_GTK
+bin_PROGRAMS = ansvif find_suid buffer_overflow string_format ansvif_gtk
+endif
 if WITH_SYSCALLS
 bin_PROGRAMS = ansvif find_suid buffer_overflow string_format syscalls
 else
@@ -31,11 +34,16 @@ endif
 find_suid_SOURCES = src/linux/find_suid.cpp
 buffer_overflow_SOURCES = src/buffer_overflow.c
 buffer_overflow_CFLAGS = -ansi -fno-stack-protector -D_GNU_SOURCE -Wno-implicit-function-declarationw
-string_format_SOURCES = src/string_format.c    
+string_format_SOURCES = src/string_format.c
 string_format_CFLAGS = -ansi -D_GNU_SOURCE -Wno-format-security
 if WITH_SYSCALLS
 syscalls_SOURCES = src/linux/syscalls.cpp
 syscalls_CPPFLAGS = -ansi -Wno-unused-result -Wno-nonnull -std=c++11
+endif
+if WITH_GTK
+ansvif_gtk_SOURCES = src/ansvif_gtk.cpp
+ansvif_gtk_LDADD = @GTK_LIBS@
+ansvif_gtk_CPPFLAGS = @GTK_CFLAGS@ -fpermissive
 endif
 ansvifdir = bin
 check: all
