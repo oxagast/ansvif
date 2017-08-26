@@ -18,16 +18,23 @@
 
 std::string buffer_size = " -b 32 ";
 std::string template_file = "";
+std::string binary_file = "";
 
 int fuzz_call() {
-  std::string ansvif_call = "./ansvif " + buffer_size + template_file;
-  std::cout << ansvif_call << std::endl;
+  std::string ansvif_call = "../ansvif " + buffer_size + binary_file + template_file;
+//  std::cout << ansvif_call << std::endl;
+  execl("/bin/sh", "/bin/sh", "-c", ansvif_call.c_str(), NULL);  
   return (0);
 }
 
 static void template_selected(GtkWidget *w, GtkFileSelection *fs) {
   template_file.assign(gtk_file_selection_get_filename(GTK_FILE_SELECTION(fs)));
   template_file = " -t " + template_file;
+}
+
+static void binary_selected(GtkWidget *w, GtkFileSelection *fs) {
+  binary_file.assign(gtk_file_selection_get_filename(GTK_FILE_SELECTION(fs)));
+  binary_file = " -c " + binary_file;
 }
 
 int select_template() {
@@ -40,11 +47,27 @@ int select_template() {
                            "clicked", G_CALLBACK(gtk_widget_destroy),
                            templ_file);
   gtk_file_selection_set_filename(GTK_FILE_SELECTION(templ_file),
-                                  "penguin.png");
+                                  "examples/all_flags.cpp");
   gtk_widget_show(templ_file);
   gtk_main();
   return 0;
 }
+
+int select_binary() {
+  GtkWidget *bin_file;
+  bin_file = gtk_file_selection_new("File selection");
+  g_signal_connect(bin_file, "destroy", G_CALLBACK(gtk_main_quit), NULL);
+  g_signal_connect(GTK_FILE_SELECTION(bin_file)->ok_button, "clicked",
+  G_CALLBACK(binary_selected), (gpointer)bin_file);
+  g_signal_connect_swapped(GTK_FILE_SELECTION(bin_file)->cancel_button,
+                          "clicked", G_CALLBACK(gtk_widget_destroy), bin_file);
+  //gtk_file_selection_set_filename(GTK_FILE_SELECTION(templ_file),
+  //	                  "examples/all_flags.cpp");
+  gtk_widget_show(bin_file);
+  gtk_main();
+  return 0;
+}
+
 
 int set_buffer_size(GtkWidget *buf_size_zero, gpointer data) {
   if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(buf_size_zero))) {
@@ -58,9 +81,12 @@ int set_buffer_size(GtkWidget *buf_size_zero, gpointer data) {
 void destroy(GtkWidget *widget, gpointer data) { gtk_main_quit(); }
 
 int main(int argc, char *argv[]) {
+  std::string command;
   GtkWidget *window;
   GtkWidget *opters;
-  GtkWidget *fuzz_it, *template_sel;
+  GtkWidget *fuzz_it;
+  GtkWidget *command_sel;
+  GtkWidget *template_sel;
   GtkWidget *buf_size_zero;
   gtk_init(&argc, &argv);
   window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
@@ -74,16 +100,21 @@ int main(int argc, char *argv[]) {
                    "fuzz_it");
   gtk_fixed_put(GTK_FIXED(opters), fuzz_it, 400, 10);
   gtk_widget_show(fuzz_it);
-  gtk_widget_show(opters);
+//  gtk_widget_show(opters);
   template_sel = gtk_button_new_with_label("Select Template");
   g_signal_connect(GTK_OBJECT(template_sel), "clicked",
                    G_CALLBACK(select_template), "template_sel");
-  gtk_fixed_put(GTK_FIXED(opters), template_sel, 50, 50);
+  gtk_fixed_put(GTK_FIXED(opters), template_sel, 50, 80);
   gtk_widget_show(template_sel);
+  command_sel = gtk_button_new_with_label("Select binary to fuzz");
+  g_signal_connect(GTK_OBJECT(command_sel), "clicked",
+                   G_CALLBACK(select_binary), "command");
+  gtk_fixed_put(GTK_FIXED(opters), command_sel, 50, 50);
+  gtk_widget_show(command_sel);
   buf_size_zero = gtk_toggle_button_new_with_label("Buffer Size 0");
   g_signal_connect(GTK_OBJECT(buf_size_zero), "clicked",
                    G_CALLBACK(set_buffer_size), "buf_size_zero");
-  gtk_fixed_put(GTK_FIXED(opters), buf_size_zero, 50, 80);
+  gtk_fixed_put(GTK_FIXED(opters), buf_size_zero, 50, 200);
   gtk_widget_show(buf_size_zero);
   gtk_widget_show(opters);
   gtk_widget_show_all(window);
