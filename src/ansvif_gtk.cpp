@@ -11,12 +11,12 @@
 
 /* this code does not work at all yet! */
 
+#include <cstring>
 #include <gtk/gtk.h>
 #include <iostream>
+#include <sstream>
 #include <string>
 #include <unistd.h>
-#include <cstring>
-#include <sstream>
 
 FILE *popen2(std::string command, std::string type, int &pid,
              std::string low_lvl_user);
@@ -29,6 +29,8 @@ std::string ansvif_call;
 GtkWidget *caller_box;
 GtkTextBuffer *buffer;
 GtkTextIter iter;
+GtkWidget *template_sel_t;
+GtkWidget *command_sel_t;
 
 static void enter_callback(GtkWidget *widget, GtkWidget *caller_box) {
   const gchar *entry_text;
@@ -49,8 +51,8 @@ int fuzz_call(GtkTextBuffer *buffe) {
   char command_out[4096] = {0};
   std::stringstream output;
   while (read(fileno(fp), command_out, sizeof(command_out) - 1) != 0) {
-   output << std::string(command_out);
-   memset(&command_out, 0, sizeof(command_out));
+    output << std::string(command_out);
+    memset(&command_out, 0, sizeof(command_out));
   }
   gtk_text_buffer_get_iter_at_offset(buffer, &iter, 0);
   gtk_text_buffer_set_text(buffer, output.str().c_str(), -1);
@@ -62,12 +64,16 @@ static void template_selected(GtkWidget *w, GtkFileSelection *fs) {
   template_file.assign(gtk_file_selection_get_filename(GTK_FILE_SELECTION(fs)));
   template_file = " -t " + template_file;
   gtk_entry_set_text(GTK_ENTRY(caller_box), ansvif_str().c_str());
+  gtk_entry_set_text(GTK_ENTRY(template_sel_t),
+                     gtk_file_selection_get_filename(GTK_FILE_SELECTION(fs)));
 }
 
 static void binary_selected(GtkWidget *w, GtkFileSelection *fs) {
   binary_file.assign(gtk_file_selection_get_filename(GTK_FILE_SELECTION(fs)));
   binary_file = " -c " + binary_file;
   gtk_entry_set_text(GTK_ENTRY(caller_box), ansvif_str().c_str());
+  gtk_entry_set_text(GTK_ENTRY(command_sel_t),
+                     gtk_file_selection_get_filename(GTK_FILE_SELECTION(fs)));
 }
 
 int select_template() {
@@ -80,7 +86,7 @@ int select_template() {
                            "clicked", G_CALLBACK(gtk_widget_destroy),
                            templ_file);
   gtk_file_selection_set_filename(GTK_FILE_SELECTION(templ_file),
-                                  "examples/all_flags.cpp");
+                                  "flag_chars.txt");
   gtk_widget_show(templ_file);
   gtk_main();
   return 0;
@@ -155,7 +161,7 @@ int main(int argc, char *argv[]) {
   gtk_init(&argc, &argv);
   /* Create gtk window */
   window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
- gtk_widget_set_size_request (GTK_WIDGET (window), 850, 700);
+  gtk_widget_set_size_request(GTK_WIDGET(window), 850, 700);
   /* Set the title to ansvif */
   gtk_window_set_title(GTK_WINDOW(window), "ansvif");
   g_signal_connect(window, "destroy", G_CALLBACK(destroy), NULL);
@@ -172,7 +178,7 @@ int main(int argc, char *argv[]) {
   /* A text box where the ansvif command goes */
   caller_box = gtk_entry_new();
   gtk_entry_set_max_length(GTK_ENTRY(caller_box), 1024);
-  gtk_widget_set_size_request (GTK_WIDGET (caller_box), 650, 25);
+  gtk_widget_set_size_request(GTK_WIDGET(caller_box), 650, 25);
   gtk_editable_set_editable(GTK_EDITABLE(caller_box), FALSE);
   g_signal_connect(caller_box, "activate", G_CALLBACK(enter_callback),
                    caller_box);
@@ -180,19 +186,37 @@ int main(int argc, char *argv[]) {
   tmp_pos = GTK_ENTRY(caller_box)->text_length;
   gtk_fixed_put(GTK_FIXED(opters), caller_box, 30, 10);
   gtk_widget_show(caller_box);
-
   /*  Make our template file selection */
   template_sel = gtk_button_new_with_label("Select Template");
   g_signal_connect(GTK_OBJECT(template_sel), "clicked",
                    G_CALLBACK(select_template), "template_sel");
-  gtk_fixed_put(GTK_FIXED(opters), template_sel, 50, 80);
+  gtk_fixed_put(GTK_FIXED(opters), template_sel, 30, 80);
   gtk_widget_show(template_sel);
+  template_sel_t = gtk_entry_new();
+  gtk_entry_set_max_length(GTK_ENTRY(template_sel_t), 128);
+  gtk_widget_set_size_request(GTK_WIDGET(template_sel_t), 350, 25);
+  gtk_editable_set_editable(GTK_EDITABLE(template_sel_t), FALSE);
+  g_signal_connect(template_sel_t, "activate", G_CALLBACK(enter_callback),
+                   template_sel_t);
+  tmp_pos = GTK_ENTRY(template_sel_t)->text_length;
+  gtk_fixed_put(GTK_FIXED(opters), template_sel_t, 200, 80);
+  gtk_widget_show(template_sel_t);
   /* Make our binary to be fuzzed file selection */
   command_sel = gtk_button_new_with_label("Select binary to fuzz");
   g_signal_connect(GTK_OBJECT(command_sel), "clicked",
                    G_CALLBACK(select_binary), "command");
-  gtk_fixed_put(GTK_FIXED(opters), command_sel, 50, 50);
+  gtk_fixed_put(GTK_FIXED(opters), command_sel, 30, 50);
   gtk_widget_show(command_sel);
+  command_sel_t = gtk_entry_new();
+  gtk_entry_set_max_length(GTK_ENTRY(command_sel_t), 128);
+  gtk_widget_set_size_request(GTK_WIDGET(command_sel_t), 350, 25);
+  gtk_editable_set_editable(GTK_EDITABLE(command_sel_t), FALSE);
+  g_signal_connect(command_sel_t, "activate", G_CALLBACK(enter_callback),
+                   command_sel_t);
+  tmp_pos = GTK_ENTRY(command_sel_t)->text_length;
+  gtk_fixed_put(GTK_FIXED(opters), command_sel_t, 200, 50);
+  gtk_widget_show(command_sel_t);
+
   /* A toggle for turning buffer size 0 on and off */
   buf_size_zero = gtk_check_button_new_with_label("Buffer Size 0");
   g_signal_connect(GTK_OBJECT(buf_size_zero), "clicked",
@@ -207,10 +231,10 @@ int main(int argc, char *argv[]) {
   gtk_fixed_put(GTK_FIXED(opters), ansvif_out, 50, 500);
   gtk_widget_show(ansvif_out);
   /* Show that part of the screen */
-  text = create_text ();
+  text = create_text();
   gtk_fixed_put(GTK_FIXED(opters), text, 50, 540);
-  gtk_widget_set_size_request (GTK_WIDGET(text), 650, 100);
-  gtk_widget_show (text);
+  gtk_widget_set_size_request(GTK_WIDGET(text), 650, 100);
+  gtk_widget_show(text);
   gtk_widget_show(opters);
   /* Show the whole window at once */
   gtk_widget_show_all(window);
