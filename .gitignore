@@ -7,6 +7,7 @@ ansvif
 faulty
 find_suid
 syscalls
+ansvif_gtk
 buffer_overflow
 string_format
 *.log

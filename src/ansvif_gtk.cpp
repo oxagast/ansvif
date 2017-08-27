@@ -15,27 +15,59 @@
 #include <iostream>
 #include <string>
 #include <unistd.h>
+#include <cstring>
+#include <sstream>
+
+FILE *popen2(std::string command, std::string type, int &pid,
+             std::string low_lvl_user);
+int pclose2(FILE *fp, pid_t pid);
 
 std::string buffer_size = " -b 32 ";
-std::string template_file = "";
-std::string binary_file = "";
+std::string template_file;
+std::string binary_file;
+std::string ansvif_call;
+GtkWidget *caller_box;
+GtkTextBuffer *buffer;
+GtkTextIter iter;
 
-int fuzz_call() {
+static void enter_callback(GtkWidget *widget, GtkWidget *caller_box) {
+  const gchar *entry_text;
+  entry_text = gtk_entry_get_text(GTK_ENTRY(caller_box));
+  // printf ("Entry contents: %s\n", entry_text);
+  // printf("%s", ansvif_call.c_str());
+}
+
+std::string ansvif_str() {
+  ansvif_call = "./ansvif " + buffer_size + binary_file + template_file;
+  return (ansvif_call);
+}
+
+int fuzz_call(GtkTextBuffer *buffe) {
   /* put together the call to ansvif */
-  std::string ansvif_call = "./ansvif " + buffer_size + binary_file + template_file + " & ";
-  /* exec ansvif */
-  execl("/bin/sh", "/bin/sh", "-c", ansvif_call.c_str(), NULL);  
+  int com_pid;
+  FILE *fp = popen2(ansvif_str(), "r", com_pid, "nobody");
+  char command_out[4096] = {0};
+  std::stringstream output;
+  while (read(fileno(fp), command_out, sizeof(command_out) - 1) != 0) {
+   output << std::string(command_out);
+   memset(&command_out, 0, sizeof(command_out));
+  }
+  gtk_text_buffer_get_iter_at_offset(buffer, &iter, 0);
+  gtk_text_buffer_set_text(buffer, output.str().c_str(), -1);
+  pclose2(fp, com_pid);
   return (0);
 }
 
 static void template_selected(GtkWidget *w, GtkFileSelection *fs) {
   template_file.assign(gtk_file_selection_get_filename(GTK_FILE_SELECTION(fs)));
   template_file = " -t " + template_file;
+  gtk_entry_set_text(GTK_ENTRY(caller_box), ansvif_str().c_str());
 }
 
 static void binary_selected(GtkWidget *w, GtkFileSelection *fs) {
   binary_file.assign(gtk_file_selection_get_filename(GTK_FILE_SELECTION(fs)));
   binary_file = " -c " + binary_file;
+  gtk_entry_set_text(GTK_ENTRY(caller_box), ansvif_str().c_str());
 }
 
 int select_template() {
@@ -59,22 +91,50 @@ int select_binary() {
   bin_file = gtk_file_selection_new("File selection");
   g_signal_connect(bin_file, "destroy", G_CALLBACK(gtk_main_quit), NULL);
   g_signal_connect(GTK_FILE_SELECTION(bin_file)->ok_button, "clicked",
-  G_CALLBACK(binary_selected), (gpointer)bin_file);
+                   G_CALLBACK(binary_selected), (gpointer)bin_file);
   g_signal_connect_swapped(GTK_FILE_SELECTION(bin_file)->cancel_button,
-                          "clicked", G_CALLBACK(gtk_widget_destroy), bin_file);
+                           "clicked", G_CALLBACK(gtk_widget_destroy), bin_file);
   gtk_widget_show(bin_file);
   gtk_main();
   return 0;
 }
 
-
 int set_buffer_size(GtkWidget *buf_size_zero, gpointer data) {
   if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(buf_size_zero))) {
     buffer_size = " -y ";
+    gtk_entry_set_text(GTK_ENTRY(caller_box), ansvif_str().c_str());
   } else {
     buffer_size = " -b 32 ";
+    gtk_entry_set_text(GTK_ENTRY(caller_box), ansvif_str().c_str());
   }
   return (0);
+}
+
+/*
+static void insert_text(GtkTextBuffer *buffer) {
+  gtk_text_buffer_get_iter_at_offset(buffer, &iter, 0);
+  gtk_text_buffer_insert(buffer, &iter, "ansvif", -1);
+}
+*/
+
+/* Create a scrolled text area that displays a "message" */
+static GtkWidget *create_text(void) {
+  GtkWidget *scrolled_window;
+  GtkWidget *view;
+
+  view = gtk_text_view_new();
+  buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(view));
+
+  scrolled_window = gtk_scrolled_window_new(NULL, NULL);
+  gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window),
+                                 GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+
+  gtk_container_add(GTK_CONTAINER(scrolled_window), view);
+  fuzz_call(buffer);
+
+  gtk_widget_show_all(scrolled_window);
+
+  return scrolled_window;
 }
 
 void destroy(GtkWidget *widget, gpointer data) { gtk_main_quit(); }
@@ -88,10 +148,14 @@ int main(int argc, char *argv[]) {
   GtkWidget *command_sel;
   GtkWidget *template_sel;
   GtkWidget *buf_size_zero;
+  GtkWidget *ansvif_out;
+  GtkWidget *text;
+  gint tmp_pos;
   /* Pull in the args for gtk */
   gtk_init(&argc, &argv);
   /* Create gtk window */
   window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+ gtk_widget_set_size_request (GTK_WIDGET (window), 850, 700);
   /* Set the title to ansvif */
   gtk_window_set_title(GTK_WINDOW(window), "ansvif");
   g_signal_connect(window, "destroy", G_CALLBACK(destroy), NULL);
@@ -103,8 +167,20 @@ int main(int argc, char *argv[]) {
   fuzz_it = gtk_button_new_with_label("Fuzz!");
   g_signal_connect(GTK_OBJECT(fuzz_it), "clicked", G_CALLBACK(fuzz_call),
                    "fuzz_it");
-  gtk_fixed_put(GTK_FIXED(opters), fuzz_it, 400, 10);
+  gtk_fixed_put(GTK_FIXED(opters), fuzz_it, 700, 10);
   gtk_widget_show(fuzz_it);
+  /* A text box where the ansvif command goes */
+  caller_box = gtk_entry_new();
+  gtk_entry_set_max_length(GTK_ENTRY(caller_box), 1024);
+  gtk_widget_set_size_request (GTK_WIDGET (caller_box), 650, 25);
+  gtk_editable_set_editable(GTK_EDITABLE(caller_box), FALSE);
+  g_signal_connect(caller_box, "activate", G_CALLBACK(enter_callback),
+                   caller_box);
+  gtk_entry_set_text(GTK_ENTRY(caller_box), "ansvif");
+  tmp_pos = GTK_ENTRY(caller_box)->text_length;
+  gtk_fixed_put(GTK_FIXED(opters), caller_box, 30, 10);
+  gtk_widget_show(caller_box);
+
   /*  Make our template file selection */
   template_sel = gtk_button_new_with_label("Select Template");
   g_signal_connect(GTK_OBJECT(template_sel), "clicked",
@@ -118,15 +194,26 @@ int main(int argc, char *argv[]) {
   gtk_fixed_put(GTK_FIXED(opters), command_sel, 50, 50);
   gtk_widget_show(command_sel);
   /* A toggle for turning buffer size 0 on and off */
-  buf_size_zero = gtk_toggle_button_new_with_label("Buffer Size 0");
+  buf_size_zero = gtk_check_button_new_with_label("Buffer Size 0");
   g_signal_connect(GTK_OBJECT(buf_size_zero), "clicked",
                    G_CALLBACK(set_buffer_size), "buf_size_zero");
   gtk_fixed_put(GTK_FIXED(opters), buf_size_zero, 50, 200);
   gtk_widget_show(buf_size_zero);
+
+  // ansvif_out_frame = gtk_frame_new ("Left Justified Label");
+  ansvif_out = gtk_label_new("ansvif output:\n");
+  gtk_label_set_justify(GTK_LABEL(ansvif_out), GTK_JUSTIFY_LEFT);
+  gtk_container_add(GTK_CONTAINER(opters), ansvif_out);
+  gtk_fixed_put(GTK_FIXED(opters), ansvif_out, 50, 500);
+  gtk_widget_show(ansvif_out);
   /* Show that part of the screen */
+  text = create_text ();
+  gtk_fixed_put(GTK_FIXED(opters), text, 50, 540);
+  gtk_widget_set_size_request (GTK_WIDGET(text), 650, 100);
+  gtk_widget_show (text);
   gtk_widget_show(opters);
   /* Show the whole window at once */
   gtk_widget_show_all(window);
   gtk_main();
-  return(0);
+  return (0);
 }

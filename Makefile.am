@@ -41,7 +41,7 @@ syscalls_SOURCES = src/linux/syscalls.cpp
 syscalls_CPPFLAGS = -ansi -Wno-unused-result -Wno-nonnull -std=c++11
 endif
 if WITH_GTK
-ansvif_gtk_SOURCES = src/ansvif_gtk.cpp
+ansvif_gtk_SOURCES = src/ansvif_gtk.cpp src/popen2.cpp
 ansvif_gtk_LDADD = @GTK_LIBS@
 ansvif_gtk_CPPFLAGS = @GTK_CFLAGS@ -fpermissive
 endif
