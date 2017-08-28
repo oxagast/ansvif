@@ -26,6 +26,10 @@ Or, if you would like to play with the syscall fuzzer:
 ```
 $ aclocal && autoconf && automake -a && ./configure --enable-syscalls && make && make check
 ```
+If you would like to play with the GTK frontend (which is under heavy development and incomplete), you can install the GTK+2 development packages and do:
+```
+$ aclocal && autoconf && automake -a && ./configure --enable-gtk && make && ./ansvif_gtk
+```
 *FreeBSD*
 
 Assuming you installed g++ from ports (as you will need to for C++11):
