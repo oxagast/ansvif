@@ -35,8 +35,6 @@ GtkWidget *command_sel_t;
 static void enter_callback(GtkWidget *widget, GtkWidget *caller_box) {
   const gchar *entry_text;
   entry_text = gtk_entry_get_text(GTK_ENTRY(caller_box));
-  // printf ("Entry contents: %s\n", entry_text);
-  // printf("%s", ansvif_call.c_str());
 }
 
 std::string ansvif_str() {
@@ -223,17 +221,16 @@ int main(int argc, char *argv[]) {
                    G_CALLBACK(set_buffer_size), "buf_size_zero");
   gtk_fixed_put(GTK_FIXED(opters), buf_size_zero, 50, 200);
   gtk_widget_show(buf_size_zero);
-
-  // ansvif_out_frame = gtk_frame_new ("Left Justified Label");
+  /* ansvif output goes here */
   ansvif_out = gtk_label_new("ansvif output:\n");
   gtk_label_set_justify(GTK_LABEL(ansvif_out), GTK_JUSTIFY_LEFT);
   gtk_container_add(GTK_CONTAINER(opters), ansvif_out);
   gtk_fixed_put(GTK_FIXED(opters), ansvif_out, 50, 500);
   gtk_widget_show(ansvif_out);
-  /* Show that part of the screen */
   text = create_text();
   gtk_fixed_put(GTK_FIXED(opters), text, 50, 540);
-  gtk_widget_set_size_request(GTK_WIDGET(text), 650, 100);
+  gtk_widget_set_size_request(GTK_WIDGET(text), 730, 100);
+  /* Show that part of the screen */
   gtk_widget_show(text);
   gtk_widget_show(opters);
   /* Show the whole window at once */

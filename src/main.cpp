@@ -77,7 +77,7 @@ int main(int argc, char *argv[]) { // initialize our main
   int opt;
   int thread_count_def = 2;
   int thread_timeout_def = 3;
-  int static_args = 0;
+  int static_args = 4;
   int buf_size_int = -1;
   /* the options that are pulled out of the manpage or
    * template go into the opts vector, the environment
