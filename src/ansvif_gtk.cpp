@@ -45,7 +45,7 @@ std::string ansvif_str() {
 int fuzz_call(GtkTextBuffer *buffe) {
   /* put together the call to ansvif */
   int com_pid;
-  FILE *fp = popen2(ansvif_str(), "r", com_pid, "nobody");
+  FILE *fp = popen2(ansvif_str(), "r", com_pid, getlogin_r());
   char command_out[4096] = {0};
   std::stringstream output;
   while (read(fileno(fp), command_out, sizeof(command_out) - 1) != 0) {
