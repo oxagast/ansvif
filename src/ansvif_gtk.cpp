@@ -17,6 +17,8 @@
 #include <sstream>
 #include <string>
 #include <unistd.h>
+#include <pwd.h>
+#include <sys/types.h>
 
 FILE *popen2(std::string command, std::string type, int &pid,
              std::string low_lvl_user);
@@ -42,10 +44,19 @@ std::string ansvif_str() {
   return (ansvif_call);
 }
 
+const char *get_user() {
+  uid_t uid = geteuid();
+  struct passwd *pw = getpwuid(uid);
+  if (pw) {
+    return pw->pw_name;
+  } 
+return "";
+}
+
 int fuzz_call(GtkTextBuffer *buffe) {
   /* put together the call to ansvif */
   int com_pid;
-  FILE *fp = popen2(ansvif_str(), "r", com_pid, getlogin_r());
+  FILE *fp = popen2(ansvif_str(), "r", com_pid, get_user());
   char command_out[4096] = {0};
   std::stringstream output;
   while (read(fileno(fp), command_out, sizeof(command_out) - 1) != 0) {

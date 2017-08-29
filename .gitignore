@@ -3,6 +3,7 @@
 *.o
 *.a
 *.exe
+*.swp
 ansvif
 faulty
 find_suid
