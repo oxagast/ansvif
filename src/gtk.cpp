@@ -30,14 +30,19 @@ std::string random_buffer_s = "";
 std::string template_file;
 std::string binary_file;
 std::string ansvif_call;
+std::string environment_file = "";
 GtkWidget *caller_box;
 GtkTextBuffer *buffer;
 GtkTextIter iter;
 GtkWidget *template_sel_t;
 GtkWidget *command_sel_t;
+GtkWidget *environ_sel_t;
 GtkWidget *bin_file;
 GtkWidget *set_buf_size;
 GtkWidget *templ_file;
+GtkWidget *environ_file;
+GtkWidget *env_file;
+
 
 void destroy (GtkWidget *widget, gpointer *data)
 {
@@ -57,7 +62,7 @@ static void set_buf_size_callback(GtkWidget *widget, GtkWidget *set_buf_size) {
 
 
 std::string ansvif_str() {
-  ansvif_call = "./ansvif " + random_data + random_buffer_s + buffer_size + binary_file + template_file;
+  ansvif_call = "./ansvif " + random_data + random_buffer_s + buffer_size + binary_file + environment_file + template_file;
   return (ansvif_call);
 }
 
@@ -95,6 +100,15 @@ static void template_selected(GtkWidget *w, GtkFileSelection *fs) {
   gtk_widget_destroy(templ_file);
 }
 
+static void env_selected(GtkWidget *w, GtkFileSelection *fs) {
+  environment_file.assign(gtk_file_selection_get_filename(GTK_FILE_SELECTION(fs)));
+  environment_file = " -e " + environment_file;
+  gtk_entry_set_text(GTK_ENTRY(caller_box), ansvif_str().c_str());
+  gtk_entry_set_text(GTK_ENTRY(environ_sel_t),
+                     gtk_file_selection_get_filename(GTK_FILE_SELECTION(fs)));
+  gtk_widget_destroy(environ_file);
+}
+
 static void binary_selected(GtkWidget *w, GtkFileSelection *fs) {
   binary_file.assign(gtk_file_selection_get_filename(GTK_FILE_SELECTION(fs)));
   binary_file = " -c " + binary_file;
@@ -119,6 +133,19 @@ int select_template() {
   return(0);
 }
 
+int select_env() {
+  environ_file = gtk_file_selection_new("Template File selection");
+  g_signal_connect(environ_file, "destroy", G_CALLBACK(destroy), &environ_file);
+  g_signal_connect(GTK_FILE_SELECTION(environ_file)->ok_button, "clicked",
+                   G_CALLBACK(env_selected), (gpointer(environ_file)));
+  g_signal_connect_swapped(GTK_FILE_SELECTION(environ_file)->cancel_button,
+                           "clicked", G_CALLBACK(gtk_widget_destroy),
+                           environ_file);
+  gtk_widget_show(environ_file);
+  gtk_main();
+  return(0);
+}
+
 int select_binary() {
   bin_file = gtk_file_selection_new("Binary File selection");
   g_signal_connect(bin_file, "destroy", G_CALLBACK(gtk_main_quit), NULL);
@@ -126,6 +153,8 @@ int select_binary() {
                    G_CALLBACK(binary_selected), (gpointer)bin_file);
   g_signal_connect_swapped(GTK_FILE_SELECTION(bin_file)->cancel_button,
                            "clicked", G_CALLBACK(gtk_widget_destroy), bin_file);
+  gtk_file_selection_set_filename(GTK_FILE_SELECTION(environ_file),
+                                  "");
   gtk_widget_show(bin_file);
   gtk_main();
   return(0);
@@ -194,6 +223,7 @@ int main(int argc, char *argv[]) {
   GtkWidget *opters;
   GtkWidget *fuzz_it;
   GtkWidget *command_sel;
+  GtkWidget *environ_sel;
   GtkWidget *template_sel;
   GtkWidget *buf_size_zero;
   GtkWidget *ansvif_out;
@@ -262,7 +292,7 @@ int main(int argc, char *argv[]) {
   gtk_fixed_put(GTK_FIXED(opters), template_sel_t, 200, 80);
   gtk_widget_show(template_sel_t);
   /* Make our binary to be fuzzed file selection */
-  command_sel = gtk_button_new_with_label("Select binary to fuzz");
+  command_sel = gtk_button_new_with_label("Select Binary to Fuzz");
   g_signal_connect(GTK_OBJECT(command_sel), "clicked",
                    G_CALLBACK(select_binary), "command");
   gtk_fixed_put(GTK_FIXED(opters), command_sel, 30, 50);
@@ -276,7 +306,20 @@ int main(int argc, char *argv[]) {
   tmp_pos = GTK_ENTRY(command_sel_t)->text_length;
   gtk_fixed_put(GTK_FIXED(opters), command_sel_t, 200, 50);
   gtk_widget_show(command_sel_t);
-
+  /* Make our fuzz environment */
+  environ_sel = gtk_button_new_with_label("Select Environment");
+  g_signal_connect(GTK_OBJECT(environ_sel), "clicked",
+                   G_CALLBACK(select_env), "environ_sel");
+  gtk_fixed_put(GTK_FIXED(opters), environ_sel, 30, 110);
+  gtk_widget_show(environ_sel);
+  environ_sel_t = gtk_entry_new();
+  gtk_entry_set_max_length(GTK_ENTRY(environ_sel_t), 128);
+  gtk_widget_set_size_request(GTK_WIDGET(environ_sel_t), 330, 25);
+  g_signal_connect(environ_sel_t, "activate", G_CALLBACK(enter_callback),
+                   environ_sel_t);
+  tmp_pos = GTK_ENTRY(environ_sel_t)->text_length;
+  gtk_fixed_put(GTK_FIXED(opters), environ_sel_t, 200, 110);
+  gtk_widget_show(environ_sel_t);
   /* A toggle for turning buffer size 0 on and off */
   buf_size_zero = gtk_check_button_new_with_label("Buffer Size 0");
   g_signal_connect(GTK_OBJECT(buf_size_zero), "clicked",
@@ -294,7 +337,7 @@ int main(int argc, char *argv[]) {
   g_signal_connect(GTK_OBJECT(random_buffer_size), "clicked",
                    G_CALLBACK(set_random_size), "random_data_only");
   gtk_fixed_put(GTK_FIXED(opters), random_buffer_size, 30, 240);
-gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (random_buffer_size), TRUE);
+  gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (random_buffer_size), TRUE);
   gtk_widget_show(random_buffer_size);
   /* ansvif output goes here */
   ansvif_out = gtk_label_new("ansvif output:\n");
