@@ -36,6 +36,7 @@ GtkTextIter iter;
 GtkWidget *template_sel_t;
 GtkWidget *command_sel_t;
 GtkWidget *bin_file;
+GtkWidget *set_buf_size;
 GtkWidget *templ_file;
 
 void destroy (GtkWidget *widget, gpointer *data)
@@ -47,6 +48,13 @@ static void enter_callback(GtkWidget *widget, GtkWidget *caller_box) {
   const gchar *entry_text;
   entry_text = gtk_entry_get_text(GTK_ENTRY(caller_box));
 }
+
+static void set_buf_size_callback(GtkWidget *widget, GtkWidget *set_buf_size) {
+  const gchar *buf_s;
+  buf_s = gtk_entry_get_text(GTK_ENTRY(set_buf_size));
+  buffer_size = " -b " + std::string(buf_s);
+}
+
 
 std::string ansvif_str() {
   ansvif_call = "./ansvif " + random_data + random_buffer_s + buffer_size + binary_file + template_file;
@@ -108,7 +116,7 @@ int select_template() {
                                   "flag_chars.txt");
   gtk_widget_show(templ_file);
   gtk_main();
-  return 0;
+  return(0);
 }
 
 int select_binary() {
@@ -120,7 +128,7 @@ int select_binary() {
                            "clicked", G_CALLBACK(gtk_widget_destroy), bin_file);
   gtk_widget_show(bin_file);
   gtk_main();
-  return 0;
+  return(0);
 }
 
 int set_buffer_size(GtkWidget *buf_size_zero, gpointer data) {
@@ -131,7 +139,7 @@ int set_buffer_size(GtkWidget *buf_size_zero, gpointer data) {
     buffer_size = " -b 32 ";
     gtk_entry_set_text(GTK_ENTRY(caller_box), ansvif_str().c_str());
   }
-  return (0);
+  return(0);
 }
 
 int set_random_data(GtkWidget *random_data_only, gpointer data) {
@@ -142,7 +150,7 @@ int set_random_data(GtkWidget *random_data_only, gpointer data) {
     random_data = "";
     gtk_entry_set_text(GTK_ENTRY(caller_box), ansvif_str().c_str());
   }
-  return (0);
+  return(0);
 }
 
 int set_random_size(GtkWidget *random_buffer_size, gpointer data) {
@@ -153,7 +161,7 @@ int set_random_size(GtkWidget *random_buffer_size, gpointer data) {
     random_buffer_s = "";
     gtk_entry_set_text(GTK_ENTRY(caller_box), ansvif_str().c_str());
   }
-  return (0);
+  return(0);
 }
 
 
@@ -174,7 +182,7 @@ static GtkWidget *create_text(void) {
 
   gtk_widget_show_all(scrolled_window);
 
-  return scrolled_window;
+  return(scrolled_window);
 }
 
 //void destroy(GtkWidget *widget, gpointer data) { gtk_main_quit(); }
@@ -192,6 +200,7 @@ int main(int argc, char *argv[]) {
   GtkWidget *text;
   GtkWidget *random_data_only;
   GtkWidget *random_buffer_size;
+  GtkWidget *b_size_label;
   gint tmp_pos;
   /* Pull in the args for gtk */
   gtk_init(&argc, &argv);
@@ -222,6 +231,21 @@ int main(int argc, char *argv[]) {
   tmp_pos = GTK_ENTRY(caller_box)->text_length;
   gtk_fixed_put(GTK_FIXED(opters), caller_box, 30, 10);
   gtk_widget_show(caller_box);
+  /* A text box where we enter buffer size */
+  set_buf_size = gtk_entry_new();
+  gtk_entry_set_max_length(GTK_ENTRY(set_buf_size), 4);
+  gtk_widget_set_size_request(GTK_WIDGET(set_buf_size), 50, 25);
+  g_signal_connect(set_buf_size, "activate", G_CALLBACK(set_buf_size_callback),
+                   set_buf_size);
+  gtk_entry_set_text(GTK_ENTRY(set_buf_size), "32");
+  tmp_pos = GTK_ENTRY(set_buf_size)->text_length;
+  gtk_fixed_put(GTK_FIXED(opters), set_buf_size, 630, 50);
+  b_size_label = gtk_label_new("Buffer Size:\n");
+  gtk_label_set_justify(GTK_LABEL(b_size_label), GTK_JUSTIFY_LEFT);
+  gtk_container_add(GTK_CONTAINER(opters), b_size_label);
+  gtk_fixed_put(GTK_FIXED(opters), b_size_label, 540, 55);
+  gtk_widget_show(b_size_label);
+  gtk_widget_show(caller_box);
   /*  Make our template file selection */
   template_sel = gtk_button_new_with_label("Select Template");
   g_signal_connect(GTK_OBJECT(template_sel), "clicked",
@@ -230,7 +254,7 @@ int main(int argc, char *argv[]) {
   gtk_widget_show(template_sel);
   template_sel_t = gtk_entry_new();
   gtk_entry_set_max_length(GTK_ENTRY(template_sel_t), 128);
-  gtk_widget_set_size_request(GTK_WIDGET(template_sel_t), 350, 25);
+  gtk_widget_set_size_request(GTK_WIDGET(template_sel_t), 330, 25);
   gtk_editable_set_editable(GTK_EDITABLE(template_sel_t), FALSE);
   g_signal_connect(template_sel_t, "activate", G_CALLBACK(enter_callback),
                    template_sel_t);
@@ -245,7 +269,7 @@ int main(int argc, char *argv[]) {
   gtk_widget_show(command_sel);
   command_sel_t = gtk_entry_new();
   gtk_entry_set_max_length(GTK_ENTRY(command_sel_t), 128);
-  gtk_widget_set_size_request(GTK_WIDGET(command_sel_t), 350, 25);
+  gtk_widget_set_size_request(GTK_WIDGET(command_sel_t), 330, 25);
   gtk_editable_set_editable(GTK_EDITABLE(command_sel_t), FALSE);
   g_signal_connect(command_sel_t, "activate", G_CALLBACK(enter_callback),
                    command_sel_t);
@@ -270,8 +294,8 @@ int main(int argc, char *argv[]) {
   g_signal_connect(GTK_OBJECT(random_buffer_size), "clicked",
                    G_CALLBACK(set_random_size), "random_data_only");
   gtk_fixed_put(GTK_FIXED(opters), random_buffer_size, 30, 240);
+gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (random_buffer_size), TRUE);
   gtk_widget_show(random_buffer_size);
-
   /* ansvif output goes here */
   ansvif_out = gtk_label_new("ansvif output:\n");
   gtk_label_set_justify(GTK_LABEL(ansvif_out), GTK_JUSTIFY_LEFT);
