@@ -87,7 +87,12 @@ void help_me(std::string mr_me) {
 #endif
       << std::endl
       << " -W [integer] Thread timeout." << std::endl
+#ifdef _WIN32
       << " -V           Valgrind is not supported under Windows." << std::endl
+#endif
+#ifdef __linux
+      << " -V           Fuzz in conjunction with Valgrind." << std::endl
+#endif
       << " -1           Try to induce a crash once, and if a crash is not "
          "induced,"
       << std::endl
