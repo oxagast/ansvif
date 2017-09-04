@@ -47,7 +47,7 @@ get_out_str(std::string env_str, std::string valgrind_str, std::string sys_str,
   }
   if (log_prefix == "") {
     /* not logging here */
-    out_str = out_str + "  >/dev/null 2>&1; echo magic_token_CRASHCODE $?";
+    out_str = out_str + " >/dev/null 2>&1; echo magic_token_CRASHCODE $?";
   } else {
     /* logging here */
     out_str = out_str + " >" + log_prefix +

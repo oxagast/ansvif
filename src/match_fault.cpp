@@ -66,7 +66,8 @@ std::vector<std::string>
 get_out_str_pc(std::string env_str, std::string valgrind_str,
                std::string sys_str, std::string path_str,
                std::string always_arg_before, std::string always_arg_after,
-               std::string fuzz_after, std::string log_prefix, std::string before_command);
+               std::string fuzz_after, std::string log_prefix,
+               std::string before_command);
 bool match_seg(int buf_size, std::vector<std::string> opts,
                std::vector<std::string> spec_env, std::string path_str,
                std::string strip_shell, bool rand_all, bool write_to_file,
@@ -77,7 +78,8 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
                std::string always_arg_after, bool never_rand,
                std::string run_command, std::string fault_code, bool valgrind,
                bool single_try, bool percent_sign, int static_args,
-               bool keep_going, std::string before_command, bool verbose, bool debug) {
+               bool keep_going, std::string before_command, bool verbose,
+               bool debug) {
   bool segged = false;
   std::vector<std::string> used_token;
   std::string valgrind_str;
@@ -364,18 +366,20 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
         used_token.push_back(h_output);
 #endif
         if (buf_size == 0) {
-          out_str = before_command + " " + path_str + " " + always_arg_before + " " + always_arg_after;
-          out_str_p =
-              before_command + " " + path_str + " " + always_arg_before + " " + always_arg_after;
-               if (write_file_n == "") {
-    /* incase we are logging don't leave a blank file */
-    out_str = out_str + " >/dev/null 2>&1; echo $?";
-  } else {
-    /* get the signal here and log */
-    out_str = out_str + " >" + write_file_n + ".output.ansvif.log 2>&1; echo $?";
-  }
+          out_str = before_command + " " + path_str + " " + always_arg_before +
+                    " " + always_arg_after;
+          out_str_p = before_command + " " + path_str + " " +
+                      always_arg_before + " " + always_arg_after;
+          if (write_file_n == "") {
+            /* incase we are logging don't leave a blank file */
+            out_str = out_str + " >/dev/null 2>&1; echo $?";
+          } else {
+            /* get the signal here and log */
+            out_str = out_str + " >" + write_file_n +
+                      ".output.ansvif.log 2>&1; echo $?";
+          }
         }
-        
+
         if (debug == true) {
           /* write ALL the junk to STDOUT since we're in
            * debug mode
@@ -417,98 +421,80 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
         reaper_thread.detach();
 #endif
         /* our output will be stored here! */
-        std::string cmd_output;
+        std::string cmd_output = output.str();
         if (write_file_n != "") {
           /* logging */
           log_head(write_file_n, path_str, cmd_output, out_str_p, out_str, pid);
         }
-        while (std::getline(output, cmd_output)) {
-          /* we trim any extra characters */
-          cmd_output.erase(cmd_output.find_last_not_of(" \n\r\t") + 1);
-          if (verbose == true) {
-            std::cout << std::endl
+        std::size_t found132 = cmd_output.find("CRASHCODE 132");
+        std::size_t found134 = cmd_output.find("CRASHCODE 134");
+        std::size_t found139 = cmd_output.find("CRASHCODE 139");
+        std::size_t found135 = cmd_output.find("CRASHCODE 135");
+        std::size_t found136 = cmd_output.find("CRASHCODE 136");
+        std::size_t found159 = cmd_output.find("CRASHCODE 159");
+        std::size_t found138 = cmd_output.find("CRASHCODE 138");
+        std::size_t foundother = cmd_output.find("CRASHCODE " + fault_code);
+        if ((found132 != std::string::npos) ||
+            (found134 != std::string::npos) ||
+            (found139 != std::string::npos) ||
+            (found135 != std::string::npos) ||
+            (found136 != std::string::npos) ||
+            (found159 != std::string::npos) ||
+            (found138 != std::string::npos) ||
+            (foundother != std::string::npos)) {
+          cmd_output = cmd_output.replace(0, 22, "");
 #ifdef __unix__
-                      << "Code :" << cmd_output.replace(0, 22, "") << ":"
+          std::cout << "PID: " << pid << std::endl;
+#endif
+          std::cout << "Exit Code: " << cmd_output << std::endl;
+          std::cout << "Crashed with command: " << std::endl
+                    << out_str_p << std::endl;
+          if (junk_file_of_args != "") {
+            /* log the file data too */
+            std::cout << "File data left in: " << junk_file_of_args
                       << std::endl;
-#else
-                    << "Code :" << cmd_output << ":" << std::endl;
-#endif
           }
-          /* here is where we're matching the fault codes of the crash */
-          if ((cmd_output == "magic_token_CRASHCODE 132") || // linux
-              (cmd_output == "magic_token_CRASHCODE 134") || // linux
-              (cmd_output ==
-               "magic_token_CRASHCODE 139") || // linux freebsd openbsd
-              (cmd_output == "magic_token_CRASHCODE 135") || // linux
-              (cmd_output == "magic_token_CRASHCODE 136") || // linux
-              (cmd_output == "magic_token_CRASHCODE 159") || // linux
-              (cmd_output == "magic_token_CRASHCODE 138") || // freebsd
-              (cmd_output == "-1073741819") ||               // windows
-              (cmd_output == "-1073740791") ||               // windows
-              (cmd_output == "-1073741571") ||               // windows
-              (cmd_output == "-532459699") ||                // windows
-              (cmd_output == fault_code)) {
-#ifdef __unix__
-            std::cout << "PID: " << pid << std::endl;
-            cmd_output.replace(0, 22, "");
-#endif
-            std::cout << "Exit Code: " << cmd_output << std::endl;
-            std::cout << "Crashed with command: " << std::endl
-                      << out_str_p << std::endl;
-            if (junk_file_of_args != "") {
-              /* log the file data too */
-              std::cout << "File data left in: " << junk_file_of_args
-                        << std::endl;
+          if (write_to_file == true) {
+            /* since we crashed we're going to finish writing to the
+             * xml file
+             */
+            log_tail(write_file_n, junk_file_of_args, output_logfile,
+                     crash_logfile, cmd_output, out_str_p, out_str, pid);
+            /* then exit cleanly because we crashed it! Get it? :) */
+            if (keep_going == false) {
+              /* stoppp */
+              exit(0);
             }
-            if (write_to_file == true) {
-              /* since we crashed we're going to finish writing to the
-               * xml file
-               */
-              log_tail(write_file_n, junk_file_of_args, output_logfile,
-                       crash_logfile, cmd_output, out_str_p, out_str, pid);
-              /* then exit cleanly because we crashed it! Get it? :) */
-              if (keep_going == false) {
-                /* stoppp */
-                exit(0);
-              }
-            } else {
-              if (keep_going == false) {
-                /* bye */
-                exit(0);
-              }
-              return false;
+          } else {
+            if (keep_going == false) {
+              /* bye */
+              exit(0);
             }
-            if (write_to_file == true) {
-              /* logging hangs */
-              log_hang(write_file_n, out_str_p, out_str, junk_file_of_args,
-                       pid);
-            }
+            return false;
           }
+          if (write_to_file == true) {
+            /* logging hangs */
+            log_hang(write_file_n, out_str_p, out_str, junk_file_of_args, pid);
+          }
+        }
 #ifdef __linux
-        }
+      }
 #endif
+    }
+    if (single_try == true) {
+      /* do all that shit but only once! */
+      if ((verbose == true) || (debug == true)) {
+        std::cout << "No fault of mine!" << std::endl;
       }
-      if (single_try == true) {
-        /* do all that shit but only once! */
-        if ((verbose == true) || (debug == true)) {
-          std::cout << "No fault of mine!" << std::endl;
-        }
-        /* this non standard code 64 is to tell a wrapper that
-         * we never hit a fault with the single run
-         */
-        exit(64);
-      }
+      /* this non standard code 64 is to tell a wrapper that
+       * we never hit a fault with the single run
+       */
+      exit(64);
     }
     if (keep_going == false) {
       /* otherwise we exit cleanly */
       exit(0);
     }
-  }
-
-  else {
-    /* didn't find the command at the path... */
-    std::cerr << "Command not found at path..." << std::endl;
-    exit(1);
   }
   if (keep_going == false) {
     return (false);

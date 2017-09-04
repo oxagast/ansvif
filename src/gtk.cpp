@@ -14,11 +14,11 @@
 #include <cstring>
 #include <gtk/gtk.h>
 #include <iostream>
+#include <pwd.h>
 #include <sstream>
 #include <string>
-#include <unistd.h>
-#include <pwd.h>
 #include <sys/types.h>
+#include <unistd.h>
 
 FILE *popen2(std::string command, std::string type, int &pid,
              std::string low_lvl_user);
@@ -45,18 +45,13 @@ GtkWidget *templ_file;
 GtkWidget *environ_file;
 GtkWidget *env_file;
 
-
-void destroy (GtkWidget *widget, gpointer *data)
-{
-    gtk_main_quit ();
-}
+void destroy(GtkWidget *widget, gpointer *data) { gtk_main_quit(); }
 
 std::string ansvif_str() {
-  ansvif_call = "./ansvif " + random_data + random_buffer_s 
-  + buffer_size + binary_file + environment_file + template_file;
+  ansvif_call = "./ansvif " + random_data + random_buffer_s + buffer_size +
+                binary_file + environment_file + template_file;
   return (ansvif_call);
 }
-
 
 static void enter_callback(GtkWidget *widget, GtkWidget *caller_box) {
   const gchar *entry_text;
@@ -75,8 +70,8 @@ const char *get_user() {
   struct passwd *pw = getpwuid(uid);
   if (pw) {
     return pw->pw_name;
-  } 
-return "";
+  }
+  return "";
 }
 
 int fuzz_call(GtkTextBuffer *buffe) {
@@ -105,7 +100,8 @@ static void template_selected(GtkWidget *w, GtkFileSelection *fs) {
 }
 
 static void env_selected(GtkWidget *w, GtkFileSelection *fs) {
-  environment_file.assign(gtk_file_selection_get_filename(GTK_FILE_SELECTION(fs)));
+  environment_file.assign(
+      gtk_file_selection_get_filename(GTK_FILE_SELECTION(fs)));
   environment_file = " -e " + environment_file;
   gtk_entry_set_text(GTK_ENTRY(caller_box), ansvif_str().c_str());
   gtk_entry_set_text(GTK_ENTRY(environ_sel_t),
@@ -134,7 +130,7 @@ int select_template() {
                                   "flag_chars.txt");
   gtk_widget_show(templ_file);
   gtk_main();
-  return(0);
+  return (0);
 }
 
 int select_env() {
@@ -147,7 +143,7 @@ int select_env() {
                            environ_file);
   gtk_widget_show(environ_file);
   gtk_main();
-  return(0);
+  return (0);
 }
 
 int select_binary() {
@@ -157,24 +153,23 @@ int select_binary() {
                    G_CALLBACK(binary_selected), (gpointer)bin_file);
   g_signal_connect_swapped(GTK_FILE_SELECTION(bin_file)->cancel_button,
                            "clicked", G_CALLBACK(gtk_widget_destroy), bin_file);
-  gtk_file_selection_set_filename(GTK_FILE_SELECTION(environ_file),
-                                  "");
+  gtk_file_selection_set_filename(GTK_FILE_SELECTION(environ_file), "");
   gtk_widget_show(bin_file);
   gtk_main();
-  return(0);
+  return (0);
 }
 
 int set_buffer_size(GtkWidget *buf_size_zero, gpointer data) {
   if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(buf_size_zero))) {
     buffer_size = " -y ";
-    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON (random_buffer_size), FALSE);
+    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(random_buffer_size), FALSE);
     gtk_entry_set_text(GTK_ENTRY(set_buf_size), "0");
     gtk_entry_set_text(GTK_ENTRY(caller_box), ansvif_str().c_str());
   } else {
     buffer_size = " -b 32 ";
     gtk_entry_set_text(GTK_ENTRY(caller_box), ansvif_str().c_str());
   }
-  return(0);
+  return (0);
 }
 
 int set_random_data(GtkWidget *random_data_only, gpointer data) {
@@ -185,21 +180,20 @@ int set_random_data(GtkWidget *random_data_only, gpointer data) {
     random_data = "";
     gtk_entry_set_text(GTK_ENTRY(caller_box), ansvif_str().c_str());
   }
-  return(0);
+  return (0);
 }
 
 int set_random_size(GtkWidget *random_buffer_size, gpointer data) {
   if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(random_buffer_size))) {
     random_buffer_s = " -z ";
     gtk_entry_set_text(GTK_ENTRY(caller_box), ansvif_str().c_str());
-    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON (buf_size_zero), FALSE);
+    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(buf_size_zero), FALSE);
   } else {
     random_buffer_s = "";
     gtk_entry_set_text(GTK_ENTRY(caller_box), ansvif_str().c_str());
   }
-  return(0);
+  return (0);
 }
-
 
 /* Create a scrolled text area that displays a "message" */
 static GtkWidget *create_text(void) {
@@ -218,10 +212,10 @@ static GtkWidget *create_text(void) {
 
   gtk_widget_show_all(scrolled_window);
 
-  return(scrolled_window);
+  return (scrolled_window);
 }
 
-//void destroy(GtkWidget *widget, gpointer data) { gtk_main_quit(); }
+// void destroy(GtkWidget *widget, gpointer data) { gtk_main_quit(); }
 
 int main(int argc, char *argv[]) {
   /* Declare some vars */
@@ -315,8 +309,8 @@ int main(int argc, char *argv[]) {
   gtk_widget_show(command_sel_t);
   /* Make our fuzz environment */
   environ_sel = gtk_button_new_with_label("Select Environment");
-  g_signal_connect(GTK_OBJECT(environ_sel), "clicked",
-                   G_CALLBACK(select_env), "environ_sel");
+  g_signal_connect(GTK_OBJECT(environ_sel), "clicked", G_CALLBACK(select_env),
+                   "environ_sel");
   gtk_fixed_put(GTK_FIXED(opters), environ_sel, 30, 110);
   gtk_widget_show(environ_sel);
   environ_sel_t = gtk_entry_new();
@@ -332,17 +326,17 @@ int main(int argc, char *argv[]) {
                    G_CALLBACK(set_buffer_size), "buf_size_zero");
   gtk_fixed_put(GTK_FIXED(opters), buf_size_zero, 30, 200);
   gtk_widget_show(buf_size_zero);
-/* A toggle for turning all random data on and off */
+  /* A toggle for turning all random data on and off */
   random_data_only = gtk_check_button_new_with_label("Random Data Only");
   g_signal_connect(GTK_OBJECT(random_data_only), "clicked",
                    G_CALLBACK(set_random_data), "random_data_only");
   gtk_fixed_put(GTK_FIXED(opters), random_data_only, 30, 220);
-  gtk_widget_show(random_data_only); 
-/* A toggle for turning buffer random buffer size on and off */
+  gtk_widget_show(random_data_only);
+  /* A toggle for turning buffer random buffer size on and off */
   g_signal_connect(GTK_OBJECT(random_buffer_size), "clicked",
                    G_CALLBACK(set_random_size), "random_buffer_size");
   gtk_fixed_put(GTK_FIXED(opters), random_buffer_size, 30, 180);
-  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON (random_buffer_size), TRUE);
+  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(random_buffer_size), TRUE);
   gtk_widget_show(random_buffer_size);
   /* ansvif output goes here */
   ansvif_out = gtk_label_new("ansvif output:\n");
