@@ -25,12 +25,14 @@ FILE *popen2(std::string command, std::string type, int &pid,
 int pclose2(FILE *fp, pid_t pid);
 
 std::string buffer_size = " -b 32 ";
-std::string random_data = "";
-std::string random_buffer_s = "";
+std::string random_data;
+std::string random_buffer_s;
 std::string template_file;
 std::string binary_file;
 std::string ansvif_call;
-std::string environment_file = "";
+std::string environment_file;
+std::string maximum_args;
+std::string crash_code;
 GtkWidget *caller_box;
 GtkTextBuffer *buffer;
 GtkTextIter iter;
@@ -44,12 +46,15 @@ GtkWidget *set_buf_size;
 GtkWidget *templ_file;
 GtkWidget *environ_file;
 GtkWidget *env_file;
+GtkWidget *set_exit_code;
+GtkWidget *set_max_arg;
 
 void destroy(GtkWidget *widget, gpointer *data) { gtk_main_quit(); }
 
 std::string ansvif_str() {
   ansvif_call = "./ansvif " + random_data + random_buffer_s + buffer_size +
-                binary_file + environment_file + template_file;
+                binary_file + environment_file + template_file + crash_code +
+                maximum_args;
   return (ansvif_call);
 }
 
@@ -62,6 +67,20 @@ static void set_buf_size_callback(GtkWidget *widget, GtkWidget *set_buf_size) {
   const gchar *buf_s;
   buf_s = gtk_entry_get_text(GTK_ENTRY(set_buf_size));
   buffer_size = " -b " + std::string(buf_s);
+  gtk_entry_set_text(GTK_ENTRY(caller_box), ansvif_str().c_str());
+}
+
+static void set_exit_code_callback(GtkWidget *widget, GtkWidget *set_exit_code) {
+  const gchar *e_code;
+  e_code = gtk_entry_get_text(GTK_ENTRY(set_exit_code));
+  crash_code = " -C " + std::string(e_code);
+  gtk_entry_set_text(GTK_ENTRY(caller_box), ansvif_str().c_str());
+}
+
+static void set_max_arg_callback(GtkWidget *widget, GtkWidget *set_max_arg) {
+  const gchar *max_args;
+  max_args = gtk_entry_get_text(GTK_ENTRY(set_max_arg));
+  maximum_args = " -M " + std::string(max_args);
   gtk_entry_set_text(GTK_ENTRY(caller_box), ansvif_str().c_str());
 }
 
@@ -230,6 +249,8 @@ int main(int argc, char *argv[]) {
   GtkWidget *text;
   GtkWidget *random_data_only;
   GtkWidget *b_size_label;
+  GtkWidget *exit_code_label;
+  GtkWidget *max_arg_label;
   gint tmp_pos;
   random_buffer_size = gtk_check_button_new_with_label("Random Buffer Size");
   buf_size_zero = gtk_check_button_new_with_label("Buffer Size 0");
@@ -276,7 +297,37 @@ int main(int argc, char *argv[]) {
   gtk_container_add(GTK_CONTAINER(opters), b_size_label);
   gtk_fixed_put(GTK_FIXED(opters), b_size_label, 540, 55);
   gtk_widget_show(b_size_label);
-  gtk_widget_show(caller_box);
+  gtk_widget_show(set_buf_size);
+/* A text box where we enter the custom crashcode */
+  set_exit_code = gtk_entry_new();
+  gtk_entry_set_max_length(GTK_ENTRY(set_exit_code), 3);
+  gtk_widget_set_size_request(GTK_WIDGET(set_exit_code), 50, 25);
+  g_signal_connect(set_exit_code, "activate", G_CALLBACK(set_exit_code_callback),
+                   set_exit_code);
+  gtk_entry_set_text(GTK_ENTRY(set_exit_code), "136");
+  tmp_pos = GTK_ENTRY(set_exit_code)->text_length;
+  gtk_fixed_put(GTK_FIXED(opters), set_exit_code, 630, 80);
+  exit_code_label = gtk_label_new("Exit Code:\n");
+  gtk_label_set_justify(GTK_LABEL(exit_code_label), GTK_JUSTIFY_LEFT);
+  gtk_container_add(GTK_CONTAINER(opters), exit_code_label);
+  gtk_fixed_put(GTK_FIXED(opters), exit_code_label, 540, 85);
+  gtk_widget_show(exit_code_label);
+  gtk_widget_show(set_exit_code);
+/* Maximum arguments to be passed in the fuzz */
+  set_max_arg = gtk_entry_new();
+  gtk_entry_set_max_length(GTK_ENTRY(set_max_arg), 2);
+  gtk_widget_set_size_request(GTK_WIDGET(set_max_arg), 50, 25);
+  g_signal_connect(set_max_arg, "activate", G_CALLBACK(set_max_arg_callback),
+                   set_max_arg);
+  gtk_entry_set_text(GTK_ENTRY(set_max_arg), "4");
+  tmp_pos = GTK_ENTRY(set_max_arg)->text_length; 
+  gtk_fixed_put(GTK_FIXED(opters), set_max_arg, 630, 110);
+  max_arg_label = gtk_label_new("Max Args:\n");
+  gtk_label_set_justify(GTK_LABEL(max_arg_label), GTK_JUSTIFY_LEFT);
+  gtk_container_add(GTK_CONTAINER(opters), max_arg_label);
+  gtk_fixed_put(GTK_FIXED(opters), max_arg_label, 540, 115);
+  gtk_widget_show(max_arg_label);
+  gtk_widget_show(set_max_arg);
   /*  Make our template file selection */
   template_sel = gtk_button_new_with_label("Select Template");
   g_signal_connect(GTK_OBJECT(template_sel), "clicked",
