@@ -33,14 +33,12 @@ std::string ansvif_call;
 std::string environment_file;
 std::string maximum_args;
 std::string crash_code;
+std::string other_options_file;
 GtkWidget *caller_box;
 GtkTextBuffer *buffer;
 GtkTextIter iter;
 GtkWidget *buf_size_zero;
 GtkWidget *random_buffer_size;
-GtkWidget *template_sel_t;
-GtkWidget *command_sel_t;
-GtkWidget *environ_sel_t;
 GtkWidget *bin_file;
 GtkWidget *set_buf_size;
 GtkWidget *templ_file;
@@ -48,13 +46,18 @@ GtkWidget *environ_file;
 GtkWidget *env_file;
 GtkWidget *set_exit_code;
 GtkWidget *set_max_arg;
-
+GtkWidget *other_file;
+GtkWidget *environ_sel_t;
+GtkWidget *command_sel_t;
+GtkWidget *template_sel_t;
+GtkWidget *oo_sel_t;
+ 
 void destroy(GtkWidget *widget, gpointer *data) { gtk_main_quit(); }
 
 std::string ansvif_str() {
   ansvif_call = "./ansvif " + random_data + random_buffer_s + buffer_size +
-                binary_file + environment_file + template_file + crash_code +
-                maximum_args;
+                binary_file + environment_file + template_file + crash_code + 
+                other_options_file + maximum_args;
   return (ansvif_call);
 }
 
@@ -137,6 +140,17 @@ static void binary_selected(GtkWidget *w, GtkFileSelection *fs) {
   gtk_widget_destroy(bin_file);
 }
 
+static void other_selected(GtkWidget *w, GtkFileSelection *fs) {
+  other_options_file.assign(gtk_file_selection_get_filename(GTK_FILE_SELECTION(fs)));
+  other_options_file = " -x " + other_options_file;
+  gtk_entry_set_text(GTK_ENTRY(caller_box), ansvif_str().c_str());
+  gtk_entry_set_text(GTK_ENTRY(oo_sel_t),
+                     gtk_file_selection_get_filename(GTK_FILE_SELECTION(fs)));
+  gtk_widget_destroy(other_file);
+}
+
+
+
 int select_template() {
   templ_file = gtk_file_selection_new("Template File selection");
   g_signal_connect(templ_file, "destroy", G_CALLBACK(destroy), &templ_file);
@@ -174,6 +188,19 @@ int select_binary() {
                            "clicked", G_CALLBACK(gtk_widget_destroy), bin_file);
   gtk_file_selection_set_filename(GTK_FILE_SELECTION(environ_file), "");
   gtk_widget_show(bin_file);
+  gtk_main();
+  return (0);
+}
+
+int select_oo() {
+  other_file = gtk_file_selection_new("Other Template File selection");
+  g_signal_connect(other_file, "destroy", G_CALLBACK(gtk_main_quit), NULL);
+  g_signal_connect(GTK_FILE_SELECTION(other_file)->ok_button, "clicked",
+                   G_CALLBACK(other_selected), (gpointer)other_file);
+  g_signal_connect_swapped(GTK_FILE_SELECTION(other_file)->cancel_button,
+                           "clicked", G_CALLBACK(gtk_widget_destroy), other_file);
+  gtk_file_selection_set_filename(GTK_FILE_SELECTION(other_file), "");
+  gtk_widget_show(other_file);
   gtk_main();
   return (0);
 }
@@ -251,6 +278,7 @@ int main(int argc, char *argv[]) {
   GtkWidget *b_size_label;
   GtkWidget *exit_code_label;
   GtkWidget *max_arg_label;
+  GtkWidget *oo_sel;
   gint tmp_pos;
   random_buffer_size = gtk_check_button_new_with_label("Random Buffer Size");
   buf_size_zero = gtk_check_button_new_with_label("Buffer Size 0");
@@ -372,6 +400,22 @@ int main(int argc, char *argv[]) {
   tmp_pos = GTK_ENTRY(environ_sel_t)->text_length;
   gtk_fixed_put(GTK_FIXED(opters), environ_sel_t, 200, 110);
   gtk_widget_show(environ_sel_t);
+  /* Other options template */
+  oo_sel = gtk_button_new_with_label("Select Other Options");
+  g_signal_connect(GTK_OBJECT(oo_sel), "clicked", G_CALLBACK(select_oo),
+                   "environ_sel");
+  gtk_fixed_put(GTK_FIXED(opters), oo_sel, 30, 140);
+  gtk_widget_show(oo_sel);
+  oo_sel_t = gtk_entry_new();
+  gtk_entry_set_max_length(GTK_ENTRY(oo_sel_t), 128);
+  gtk_widget_set_size_request(GTK_WIDGET(oo_sel_t), 330, 25);
+  g_signal_connect(oo_sel_t, "activate", G_CALLBACK(enter_callback),
+                   oo_sel_t);
+  tmp_pos = GTK_ENTRY(oo_sel_t)->text_length;
+  gtk_fixed_put(GTK_FIXED(opters), oo_sel_t, 200, 140);
+  gtk_widget_show(oo_sel_t);
+ 
+
   /* A toggle for turning buffer size 0 on and off */
   g_signal_connect(GTK_OBJECT(buf_size_zero), "clicked",
                    G_CALLBACK(set_buffer_size), "buf_size_zero");
@@ -397,7 +441,7 @@ int main(int argc, char *argv[]) {
   gtk_widget_show(ansvif_out);
   text = create_text();
   gtk_fixed_put(GTK_FIXED(opters), text, 50, 540);
-  gtk_widget_set_size_request(GTK_WIDGET(text), 730, 100);
+  gtk_widget_set_size_request(GTK_WIDGET(text), 730, 140);
   /* Show that part of the screen */
   gtk_widget_show(text);
   gtk_widget_show(opters);
