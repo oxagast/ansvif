@@ -24,7 +24,7 @@ FILE *popen2(std::string command, std::string type, int &pid,
              std::string low_lvl_user);
 int pclose2(FILE *fp, pid_t pid);
 
-std::string buffer_size = " -b 32 ";
+std::string buffer_size;
 std::string random_data;
 std::string random_buffer_s;
 std::string template_file;
@@ -34,6 +34,7 @@ std::string environment_file;
 std::string maximum_args;
 std::string crash_code;
 std::string other_options_file;
+std::string other_seperator;
 GtkWidget *caller_box;
 GtkTextBuffer *buffer;
 GtkTextIter iter;
@@ -46,18 +47,20 @@ GtkWidget *environ_file;
 GtkWidget *env_file;
 GtkWidget *set_exit_code;
 GtkWidget *set_max_arg;
+GtkWidget *set_other_sep;
 GtkWidget *other_file;
 GtkWidget *environ_sel_t;
 GtkWidget *command_sel_t;
 GtkWidget *template_sel_t;
 GtkWidget *oo_sel_t;
- 
+std::string ver = " -i ";
+
 void destroy(GtkWidget *widget, gpointer *data) { gtk_main_quit(); }
 
 std::string ansvif_str() {
-  ansvif_call = "./ansvif " + random_data + random_buffer_s + buffer_size +
+  ansvif_call = "./ansvif " + ver + random_data + random_buffer_s + buffer_size +
                 binary_file + environment_file + template_file + crash_code + 
-                other_options_file + maximum_args;
+                other_options_file + maximum_args + other_seperator;
   return (ansvif_call);
 }
 
@@ -87,6 +90,13 @@ static void set_max_arg_callback(GtkWidget *widget, GtkWidget *set_max_arg) {
   gtk_entry_set_text(GTK_ENTRY(caller_box), ansvif_str().c_str());
 }
 
+static void set_other_sep_callback(GtkWidget *widget, GtkWidget *set_other_sep) {
+  const gchar *other_sep;
+  other_sep = gtk_entry_get_text(GTK_ENTRY(set_other_sep));
+  other_seperator = " -S \"" + std::string(other_sep) + "\"";
+  gtk_entry_set_text(GTK_ENTRY(caller_box), ansvif_str().c_str());
+}
+
 const char *get_user() {
   uid_t uid = geteuid();
   struct passwd *pw = getpwuid(uid);
@@ -96,7 +106,7 @@ const char *get_user() {
   return "";
 }
 
-int fuzz_call(GtkTextBuffer *buffe) {
+int fuzz_call(GtkTextBuffer *b) {
   /* put together the call to ansvif */
   int com_pid;
   FILE *fp = popen2(ansvif_str(), "r", com_pid, get_user());
@@ -132,6 +142,7 @@ static void env_selected(GtkWidget *w, GtkFileSelection *fs) {
 }
 
 static void binary_selected(GtkWidget *w, GtkFileSelection *fs) {
+  ver = "";
   binary_file.assign(gtk_file_selection_get_filename(GTK_FILE_SELECTION(fs)));
   binary_file = " -c " + binary_file;
   gtk_entry_set_text(GTK_ENTRY(caller_box), ansvif_str().c_str());
@@ -148,8 +159,6 @@ static void other_selected(GtkWidget *w, GtkFileSelection *fs) {
                      gtk_file_selection_get_filename(GTK_FILE_SELECTION(fs)));
   gtk_widget_destroy(other_file);
 }
-
-
 
 int select_template() {
   templ_file = gtk_file_selection_new("Template File selection");
@@ -278,6 +287,7 @@ int main(int argc, char *argv[]) {
   GtkWidget *b_size_label;
   GtkWidget *exit_code_label;
   GtkWidget *max_arg_label;
+  GtkWidget *other_sep_label;
   GtkWidget *oo_sel;
   gint tmp_pos;
   random_buffer_size = gtk_check_button_new_with_label("Random Buffer Size");
@@ -307,7 +317,6 @@ int main(int argc, char *argv[]) {
   gtk_editable_set_editable(GTK_EDITABLE(caller_box), FALSE);
   g_signal_connect(caller_box, "activate", G_CALLBACK(enter_callback),
                    caller_box);
-  gtk_entry_set_text(GTK_ENTRY(caller_box), "ansvif");
   tmp_pos = GTK_ENTRY(caller_box)->text_length;
   gtk_fixed_put(GTK_FIXED(opters), caller_box, 30, 10);
   gtk_widget_show(caller_box);
@@ -320,7 +329,7 @@ int main(int argc, char *argv[]) {
   gtk_entry_set_text(GTK_ENTRY(set_buf_size), "32");
   tmp_pos = GTK_ENTRY(set_buf_size)->text_length;
   gtk_fixed_put(GTK_FIXED(opters), set_buf_size, 630, 50);
-  b_size_label = gtk_label_new("Buffer Size:\n");
+  b_size_label = gtk_label_new("Buffer Size:");
   gtk_label_set_justify(GTK_LABEL(b_size_label), GTK_JUSTIFY_LEFT);
   gtk_container_add(GTK_CONTAINER(opters), b_size_label);
   gtk_fixed_put(GTK_FIXED(opters), b_size_label, 540, 55);
@@ -335,7 +344,7 @@ int main(int argc, char *argv[]) {
   gtk_entry_set_text(GTK_ENTRY(set_exit_code), "136");
   tmp_pos = GTK_ENTRY(set_exit_code)->text_length;
   gtk_fixed_put(GTK_FIXED(opters), set_exit_code, 630, 80);
-  exit_code_label = gtk_label_new("Exit Code:\n");
+  exit_code_label = gtk_label_new("Exit Code:");
   gtk_label_set_justify(GTK_LABEL(exit_code_label), GTK_JUSTIFY_LEFT);
   gtk_container_add(GTK_CONTAINER(opters), exit_code_label);
   gtk_fixed_put(GTK_FIXED(opters), exit_code_label, 540, 85);
@@ -350,7 +359,7 @@ int main(int argc, char *argv[]) {
   gtk_entry_set_text(GTK_ENTRY(set_max_arg), "4");
   tmp_pos = GTK_ENTRY(set_max_arg)->text_length; 
   gtk_fixed_put(GTK_FIXED(opters), set_max_arg, 630, 110);
-  max_arg_label = gtk_label_new("Max Args:\n");
+  max_arg_label = gtk_label_new("Max Args:");
   gtk_label_set_justify(GTK_LABEL(max_arg_label), GTK_JUSTIFY_LEFT);
   gtk_container_add(GTK_CONTAINER(opters), max_arg_label);
   gtk_fixed_put(GTK_FIXED(opters), max_arg_label, 540, 115);
@@ -414,8 +423,21 @@ int main(int argc, char *argv[]) {
   tmp_pos = GTK_ENTRY(oo_sel_t)->text_length;
   gtk_fixed_put(GTK_FIXED(opters), oo_sel_t, 200, 140);
   gtk_widget_show(oo_sel_t);
- 
-
+  /* The other seperator that can be used besides space */
+  set_other_sep = gtk_entry_new();
+  gtk_entry_set_max_length(GTK_ENTRY(set_other_sep), 1);
+  gtk_widget_set_size_request(GTK_WIDGET(set_other_sep), 50, 25);
+  g_signal_connect(set_other_sep, "activate", G_CALLBACK(set_other_sep_callback),
+                   set_other_sep);
+  gtk_entry_set_text(GTK_ENTRY(set_other_sep), "");
+  tmp_pos = GTK_ENTRY(set_other_sep)->text_length;
+  gtk_fixed_put(GTK_FIXED(opters), set_other_sep, 630, 140);
+  other_sep_label = gtk_label_new("Seperator:");
+  gtk_label_set_justify(GTK_LABEL(other_sep_label), GTK_JUSTIFY_LEFT);
+  gtk_container_add(GTK_CONTAINER(opters), other_sep_label);
+  gtk_fixed_put(GTK_FIXED(opters), other_sep_label, 540, 145);
+  gtk_widget_show(other_sep_label);
+  gtk_widget_show(set_other_sep);
   /* A toggle for turning buffer size 0 on and off */
   g_signal_connect(GTK_OBJECT(buf_size_zero), "clicked",
                    G_CALLBACK(set_buffer_size), "buf_size_zero");
@@ -431,13 +453,14 @@ int main(int argc, char *argv[]) {
   g_signal_connect(GTK_OBJECT(random_buffer_size), "clicked",
                    G_CALLBACK(set_random_size), "random_buffer_size");
   gtk_fixed_put(GTK_FIXED(opters), random_buffer_size, 30, 180);
-  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(random_buffer_size), TRUE);
+//  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(random_buffer_size), TRUE);
   gtk_widget_show(random_buffer_size);
   /* ansvif output goes here */
-  ansvif_out = gtk_label_new("ansvif output:\n");
+  ansvif_out = gtk_label_new("ansvif output:");
   gtk_label_set_justify(GTK_LABEL(ansvif_out), GTK_JUSTIFY_LEFT);
   gtk_container_add(GTK_CONTAINER(opters), ansvif_out);
   gtk_fixed_put(GTK_FIXED(opters), ansvif_out, 50, 500);
+  //gtk_entry_set_text(GTK_ENTRY(ansvif_out), "./ansvif -i");
   gtk_widget_show(ansvif_out);
   text = create_text();
   gtk_fixed_put(GTK_FIXED(opters), text, 50, 540);

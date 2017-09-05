@@ -48,7 +48,7 @@ void write_seg(std::string filename, std::string seg_line);
 
 /* globals to be passed to sig_handler because its easier this way */
 std::string write_file_n, junk_file_of_args;
-std::string ver = "1.7.1"; /* ansvif version */
+std::string ver = "1.8"; /* ansvif version */
 void sig_handler(int sig) {
   /* flush the screen buffer  then sleep before printing
    * the message about killing threads
@@ -70,6 +70,13 @@ void sig_handler(int sig) {
   std::cout << "Exiting cleanly..." << std::endl;
   exit(0);
 }
+
+void version() {
+  std::cout << "ansvif v" << ver << " -- A Not So Very Intelligent Fuzzer"
+  << std::endl;
+  exit(0);
+}
+
 
 int main(int argc, char *argv[]) { // initialize our main
   /* initialize all our variables for startup! */
@@ -170,7 +177,7 @@ int main(int argc, char *argv[]) { // initialize our main
   signal(SIGINT, sig_handler);
   /* now we can start grabbing all the options! */
   while ((opt = getopt(argc, argv,
-                       "m:p:t:e:c:f:o:b:s:x:R:A:F:E:S:L:W:B:M:C:y1hrzvdDnVPK")) !=
+                       "m:p:t:e:c:f:o:b:s:x:R:A:F:E:S:L:W:B:M:C:y1hrzvdDnVPKi")) !=
          -1) {
     switch (opt) {
     case 'v':
@@ -273,6 +280,9 @@ int main(int argc, char *argv[]) { // initialize our main
       break;
     case 'E':
       before_command = optarg;
+      break;
+    case 'i':
+      version();
       break;
     default:
       help_me(argv[0]);

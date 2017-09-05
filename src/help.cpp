@@ -104,7 +104,8 @@ void help_me(std::string mr_me) {
       << " -K           Keep going after a crash." << std::endl
       << " -E \"cmd\"     A command to be run before the fuzzed progarm." << std::endl
       << " -v           Be verbose." << std::endl
-      << " -d           Debug data." << std::endl;
+      << " -d           Debug data." << std::endl
+      << " -i           Prints version information." << std::endl;
   /* exit with an error because we didn't do anything but
    * print a help page
    */
