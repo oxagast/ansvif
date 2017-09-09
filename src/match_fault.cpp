@@ -461,25 +461,12 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
             log_tail(write_file_n, junk_file_of_args, output_logfile,
                      crash_logfile, cmd_output, out_str_p, out_str, pid);
             /* then exit cleanly because we crashed it! Get it? :) */
-            if (keep_going == false) {
-              /* stoppp */
-              exit(0);
-            }
-          } else {
-            if (keep_going == false) {
-              /* bye */
-              exit(0);
-            }
-            return false;
-          }
-          if (write_to_file == true) {
             /* logging hangs */
-            log_hang(write_file_n, out_str_p, out_str, junk_file_of_args, pid);
           }
-        }
-#ifdef __linux
-      }
-#endif
+          if (keep_going == false) {
+            return(false);
+}
+}
     }
     if (single_try == true) {
       /* do all that shit but only once! */
@@ -491,13 +478,7 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
        */
       exit(64);
     }
-    if (keep_going == false) {
-      /* otherwise we exit cleanly */
-      exit(0);
-    }
-  }
-  if (keep_going == false) {
-    return (false);
-  }
+  }}
+//}
   return (true);
 }
