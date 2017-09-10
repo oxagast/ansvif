@@ -1,9 +1,9 @@
 Package: ansvif
-Version: 1.7
+Version: 1.8
 Section: base
 Priority: optional
 Architecture: amd64
-Depends: zlib1g
+Depends: zlib1g gtk2.0
 Recommends: gcc, g++, gdb
 Suggests: valgrind
 Maintainer: Marshall Whittaker <marshall@i.code.pwnz.org>
