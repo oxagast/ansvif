@@ -19,11 +19,13 @@
 #include <string>
 #include <sys/types.h>
 #include <unistd.h>
+#include <src/version.h>
 
 FILE *popen2(std::string command, std::string type, int &pid,
              std::string low_lvl_user);
 int pclose2(FILE *fp, pid_t pid);
 
+std::string version = "1.8"; /* ansvif version */
 std::string buffer_size;
 std::string random_data;
 std::string random_buffer_s;
@@ -58,6 +60,17 @@ GtkWidget *log_sel_t;
 GtkWidget *oo_sel_t;
 std::string ver = " -i ";
 std::string ansvif_loc = "ansvif ";
+
+int help_me(std::string mr_me) {
+  std::cout << "ansvif v" << version << " -- A Not So Very Intelligent Fuzzer"
+  << std::endl << "Usage:" << std::endl
+  << " " << mr_me << std::endl << "Options:" << std::endl
+  << " -l           Shortcut for -p ./ansvif" << std::endl
+  << " -p [path]    The location of the ansvif binary"
+  << std::endl;
+  exit(1);
+}
+
 
 static void destroy(GtkWidget *widget, gpointer *data) { gtk_main_quit(); }
 
@@ -320,7 +333,7 @@ int main(int argc, char *argv[]) {
   gint tmp_pos;
   int c;
 
-  while ((c = getopt (argc, argv, "lp:")) != -1) {
+  while ((c = getopt (argc, argv, "hlp:")) != -1) {
     switch (c)
       {
       case 'l':
@@ -329,8 +342,11 @@ int main(int argc, char *argv[]) {
       case 'p':
         ansvif_loc = optarg;
         break;
+      case 'h':
+        help_me(argv[0]);
+        break;
           default:
-        abort ();
+        help_me(argv[0]);
       }
   }
   
