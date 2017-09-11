@@ -12,9 +12,9 @@ marshall@i.code.pwnz.org
 *--Whittaker's Law*
 
 
-**Dependancies:**
+**Compile Dependancies:**
 
-automake autoconf-archive zlib1g-dev libcrypto++  g++ gcc
+automake autoconf-archive zlib1g-dev libcrypto++  g++ gcc (and libgtk2.0-dev if you want GTK support)
 
 **Compliation:**
 
