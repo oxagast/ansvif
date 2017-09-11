@@ -107,6 +107,9 @@ PS C:\ansvif\bin\ansvif_win> .\ansvif -t ..\..\examples\space -F ..\..\tmp\tmpht
 ```
 
 **Options:**
+
+ansvif
+
 ```
   -t This file should hold line by line command arguments as shown in the example file.
   -e This file should hold line by line environment variables as shown in the example
@@ -143,6 +146,12 @@ PS C:\ansvif\bin\ansvif_win> .\ansvif -t ..\..\examples\space -F ..\..\tmp\tmpht
   -v Verbose.
   -d Debug data.
   -h Shows the help page.
+```
+ansvif_gtk
+
+```
+  -l Shortcut for -p ./ansvif
+  -p The location of the ansvif binary
 ```
 
 **Recommendations:**
