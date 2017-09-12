@@ -332,7 +332,7 @@ int main(int argc, char *argv[]) {
   GtkWidget *log_sel;
   gint tmp_pos;
   int c;
-
+  
   while ((c = getopt (argc, argv, "hlp:")) != -1) {
     switch (c)
       {
@@ -360,15 +360,15 @@ int main(int argc, char *argv[]) {
   gtk_widget_set_size_request(GTK_WIDGET(window), 850, 700);
   /* Set the title to ansvif */
   gtk_window_set_title(GTK_WINDOW(window), "ansvif");
-  g_signal_connect(window, "destroy", G_CALLBACK(*destroy), NULL);
+  g_signal_connect(window, "destroy", G_CALLBACK((gpointer)destroy), NULL);
   gtk_container_set_border_width(GTK_CONTAINER(window), 15);
   /* Make a container for our buttons */
   opters = gtk_fixed_new();
   gtk_container_add(GTK_CONTAINER(window), opters);
   /* Make the allmighty fuzz button */
   fuzz_it = gtk_button_new_with_label("Fuzz!");
-  g_signal_connect(GTK_OBJECT(fuzz_it), "clicked", G_CALLBACK(fuzz_call),
-                   "fuzz_it");
+  g_signal_connect(GTK_OBJECT(fuzz_it), "clicked", G_CALLBACK((gpointer)fuzz_call),
+                   NULL);
   gtk_fixed_put(GTK_FIXED(opters), fuzz_it, 700, 10);
   gtk_widget_show(fuzz_it);
   /* A text box where the ansvif command goes */
@@ -376,7 +376,7 @@ int main(int argc, char *argv[]) {
   gtk_entry_set_max_length(GTK_ENTRY(caller_box), 1024);
   gtk_widget_set_size_request(GTK_WIDGET(caller_box), 650, 25);
   gtk_editable_set_editable(GTK_EDITABLE(caller_box), FALSE);
-  g_signal_connect(caller_box, "activate", G_CALLBACK(*enter_callback),
+  g_signal_connect(caller_box, "activate", G_CALLBACK((gpointer)enter_callback),
                    caller_box);
   tmp_pos = GTK_ENTRY(caller_box)->text_length;
   gtk_fixed_put(GTK_FIXED(opters), caller_box, 30, 10);
@@ -385,7 +385,7 @@ int main(int argc, char *argv[]) {
   set_buf_size = gtk_entry_new();
   gtk_entry_set_max_length(GTK_ENTRY(set_buf_size), 4);
   gtk_widget_set_size_request(GTK_WIDGET(set_buf_size), 50, 25);
-  g_signal_connect(set_buf_size, "activate", G_CALLBACK(*set_buf_size_callback),
+  g_signal_connect(set_buf_size, "activate", G_CALLBACK((gpointer)set_buf_size_callback),
                    set_buf_size);
   gtk_entry_set_text(GTK_ENTRY(set_buf_size), "32");
   tmp_pos = GTK_ENTRY(set_buf_size)->text_length;
@@ -400,7 +400,7 @@ int main(int argc, char *argv[]) {
   set_exit_code = gtk_entry_new();
   gtk_entry_set_max_length(GTK_ENTRY(set_exit_code), 3);
   gtk_widget_set_size_request(GTK_WIDGET(set_exit_code), 50, 25);
-  g_signal_connect(set_exit_code, "activate", G_CALLBACK(*set_exit_code_callback),
+  g_signal_connect(set_exit_code, "activate", G_CALLBACK((gpointer)set_exit_code_callback),
                    set_exit_code);
   gtk_entry_set_text(GTK_ENTRY(set_exit_code), "136");
   tmp_pos = GTK_ENTRY(set_exit_code)->text_length;
@@ -415,7 +415,7 @@ int main(int argc, char *argv[]) {
   set_max_arg = gtk_entry_new();
   gtk_entry_set_max_length(GTK_ENTRY(set_max_arg), 2);
   gtk_widget_set_size_request(GTK_WIDGET(set_max_arg), 50, 25);
-  g_signal_connect(set_max_arg, "activate", G_CALLBACK(*set_max_arg_callback),
+  g_signal_connect(set_max_arg, "activate", G_CALLBACK((gpointer)set_max_arg_callback),
                    set_max_arg);
   gtk_entry_set_text(GTK_ENTRY(set_max_arg), "4");
   tmp_pos = GTK_ENTRY(set_max_arg)->text_length; 
@@ -429,14 +429,14 @@ int main(int argc, char *argv[]) {
   /*  Make our template file selection */
   template_sel = gtk_button_new_with_label("Select Template");
   g_signal_connect(GTK_OBJECT(template_sel), "clicked",
-                   G_CALLBACK(select_template), "template_sel");
+                   G_CALLBACK((gpointer)select_template), NULL);
   gtk_fixed_put(GTK_FIXED(opters), template_sel, 30, 80);
   gtk_widget_show(template_sel);
   template_sel_t = gtk_entry_new();
   gtk_entry_set_max_length(GTK_ENTRY(template_sel_t), 128);
   gtk_widget_set_size_request(GTK_WIDGET(template_sel_t), 330, 25);
   gtk_editable_set_editable(GTK_EDITABLE(template_sel_t), FALSE);
-  g_signal_connect(template_sel_t, "activate", G_CALLBACK(*enter_callback),
+  g_signal_connect(template_sel_t, "activate", G_CALLBACK((gpointer)enter_callback),
                    template_sel_t);
   tmp_pos = GTK_ENTRY(template_sel_t)->text_length;
   gtk_fixed_put(GTK_FIXED(opters), template_sel_t, 200, 80);
@@ -444,7 +444,7 @@ int main(int argc, char *argv[]) {
   /* Make our binary to be fuzzed file selection */
   command_sel = gtk_button_new_with_label("Select Binary to Fuzz");
   g_signal_connect(GTK_OBJECT(command_sel), "clicked",
-                   G_CALLBACK(select_binary), "command");
+                   G_CALLBACK((gpointer)select_binary), NULL);
   gtk_fixed_put(GTK_FIXED(opters), command_sel, 30, 50);
   gtk_widget_show(command_sel);
   command_sel_t = gtk_entry_new();
@@ -458,14 +458,14 @@ int main(int argc, char *argv[]) {
   gtk_widget_show(command_sel_t);
   /* Make our fuzz environment */
   environ_sel = gtk_button_new_with_label("Select Environment");
-  g_signal_connect(GTK_OBJECT(environ_sel), "clicked", G_CALLBACK(*select_env),
-                   "environ_sel");
+  g_signal_connect(GTK_OBJECT(environ_sel), "clicked", G_CALLBACK((gpointer)select_env),
+                   NULL);
   gtk_fixed_put(GTK_FIXED(opters), environ_sel, 30, 110);
   gtk_widget_show(environ_sel);
   environ_sel_t = gtk_entry_new();
   gtk_entry_set_max_length(GTK_ENTRY(environ_sel_t), 128);
   gtk_widget_set_size_request(GTK_WIDGET(environ_sel_t), 330, 25);
-  g_signal_connect(environ_sel_t, "activate", G_CALLBACK(*enter_callback),
+  g_signal_connect(environ_sel_t, "activate", G_CALLBACK((gpointer)enter_callback),
                    environ_sel_t);
   tmp_pos = GTK_ENTRY(environ_sel_t)->text_length;
   gtk_fixed_put(GTK_FIXED(opters), environ_sel_t, 200, 110);
@@ -473,14 +473,14 @@ int main(int argc, char *argv[]) {
 
   /* Make our fuzz log */
   log_sel = gtk_button_new_with_label("Select Log File");
-  g_signal_connect(GTK_OBJECT(log_sel), "clicked", G_CALLBACK(*log_outfile),
-                   "log_sel");
+  g_signal_connect(GTK_OBJECT(log_sel), "clicked", G_CALLBACK((gpointer)log_outfile),
+                   NULL);
   gtk_fixed_put(GTK_FIXED(opters), log_sel, 30, 450);
   gtk_widget_show(log_sel);
   log_sel_t = gtk_entry_new();
   gtk_entry_set_max_length(GTK_ENTRY(log_sel_t), 128);
   gtk_widget_set_size_request(GTK_WIDGET(log_sel_t), 330, 25);
-  g_signal_connect(log_sel_t, "activate", G_CALLBACK(*enter_callback),
+  g_signal_connect(log_sel_t, "activate", G_CALLBACK((gpointer)enter_callback),
                    log_sel_t);
   tmp_pos = GTK_ENTRY(environ_sel_t)->text_length;
   gtk_fixed_put(GTK_FIXED(opters), log_sel_t, 200, 450);
@@ -489,14 +489,14 @@ int main(int argc, char *argv[]) {
 
   /* Other options template */
   oo_sel = gtk_button_new_with_label("Select Other Options");
-  g_signal_connect(GTK_OBJECT(oo_sel), "clicked", G_CALLBACK(*select_oo),
-                   "environ_sel");
+  g_signal_connect(GTK_OBJECT(oo_sel), "clicked", G_CALLBACK((gpointer)select_oo),
+                   NULL);
   gtk_fixed_put(GTK_FIXED(opters), oo_sel, 30, 140);
   gtk_widget_show(oo_sel);
   oo_sel_t = gtk_entry_new();
   gtk_entry_set_max_length(GTK_ENTRY(oo_sel_t), 128);
   gtk_widget_set_size_request(GTK_WIDGET(oo_sel_t), 330, 25);
-  g_signal_connect(oo_sel_t, "activate", G_CALLBACK(*enter_callback),
+  g_signal_connect(oo_sel_t, "activate", G_CALLBACK((gpointer)enter_callback),
                    oo_sel_t);
   tmp_pos = GTK_ENTRY(oo_sel_t)->text_length;
   gtk_fixed_put(GTK_FIXED(opters), oo_sel_t, 200, 140);
@@ -505,7 +505,7 @@ int main(int argc, char *argv[]) {
   set_other_sep = gtk_entry_new();
   gtk_entry_set_max_length(GTK_ENTRY(set_other_sep), 1);
   gtk_widget_set_size_request(GTK_WIDGET(set_other_sep), 50, 25);
-  g_signal_connect(set_other_sep, "activate", G_CALLBACK(*set_other_sep_callback),
+  g_signal_connect(set_other_sep, "activate", G_CALLBACK((gpointer)set_other_sep_callback),
                    set_other_sep);
   gtk_entry_set_text(GTK_ENTRY(set_other_sep), "");
   tmp_pos = GTK_ENTRY(set_other_sep)->text_length;
@@ -518,18 +518,18 @@ int main(int argc, char *argv[]) {
   gtk_widget_show(set_other_sep);
   /* A toggle for turning buffer size 0 on and off */
   g_signal_connect(GTK_OBJECT(buf_size_zero), "clicked",
-                   G_CALLBACK(set_buffer_size), "buf_size_zero");
+                   G_CALLBACK((gpointer)set_buffer_size), NULL);
   gtk_fixed_put(GTK_FIXED(opters), buf_size_zero, 30, 200);
   gtk_widget_show(buf_size_zero);
   /* A toggle for turning all random data on and off */
   random_data_only = gtk_check_button_new_with_label("Random Data Only");
   g_signal_connect(GTK_OBJECT(random_data_only), "clicked",
-                   G_CALLBACK(*set_random_data), "random_data_only");
+                   G_CALLBACK((gpointer)set_random_data), NULL);
   gtk_fixed_put(GTK_FIXED(opters), random_data_only, 30, 220);
   gtk_widget_show(random_data_only);
   /* A toggle for turning buffer random buffer size on and off */
   g_signal_connect(GTK_OBJECT(random_buffer_size), "clicked",
-                   G_CALLBACK(set_random_size), "random_buffer_size");
+                   G_CALLBACK((gpointer)set_random_size), NULL);
   gtk_fixed_put(GTK_FIXED(opters), random_buffer_size, 30, 180);
 //  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(random_buffer_size), TRUE);
   gtk_widget_show(random_buffer_size);
