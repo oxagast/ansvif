@@ -21,9 +21,9 @@
         <section id="downloads">
           <a href="https://github.com/oxagast/ansvif/zipball/master" class="btn">Download as .zip</a>
           <a href="https://github.com/oxagast/ansvif/tarball/master" class="btn">Download as .tar.gz</a>
-          <a href="https://github.com/oxagast/ansvif/releases/download/1.7/ansvif-1.7-1.fc25.x86_64.rpm" class="btn">Download for Fedora (x86_64)</a>
-          <a href="https://github.com/oxagast/ansvif/releases/download/1.7/ansvif_1.7_amd64.deb" class="btn">Download for Debian (x86_64)</a>
-          <a href="https://github.com/oxagast/ansvif/releases/download/1.7/ansvif-1.7-win-amd64.zip" class="btn">Download for Windows (x86_64)</a>
+          <a href="https://github.com/oxagast/ansvif/releases/download/1.7/ansvif-1.7-1.fc25.x86_64.rpm" class="btn">1.7 Download for Fedora (x86_64)</a>
+          <a href="https://github.com/oxagast/ansvif/releases/download/1.8/ansvif_1.8_amd64.deb" class="btn">1.8 Download for Debian (x86_64)</a>
+          <a href="https://github.com/oxagast/ansvif/releases/download/1.7/ansvif-1.7-win-amd64.zip" class="btn">1.7 Download for Windows (x86_64)</a>
           <a href="https://github.com/oxagast/ansvif" class="btn btn-github"><span class="icon"></span>View on GitHub</a>
         </section>
         </center>
@@ -55,7 +55,7 @@ As the complexity of a system rises, as does the potential for problems within t
 </p>
 
 <center><img src="https://raw.githubusercontent.com/oxagast/ansvif/gh-pages/images/ansvif_im.jpg" width=65% height=65%></center>
-
+<center><img src="https://raw.githubusercontent.com/oxagast/ansvif/gh-pages/images/mount_fuzzing_ansvif.png" width=80% height=80%</center>
 <h3>
 <a id="checkout-and-compliation" class="anchor" href="#checkout-and-compliation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Checkout and compliation</h3>
 
@@ -64,7 +64,7 @@ $ cd ansvif
 $ aclocal
 $ autoconf
 $ automake -a
-$ ./configure
+$ ./configure (or) $ ./configure --enable-gtk
 $ make
 $ make check
 </code></pre>
@@ -79,10 +79,12 @@ A Not So Very Intelligent Fuzzer.
 Compliation:
 
  Dependancies:
-  automake autoconf-archive zlib1g-dev g++ gcc crypto++
+  automake autoconf-archive zlib1g-dev g++ gcc crypto++ (and libgtk2.0-dev if you want the GUI)
   
  Linux:
   $ aclocal && autoconf && automake -a && ./configure && make && make check
+  or
+  $ aclocal && autoconf && automake -a && ./configure --enable-gtk && make && make check
  OpenBSD:
   $ CXX=$(find / -name 'eg++' 2>/dev/null | grep ports | head -n 1) AUTOCONF_VERSION=2.69 \
     AUTOMAKE_VERSION=1.15 autoreconf -fmi
@@ -99,11 +101,19 @@ Compliation:
 Using the example code:
   You can point the memory back at address \xff\x05\x40\x00\x00\x00\x00\x00 (the
   subroutine containing the code that spawns bash) with:
-  $ ./faulty -a $(perl -e 'print "A"x24;print "\x00\xff\x05\x40\x00\x00\x00\x00\x00"')
+  $ ./buffer_overflow -a $(perl -e 'print "A"x24;print "\x00\xff\x05\x40\x00\x00\x00\x00\x00"')
   The address may be a little different under your distro, check gdb if you really
   want to try it out.  The code above /should/ drop you at a bash prompt.
   If the code is set to a mode where all are able to execute as another user, it will
   attempt to spawn a root shell.
+  
+  Please note that the example faulty buffer_overflow when compiled under Debian 9 does
+  not throw an error detectable by ansvif when you fill it with trash.
+  Ex:
+  $ ./buffer_overflow A AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+  returns 1 with:
+  $ echo $?
+  This as far as I know is a Debian specific bug.
 
 
 Useage:
@@ -111,6 +121,8 @@ Useage:
 
   $ ./find_suid /usr/bin/ /bin/ /sbin/
   $ ./ansvif -[tm] [template/manpage] -c /path/to/executable -b buffersize
+  $ ./ansvif_gtk -l
+  $ ./ansvif_gtk -p /usr/bin/ansvif_gtk
 
   Examples:
    Linux/BSD:
