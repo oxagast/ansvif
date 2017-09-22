@@ -38,6 +38,8 @@ std::string log_file;
 std::string crash_code;
 std::string other_options_file;
 std::string other_seperator;
+std::string before_specifier;
+std::string after_specifier;
 GtkWidget *caller_box;
 GtkTextBuffer *buffer;
 GtkTextIter iter;
@@ -58,6 +60,10 @@ GtkWidget *command_sel_t;
 GtkWidget *template_sel_t;
 GtkWidget *log_sel_t;
 GtkWidget *oo_sel_t;
+GtkWidget *before_label;
+GtkWidget *before_t;
+GtkWidget *set_before;
+GtkWidget *set_after;
 std::string ver = " -i ";
 std::string ansvif_loc = "ansvif ";
 
@@ -114,6 +120,20 @@ static void set_other_sep_callback(GtkWidget *widget, GtkWidget *set_other_sep) 
   const gchar *other_sep;
   other_sep = gtk_entry_get_text(GTK_ENTRY(set_other_sep));
   other_seperator = " -S \"" + std::string(other_sep) + "\"";
+  gtk_entry_set_text(GTK_ENTRY(caller_box), ansvif_str().c_str());
+}
+
+static void set_before_callback(GtkWidget *widget, GtkWidget *set_other_sep) {
+  const gchar *before_spec;
+  before_spec = gtk_entry_get_text(GTK_ENTRY(set_before));
+  other_seperator = " -B \'" + std::string(before_spec) + "\'";
+  gtk_entry_set_text(GTK_ENTRY(caller_box), ansvif_str().c_str());
+}
+
+static void set_after_callback(GtkWidget *widget, GtkWidget *set_after) {
+  const gchar *after_spec;
+  after_spec = gtk_entry_get_text(GTK_ENTRY(set_after));
+  after_specifier = " -A \'" + std::string(after_spec) + "\'";
   gtk_entry_set_text(GTK_ENTRY(caller_box), ansvif_str().c_str());
 }
 
@@ -332,6 +352,7 @@ int main(int argc, char *argv[]) {
   GtkWidget *other_sep_label;
   GtkWidget *oo_sel;
   GtkWidget *log_sel;
+  GtkWidget *before_sel;
   gint tmp_pos;
   int c;
   
@@ -473,7 +494,7 @@ int main(int argc, char *argv[]) {
   gtk_fixed_put(GTK_FIXED(opters), environ_sel_t, 200, 110);
   gtk_widget_show(environ_sel_t);
 
-  /* Make our fuzz log */
+/* Make our fuzz log */
   log_sel = gtk_button_new_with_label("Select Log File");
   g_signal_connect(GTK_OBJECT(log_sel), "clicked", G_CALLBACK((gpointer)log_outfile),
                    NULL);
@@ -487,8 +508,19 @@ int main(int argc, char *argv[]) {
   tmp_pos = GTK_ENTRY(environ_sel_t)->text_length;
   gtk_fixed_put(GTK_FIXED(opters), log_sel_t, 200, 450);
   gtk_widget_show(log_sel_t);
-
-
+  /* Before the rest of the fuzz */
+  set_before = gtk_entry_new();
+  g_signal_connect(set_before, "activate", G_CALLBACK((gpointer)set_before_callback),
+                   set_before);
+  tmp_pos = GTK_ENTRY(set_before)->text_length;
+  gtk_fixed_put(GTK_FIXED(opters), set_before, 200 ,260);
+  gtk_widget_set_size_request(GTK_WIDGET(set_before), 330, 25);
+  before_label = gtk_label_new("Before the fuzz:");
+  gtk_label_set_justify(GTK_LABEL(before_label), GTK_JUSTIFY_LEFT);
+  gtk_container_add(GTK_CONTAINER(opters), before_label);
+  gtk_fixed_put(GTK_FIXED(opters), before_label, 30, 270);
+  gtk_widget_show(before_label);
+  gtk_widget_show(set_before);
   /* Other options template */
   oo_sel = gtk_button_new_with_label("Select Other Options");
   g_signal_connect(GTK_OBJECT(oo_sel), "clicked", G_CALLBACK((gpointer)select_oo),
