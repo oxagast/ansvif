@@ -9,7 +9,7 @@
 //  (  O )  (/    ( (_ /    \___ \ )(
 //   \__(_/\_\_/\_/\___\_/\_(____/(__)
 
-/* this code does not work at all yet! */
+/* this code is under heavy development! */
 
 #include <cstring>
 #include <gtk/gtk.h>
@@ -85,6 +85,8 @@ std::string ansvif_str() {
 static void enter_callback(GtkWidget *widget, GtkWidget *caller_box) {
   const gchar *entry_text;
   entry_text = gtk_entry_get_text(GTK_ENTRY(caller_box));
+//  gtk_entry_set_text(GTK_ENTRY(caller_box), ansvif_str().c_str());
+  gtk_entry_set_text(GTK_ENTRY(caller_box), entry_text);
 }
 
 static void set_buf_size_callback(GtkWidget *widget, GtkWidget *set_buf_size) {
@@ -373,9 +375,9 @@ int main(int argc, char *argv[]) {
   gtk_widget_show(fuzz_it);
   /* A text box where the ansvif command goes */
   caller_box = gtk_entry_new();
-  gtk_entry_set_max_length(GTK_ENTRY(caller_box), 1024);
+  gtk_entry_set_max_length(GTK_ENTRY(caller_box), 4096);
   gtk_widget_set_size_request(GTK_WIDGET(caller_box), 650, 25);
-  gtk_editable_set_editable(GTK_EDITABLE(caller_box), FALSE);
+  gtk_editable_set_editable(GTK_EDITABLE(caller_box), TRUE);
   g_signal_connect(caller_box, "activate", G_CALLBACK((gpointer)enter_callback),
                    caller_box);
   tmp_pos = GTK_ENTRY(caller_box)->text_length;
