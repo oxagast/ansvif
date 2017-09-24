@@ -61,8 +61,9 @@ GtkWidget *template_sel_t;
 GtkWidget *log_sel_t;
 GtkWidget *oo_sel_t;
 GtkWidget *before_label;
-GtkWidget *before_t;
+//GtkWidget *before_t;
 GtkWidget *set_before;
+GtkWidget *after_label;
 GtkWidget *set_after;
 std::string ver = " -i ";
 std::string ansvif_loc = "ansvif ";
@@ -82,8 +83,9 @@ static void destroy(GtkWidget *widget, gpointer *data) { gtk_main_quit(); }
 
 std::string ansvif_str() {
   ansvif_call = ansvif_loc + ver + random_data + random_buffer_s + buffer_size +
-                log_file + maximum_args + other_seperator + binary_file +
-                environment_file + template_file + crash_code + other_options_file;
+                before_specifier + after_specifier + log_file + maximum_args + 
+                other_seperator + binary_file + environment_file + 
+                template_file + crash_code + other_options_file;
   /* damn son */
   return (ansvif_call);
 }
@@ -123,14 +125,14 @@ static void set_other_sep_callback(GtkWidget *widget, GtkWidget *set_other_sep) 
   gtk_entry_set_text(GTK_ENTRY(caller_box), ansvif_str().c_str());
 }
 
-static void set_before_callback(GtkWidget *widget, GtkWidget *set_other_sep) {
+static void set_before_callback(GtkWidget *widget, GtkWidget *set_before_b) {
   const gchar *before_spec;
   before_spec = gtk_entry_get_text(GTK_ENTRY(set_before));
-  other_seperator = " -B \'" + std::string(before_spec) + "\'";
+  before_specifier = " -B \'" + std::string(before_spec) + "\'";
   gtk_entry_set_text(GTK_ENTRY(caller_box), ansvif_str().c_str());
 }
 
-static void set_after_callback(GtkWidget *widget, GtkWidget *set_after) {
+static void set_after_callback(GtkWidget *widget, GtkWidget *set_after_a) {
   const gchar *after_spec;
   after_spec = gtk_entry_get_text(GTK_ENTRY(set_after));
   after_specifier = " -A \'" + std::string(after_spec) + "\'";
@@ -352,7 +354,6 @@ int main(int argc, char *argv[]) {
   GtkWidget *other_sep_label;
   GtkWidget *oo_sel;
   GtkWidget *log_sel;
-  GtkWidget *before_sel;
   gint tmp_pos;
   int c;
   
@@ -521,6 +522,19 @@ int main(int argc, char *argv[]) {
   gtk_fixed_put(GTK_FIXED(opters), before_label, 30, 270);
   gtk_widget_show(before_label);
   gtk_widget_show(set_before);
+  /* After the other fuzz stuff */
+  set_after = gtk_entry_new();
+  g_signal_connect(set_after, "activate", G_CALLBACK((gpointer)set_after_callback),
+                   set_after);
+  tmp_pos = GTK_ENTRY(set_after)->text_length;
+  gtk_fixed_put(GTK_FIXED(opters), set_after, 200, 290);
+  gtk_widget_set_size_request(GTK_WIDGET(set_after), 330, 25);
+  after_label = gtk_label_new("After the fuzz:");
+  gtk_label_set_justify(GTK_LABEL(after_label), GTK_JUSTIFY_LEFT);
+  gtk_container_add(GTK_CONTAINER(opters), after_label);
+  gtk_fixed_put(GTK_FIXED(opters), after_label, 30, 295);
+  gtk_widget_show(after_label);
+  gtk_widget_show(set_after);
   /* Other options template */
   oo_sel = gtk_button_new_with_label("Select Other Options");
   g_signal_connect(GTK_OBJECT(oo_sel), "clicked", G_CALLBACK((gpointer)select_oo),
