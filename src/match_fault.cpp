@@ -22,11 +22,13 @@
 #endif
 #endif
 #include "src/version.h"
+#include <algorithm>
 #include <cstdlib>
 #include <cstring>
 #include <fstream>
 #include <iomanip>
 #include <iostream>
+#include <random>
 #include <regex>
 #include <sstream>
 #include <stdio.h>
@@ -116,6 +118,8 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
       unlink(valgrind_logfile.c_str());
       /* initialize two random pieces */
       int rand_spec_one, rand_spec_two;
+      std::vector<std::string> junk_opters;
+
       if (rand_all == true) {
         /* or always random data (8) */
         rand_spec_one = 8;
@@ -150,17 +154,19 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
         }
       }
       if (static_args != 0) {
-        int junk_opts_size = 0;
-        for (int cmd_flag_l = 0; junk_opts_size < static_args; cmd_flag_l++) {
+        for (int cmd_flag_l = 0; cmd_flag_l < opts_size; cmd_flag_l++) {
           if ((rand_me_plz(0, 1) == 1) && (cmd_flag_l < opts_size)) {
             junk_opts.push_back(opts.at(cmd_flag_l));
-            junk_opts_size = junk_opts.size();
           } else {
             junk_opts.push_back(" ");
-            junk_opts_size = junk_opts.size();
           }
         }
+        std::random_shuffle(junk_opts.begin(), junk_opts.end());
+        for (int holder = 0; holder < static_args; holder++) {
+          junk_opters.push_back(opts.at(rand_me_plz(0, opts.size() - 1)));
+        }
       }
+      junk_opts = junk_opters;
       for (int cmd_flag_a = 0; cmd_flag_a < my_penis_size; cmd_flag_a++) {
         if (rand_me_plz(0, 1) == 1) {
           junk_opts_env.push_back(spec_env.at(cmd_flag_a));
@@ -183,6 +189,7 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
               env_str = env_str + *junk_opt_env + oscar_env + " ";
             }
           }
+
           for (std::vector<std::string>::const_iterator junk_opt =
                    junk_opts.begin();
                junk_opt != junk_opts.end(); ++junk_opt) {
@@ -292,9 +299,11 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
               env_str = env_str + *junk_opt_env + oscar_env + " ";
             }
           }
+
           for (std::vector<std::string>::const_iterator junk_opt =
                    junk_opts.begin();
                junk_opt != junk_opts.end(); ++junk_opt) {
+
             std::string oscar = remove_chars(
                 make_garbage(rand_me_plz(rand_spec_one, rand_spec_two),
                              buf_size, "", is_other, never_rand),
@@ -464,21 +473,21 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
             /* logging hangs */
           }
           if (keep_going == false) {
-            return(false);
-}
-}
-    }
-    if (single_try == true) {
-      /* do all that shit but only once! */
-      if ((verbose == true) || (debug == true)) {
-        std::cout << "No fault of mine!" << std::endl;
+            return (false);
+          }
+        }
       }
-      /* this non standard code 64 is to tell a wrapper that
-       * we never hit a fault with the single run
-       */
-      exit(64);
+      if (single_try == true) {
+        /* do all that shit but only once! */
+        if ((verbose == true) || (debug == true)) {
+          std::cout << "No fault of mine!" << std::endl;
+        }
+        /* this non standard code 64 is to tell a wrapper that
+         * we never hit a fault with the single run
+         */
+        exit(64);
+      }
     }
-  }}
-//}
+  }
   return (true);
 }
