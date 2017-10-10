@@ -11,6 +11,7 @@ syscalls
 ansvif_gtk
 buffer_overflow
 string_format
+generic_buffer_overflow
 *.log
 !/man/*
 !/tmp/*

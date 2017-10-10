@@ -48,9 +48,9 @@ ansvif_gtk_CPPFLAGS = @GTK_CFLAGS@ -fpermissive
 endif
 ansvifdir = bin
 check: all
-	./ansvif -t examples/space.txt -c ./generic_buffer_overflow -b 32 -o checkfaulty && rm checkfaulty.*
+	./ansvif -t examples/space.txt -c ./generic_buffer_overflow -b 64 -o checkfaulty && rm checkfaulty.*
 	@echo "*** CHECK 1 PASSED ***"
-	./ansvif -t examples/space.txt -c ./generic_buffer_overflow -b 32
+	./ansvif -t examples/space.txt -c ./generic_buffer_overflow -b 64
 	@echo "*** CHECK 2 PASSED ***"
 	./ansvif -t examples/space.txt -c ./string_format -b 32
 	@echo "*** CHECK 3 PASSED ***"

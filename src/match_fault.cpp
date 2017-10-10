@@ -435,6 +435,7 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
           /* logging */
           log_head(write_file_n, path_str, cmd_output, out_str_p, out_str, pid);
         }
+	/* std::cout << cmd_output << std::endl; */
         std::size_t found132 = cmd_output.find("CRASHCODE 132");
         std::size_t found134 = cmd_output.find("CRASHCODE 134");
         std::size_t found139 = cmd_output.find("CRASHCODE 139");
