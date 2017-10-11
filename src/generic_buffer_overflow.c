@@ -17,10 +17,11 @@
 void func(char **argv) {
   printf("running strcpy...\n");
   char arr[16];
-  strcpy(arr, argv[2]);
-  return;
+  strcpy(arr, argv[1]);
 }
 int main(int argc, char *argv[]) {
-  func(argv);
+  if(argc == 2) {
+    func(argv);
+  }
   return(0);
 }

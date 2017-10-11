@@ -5,7 +5,7 @@ Marshall Whittaker
 
 oxagast
 
-marshall@i.code.pwnz.org
+marshall@dont.even.try.to.h4ck.me
 
 *As the complexity of a system rises, as does the potential for problems within that system.*
 
