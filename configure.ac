@@ -49,6 +49,21 @@ else
     PKG_CHECK_MODULES(GTK, gtk+-2.0 >= 2.0)
 fi
 
+AC_ARG_ENABLE(testcode,
+	      [  --disable-testcode       Disable Test Code)],
+	      [case "${enableval}" in
+	       yes) WITH_TESTCODE=true ;;
+	       no)  WITH_TESTCODE=false ;;
+	     *) AC_MSG_ERROR(bad value ${enableval} for --disable-testcode) ;;
+	     esac],[WITH_GTK=true])
+AM_CONDITIONAL([WITH_TESTCODE], [test "$WITH_TESTCODE" = "true"])
+if test "$WITH_TESTCODE" = "false"; then
+    AC_MSG_NOTICE([Test Code is disabled])
+else
+AC_DEFINE([WITH_TESTCODE], [], ["build Test Code"])
+AC_MSG_NOTICE([Test Code, we will try to compile them])
+fi
+
 
 AM_CONDITIONAL(OS_IS_REDHAT, [ test `test -e /etc/os-release; echo $?` -eq "0" ])
 if test "$OS_IS_REDHAT" = "1"; then

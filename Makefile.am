@@ -2,13 +2,17 @@ AUTOMAKE_OPTIONS = foreign
 ACLOCAL_AMFLAGS = ${ACLOCAL_FLAGS}
 #SUBDIRS = tests
 if WITH_GTK
-bin_PROGRAMS = ansvif find_suid generic_buffer_overflow string_format ansvif_gtk
+bin_PROGRAMS = ansvif find_suid ansvif_gtk
 endif
 if WITH_SYSCALLS
-bin_PROGRAMS = ansvif find_suid generic_buffer_overflow string_format syscalls
-else
-bin_PROGRAMS = ansvif find_suid generic_buffer_overflow string_format
+bin_PROGRAMS = ansvif find_suid syscalls
 endif
+if WITH_TESTCODE
+bin_PROGRAMS = ansvif find_suid generic_buffer_overflow string_format
+else
+bin_PROGRAMS = ansvif find_suid
+endif
+
 noinst_LIBRARIES = libgzstream.a
 libgzstream_a_SOURCES = include/gzstream/gzstream.h include/gzstream/gzstream.C
 ansvif_SOURCES = src/log.cpp src/common.cpp src/bin2hex.cpp src/popen2.cpp src/main.cpp src/help.cpp src/match_fault.cpp src/sys_string.cpp src/man_read.cpp src/trash.cpp src/randomizer.cpp include/gzstream/gzstream.h include/xmlwriter/xml_writer.hpp src/version.h
