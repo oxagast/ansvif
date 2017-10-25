@@ -1393,7 +1393,7 @@ Optional Features:
   --enable-silent-rules   less verbose build output (undo: "make V=1")
   --disable-silent-rules  verbose build output (undo: "make V=0")
   --enable-syscalls       Enable Syscalls compiliation (experimental)
-  --enable-gtk       Enable GTK compiliation (experimental)
+  --disable-gtk       Enable GTK compiliation (experimental)
 
 Some influential environment variables:
   CC          C compiler command
@@ -5897,7 +5897,7 @@ else
   WITH_GTK=true
 fi
 
- if test "$WITH_GTK" = "false"; then
+ if test "$WITH_GTK" = "true"; then
   WITH_GTK_TRUE=
   WITH_GTK_FALSE='#'
 else
@@ -5906,7 +5906,10 @@ else
 fi
 
 # try to compile syscalls if they're enabled
-if test "$WITH_GTK" = "true"; then
+if test "$WITH_GTK" = "false"; then
+    { $as_echo "$as_me:${as_lineno-$LINENO}: GTK module is disabled" >&5
+$as_echo "$as_me: GTK module is disabled" >&6;}
+else
 
 $as_echo "#define WITH_GTK /**/" >>confdefs.h
 
@@ -6123,9 +6126,6 @@ else
 $as_echo "yes" >&6; }
 
 fi
-else
-    { $as_echo "$as_me:${as_lineno-$LINENO}: GTK module is disabled" >&5
-$as_echo "$as_me: GTK module is disabled" >&6;}
 fi
 
 

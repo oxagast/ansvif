@@ -33,20 +33,20 @@ else
 fi
 
 AC_ARG_ENABLE(gtk,
-[  --enable-gtk       Enable GTK compiliation (experimental)],
+[  --disable-gtk       Enable GTK compiliation (experimental)],
 [case "${enableval}" in
   yes) WITH_GTK=true ;;
   no)  WITH_GTK=false ;;
   *) AC_MSG_ERROR(bad value ${enableval} for --disable-gtk) ;;
 esac],[WITH_GTK=true])
-AM_CONDITIONAL([WITH_GTK], [test "$WITH_GTK" = "false"])
+AM_CONDITIONAL([WITH_GTK], [test "$WITH_GTK" = "true"])
 # try to compile syscalls if they're enabled
-if test "$WITH_GTK" = "true"; then
+if test "$WITH_GTK" = "false"; then
+    AC_MSG_NOTICE([GTK module is disabled])
+else
     AC_DEFINE([WITH_GTK], [], ["build GTK module"])
     AC_MSG_NOTICE([GTK enabled, we will try to compile them])
     PKG_CHECK_MODULES(GTK, gtk+-2.0 >= 2.0)
-else
-    AC_MSG_NOTICE([GTK module is disabled])
 fi
 
 
