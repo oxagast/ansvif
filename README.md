@@ -26,9 +26,9 @@ Or, if you would like to play with the syscall fuzzer:
 ```
 $ aclocal && autoconf && automake -a && ./configure --enable-syscalls && make && make check
 ```
-If you would like to play with the GTK frontend (which is under heavy development and incomplete), you can install the GTK+2 development packages and do:
+If you would like to disable the GTK frontend you can do:
 ```
-$ aclocal && autoconf && automake -a && ./configure --enable-gtk && make && ./ansvif_gtk
+$ aclocal && autoconf && automake -a && ./configure --disable-gtk && make && make check
 ```
 *FreeBSD*
 
@@ -86,7 +86,6 @@ $ ./ansvif -[tm] [template/manpage] -c /path/to/executable -b buffersize
 *Linux/BSD:*
 ```
 $ ulimit -c unlimited
-$ echo "Marshall" ./ansvif -t examples/template -c ./faulty -b 64
 $ ./ansvif -m mount -c /bin/mount -e examples/mount_e.txt -x examples/mount_o.txt\
 -f 8 -b 2048
 $ ./ansvif -t examples/blank.txt -F tmp/tmphtml -x examples/htmltags.txt -c /usr/bin/iceweasel -b\
