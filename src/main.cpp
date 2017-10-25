@@ -177,7 +177,7 @@ int main(int argc, char *argv[]) { // initialize our main
   signal(SIGINT, sig_handler);
   /* now we can start grabbing all the options! */
   while ((opt = getopt(argc, argv,
-                       "m:p:t:e:c:f:o:b:s:x:R:A:F:E:S:L:W:B:M:C:y1hrzvdDnVPKi")) !=
+                       "m:p:t:e:c:f:o:b:s:x:R:A:F:E:S:L:W:B:M:C:y1hrzvdDnVPKi0")) !=
          -1) {
     switch (opt) {
     case 'v':
@@ -283,6 +283,9 @@ int main(int argc, char *argv[]) { // initialize our main
       break;
     case 'i':
       version();
+      break;
+    case '0':
+      strip_shell = strip_shell + "\\x00";
       break;
     default:
       help_me(argv[0]);

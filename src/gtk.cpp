@@ -25,7 +25,7 @@ FILE *popen2(std::string command, std::string type, int &pid,
              std::string low_lvl_user);
 int pclose2(FILE *fp, pid_t pid);
 
-std::string version = "1.8"; /* ansvif version */
+std::string version = "1.8.1"; /* ansvif version */
 std::string buffer_size;
 std::string random_data;
 std::string random_buffer_s;
@@ -40,6 +40,7 @@ std::string other_options_file;
 std::string other_seperator;
 std::string before_specifier;
 std::string after_specifier;
+std::string no_null_s;
 GtkWidget *caller_box;
 GtkTextBuffer *buffer;
 GtkTextIter iter;
@@ -61,10 +62,11 @@ GtkWidget *template_sel_t;
 GtkWidget *log_sel_t;
 GtkWidget *oo_sel_t;
 GtkWidget *before_label;
-//GtkWidget *before_t;
 GtkWidget *set_before;
 GtkWidget *after_label;
 GtkWidget *set_after;
+GtkWidget *no_null;
+GtkWidget *non_null_label;
 std::string ver = " -i ";
 std::string ansvif_loc = "ansvif ";
 
@@ -82,7 +84,7 @@ int help_me(std::string mr_me) {
 static void destroy(GtkWidget *widget, gpointer *data) { gtk_main_quit(); }
 
 std::string ansvif_str() {
-  ansvif_call = ansvif_loc + ver + random_data + random_buffer_s + buffer_size +
+  ansvif_call = ansvif_loc + ver + random_data + random_buffer_s + no_null_s + buffer_size +
                 before_specifier + after_specifier + log_file + maximum_args + 
                 other_seperator + binary_file + environment_file + 
                 template_file + crash_code + other_options_file;
@@ -150,7 +152,6 @@ const char *get_user() {
 
 static void fuzz_call() {
   /* put together the call to ansvif */
-  //while (gtk_events_pending ()) gtk_main_iteration ();
   int com_pid;
   FILE *fp = popen2(ansvif_str(), "r", com_pid, get_user());
   char command_out[4096] = {0};
@@ -160,7 +161,6 @@ static void fuzz_call() {
     gtk_main_iteration_do(TRUE);
     memset(&command_out, 0, sizeof(command_out));
   }
-//  gtk_text_buffer_get_iter_at_offset(buffer, &iter, 0);
   gtk_text_buffer_set_text(buffer, output.str().c_str(), -1);
   pclose2(fp, com_pid);
 }
@@ -314,6 +314,17 @@ const void set_random_size(void*) {
   }
 }
 
+const void set_no_null(void*) {
+  if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(no_null))) {
+    no_null_s = " -0 ";
+    gtk_entry_set_text(GTK_ENTRY(caller_box), ansvif_str().c_str());
+    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(no_null), TRUE);
+  } else {
+    no_null_s = "";
+    gtk_entry_set_text(GTK_ENTRY(caller_box), ansvif_str().c_str());
+  }
+}
+
 /* Create a scrolled text area that displays a "message" */
 static GtkWidget *create_text(void) {
   GtkWidget *scrolled_window;
@@ -332,8 +343,6 @@ static GtkWidget *create_text(void) {
 
   return (scrolled_window);
 }
-
-// void destroy(GtkWidget *widget, gpointer data) { gtk_main_quit(); }
 
 int main(int argc, char *argv[]) {
   /* Declare some vars */
@@ -375,8 +384,6 @@ int main(int argc, char *argv[]) {
   }
   
   
-  random_buffer_size = gtk_check_button_new_with_label("Random Buffer Size");
-  buf_size_zero = gtk_check_button_new_with_label("Buffer Size 0");
   /* Pull in the args for gtk */
   gtk_init(&argc, &argv);
   /* Create gtk window */
@@ -565,6 +572,7 @@ int main(int argc, char *argv[]) {
   gtk_widget_show(other_sep_label);
   gtk_widget_show(set_other_sep);
   /* A toggle for turning buffer size 0 on and off */
+  buf_size_zero = gtk_check_button_new_with_label("Buffer Size 0");
   g_signal_connect(GTK_OBJECT(buf_size_zero), "clicked",
                    G_CALLBACK((gpointer)set_buffer_size), NULL);
   gtk_fixed_put(GTK_FIXED(opters), buf_size_zero, 30, 200);
@@ -576,20 +584,28 @@ int main(int argc, char *argv[]) {
   gtk_fixed_put(GTK_FIXED(opters), random_data_only, 30, 220);
   gtk_widget_show(random_data_only);
   /* A toggle for turning buffer random buffer size on and off */
+  random_buffer_size = gtk_check_button_new_with_label("Random Buffer Size");
   g_signal_connect(GTK_OBJECT(random_buffer_size), "clicked",
                    G_CALLBACK((gpointer)set_random_size), NULL);
   gtk_fixed_put(GTK_FIXED(opters), random_buffer_size, 30, 180);
-//  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(random_buffer_size), TRUE);
   gtk_widget_show(random_buffer_size);
- /* ansvif output goes here */
+  /* A toggle for turning non null on and off */
+  no_null = gtk_check_button_new_with_label("No NULL In Fuzz"); 
+  g_signal_connect(GTK_OBJECT(no_null), "clicked",
+                   G_CALLBACK((gpointer)set_no_null), NULL);
+  gtk_fixed_put(GTK_FIXED(opters), no_null, 220, 180);
+//  gtk_fixed_put(GTK_FIXED(opters), set_no_null, 200, 185);
+  gtk_widget_show(no_null);
+//  gtk_widget_show(non_null_label);
+  /* ansvif output goes here */
   ansvif_out = gtk_label_new("ansvif output:");
   gtk_label_set_justify(GTK_LABEL(ansvif_out), GTK_JUSTIFY_LEFT);
   gtk_container_add(GTK_CONTAINER(opters), ansvif_out);
-  gtk_fixed_put(GTK_FIXED(opters), ansvif_out, 50, 500);
+  gtk_fixed_put(GTK_FIXED(opters), ansvif_out, 30, 500);
   //gtk_entry_set_text(GTK_ENTRY(ansvif_out), "./ansvif -i");
   gtk_widget_show(ansvif_out);
   text = create_text();
-  gtk_fixed_put(GTK_FIXED(opters), text, 50, 540);
+  gtk_fixed_put(GTK_FIXED(opters), text, 30, 540);
   gtk_widget_set_size_request(GTK_WIDGET(text), 730, 140);
   /* Show that part of the screen */
   gtk_widget_show(text);
