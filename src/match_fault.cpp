@@ -409,10 +409,12 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
         /* this here takes care of the command that is run after
          * the fuzz
          */
-        if (run_command != "") {
+	if (run_command != "") {
+#ifdef _WIN32
 		  run_command = "powershell " + run_command;
-          int run_com_pid;
-          FILE *fp = popen2(run_command, "r", run_com_pid, low_lvl_user);
+#endif
+	  int run_com_pid;
+	  FILE *fp = popen2(run_command, "r", run_com_pid, low_lvl_user);
           pclose2(fp, run_com_pid);
         }
         /* inititalize the child and open the child process fork
