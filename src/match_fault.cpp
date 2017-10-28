@@ -443,6 +443,10 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
         std::size_t found136 = cmd_output.find("CRASHCODE 136");
         std::size_t found159 = cmd_output.find("CRASHCODE 159");
         std::size_t found138 = cmd_output.find("CRASHCODE 138");
+	/*
+	 * Windows codes:
+	 * -1073741819 -1073740791 -1073741571 -532459699
+	 */
         std::size_t foundother = cmd_output.find("CRASHCODE " + fault_code);
         if ((found132 != std::string::npos) ||
             (found134 != std::string::npos) ||
