@@ -371,8 +371,8 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
       if (std::find(used_token.begin(), used_token.end(), h_output) !=
           used_token.end()) {
         used_token.push_back(h_output);
-      } else {
-        used_token.push_back(h_output);
+} else {
+       used_token.push_back(h_output);
 #endif
         if (buf_size == 0) {
           out_str = before_command + " " + path_str + " " + always_arg_before +
@@ -480,7 +480,9 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
           if (keep_going == false) {
             return (false);
           }
-        }
+#ifdef __linux
+        }  // For the checksum algorithm under linux
+#endif   
       }
       if (single_try == true) {
         /* do all that shit but only once! */

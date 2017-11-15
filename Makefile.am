@@ -8,7 +8,7 @@ if WITH_SYSCALLS
 bin_PROGRAMS = ansvif find_suid syscalls
 endif
 if WITH_TESTCODE
-bin_PROGRAMS = ansvif find_suid generic_buffer_overflow string_format
+bin_PROGRAMS = ansvif find_suid generic_buffer_overflow string_format null_pointer
 else
 bin_PROGRAMS = ansvif find_suid
 endif
@@ -41,6 +41,7 @@ find_suid_SOURCES = src/linux/find_suid.cpp
 string_format_SOURCES = src/string_format.c
 string_format_CFLAGS = -ansi -D_GNU_SOURCE -Wno-format-security
 generic_buffer_overflow_SOURCES = src/generic_buffer_overflow.c
+null_pointer_SOURCES = src/null_pointer.c
 if WITH_SYSCALLS
 syscalls_SOURCES = src/linux/syscalls.cpp
 syscalls_CPPFLAGS = -ansi -Wno-unused-result -Wno-nonnull -std=c++11
