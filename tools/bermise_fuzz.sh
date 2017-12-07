@@ -6,6 +6,15 @@
 ##   \__(_/\_\_/\_/\___\_/\_(____/(__)
 
 
+if [ $# -eq 0 ]
+  then
+    echo "ansvif toolchain -- A Not So Very Intelligent Fuzzer";
+    echo "Usage:";
+    echo " $0 iconv -f Unicode";
+    echo " $0 nc 127.0.0.1 22";
+  exit 0;
+fi;
+
 
 mupr="64";
 

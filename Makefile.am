@@ -2,15 +2,15 @@ AUTOMAKE_OPTIONS = foreign
 ACLOCAL_AMFLAGS = ${ACLOCAL_FLAGS}
 #SUBDIRS = tests
 if WITH_GTK
-bin_PROGRAMS = ansvif find_suid ansvif_gtk
+bin_PROGRAMS = ansvif ansvif_gtk
 endif
 if WITH_SYSCALLS
-bin_PROGRAMS = ansvif find_suid syscalls
+bin_PROGRAMS = ansvif syscalls
 endif
 if WITH_TESTCODE
-bin_PROGRAMS = ansvif find_suid generic_buffer_overflow string_format null_pointer
+bin_PROGRAMS = ansvif generic_buffer_overflow string_format null_pointer
 else
-bin_PROGRAMS = ansvif find_suid
+bin_PROGRAMS = ansvif
 endif
 
 noinst_LIBRARIES = libgzstream.a
@@ -35,7 +35,7 @@ ansvif_LDADD = -lestdc++ -lz -L.
 ansvif_LDFLAGS = -I./include/gzstream -I./include/xml_writer -I./src/linux -pthread
 ansvif_CPPFLAGS = -O3 -D __DEBIAN -Wl,--no-as-needed -std=c++11
 endif
-find_suid_SOURCES = src/linux/find_suid.cpp
+#find_suid_SOURCES = src/linux/find_suid.cpp
 #buffer_overflow_SOURCES = src/buffer_overflow.c
 #buffer_overflow_CFLAGS = -ansi -fno-stack-protector -D_GNU_SOURCE -Wno-implicit-function-declarationw
 string_format_SOURCES = src/string_format.c
