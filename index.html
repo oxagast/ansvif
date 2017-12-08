@@ -50,7 +50,7 @@ As the complexity of a system rises, as does the potential for problems within t
 <br>
 </p>
 <p>
-  The fuzzer ansvif is designed to find code bugs by throwing garbage input at programs to see how they react.  This is great for finding bugs, because not every type of input is always handled, and buffers are not always checked, etc.  It also comes in handy when writing (and protecting against), buffer overflow exploitation, as well as string input validation vulnerabilities (the %s bug).
+  The fuzzer ansvif is designed to find code bugs by throwing garbage input at programs to see how they react.  This is great for finding bugs, because not every type of input is always handled, and buffers are not always checked, etc.  It also comes in handy when writing (and protecting against), buffer overflow exploitation, as well as string format vulnerabilities (the %s bug).
   For more information, visit the <a href="https://github.com/oxagast/ansvif/wiki">Wiki on GitHub</a>.
 </p>
 
@@ -120,7 +120,8 @@ Using the example code:
 Useage:
   Important note: Windows users will have to run ansvif.exe from Powershell for it to work!
 
-  $ ./find_suid /usr/bin/ /bin/ /sbin/
+  $ ./tools/find_suid.sh /usr/bin/ /bin/ /sbin/
+  # ./tools/bermise_fuzz.sh nc 127.0.0.1 22 (should be run as root or be able to read /var/log/syslog)
   $ ./ansvif -[tm] [template/manpage] -c /path/to/executable -b buffersize
   $ ./ansvif_gtk -l
   $ ./ansvif_gtk -p /usr/bin/ansvif_gtk
@@ -187,8 +188,10 @@ Options:
   -1 Try to make it fault once, if it doesn't happen, throw error code 64.  Useful for scripting.
   -P Use % to represent binary in fuzz.
   -M Max arguments to use in the fuzz.
-  -y Short for -b 0 and usually only useful with -A or -B
+  -y Short for -b 0 and usually only useful with -A or -B.
   -K Keep going after a crash.
+  -E A command to be run before the fuzzed progarm.
+  -0 No NULL characters in the fuzz.
   -v Verbose.
   -d Debug data.
   -h Shows the help page.
