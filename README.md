@@ -139,9 +139,10 @@ ansvif
   -1 Try to make it fault once, if it doesn't happen, throw error code 64.  Useful for scripting.
   -P Use % to represent binary in fuzz.
   -M Max arguments to use in the fuzz.
-  -y Short for -b 0 and usually only useful with -A or -B
+  -y Short for -b 0 and usually only useful with -A or -B.
   -K Keep fuzzing after a crash in the target.
-  -E A command to be run before the fuzzed progarm
+  -E A command to be run before the fuzzed progarm.
+  -0 No NULL characters in the fuzz.
   -v Verbose.
   -d Debug data.
   -h Shows the help page.
@@ -179,3 +180,4 @@ Syscall fuzzing under linux is under heavy development.
 Thanks to dll999 for syscall fuzzing ideas.
 Thanks to moo from #2600 on 2600net for a few recommendations on the wiki writeup.
 Thanks to god knows how many people on IRC and StackOverflow.
+Thanks to DarkSt0rm for fixing a bug in the Makefile.
