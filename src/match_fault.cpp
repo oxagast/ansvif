@@ -21,7 +21,12 @@
 #include <crypto++/md5.h>
 #endif
 #endif
+#ifdef __unix
 #include "src/version.h"
+#endif
+#ifdef _WIN32
+#include "version.h"
+#endif
 #include <algorithm>
 #include <cstdlib>
 #include <cstring>
@@ -443,9 +448,15 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
         std::size_t found136 = cmd_output.find("CRASHCODE 136");
         std::size_t found159 = cmd_output.find("CRASHCODE 159");
         std::size_t found138 = cmd_output.find("CRASHCODE 138");
+		std::size_t foundW1073741819 = cmd_output.find("CRASHCODE -1073741819");
+        std::size_t foundW1073740791 = cmd_output.find("CRASHCODE -1073740791");
+        std::size_t foundW1073741571 = cmd_output.find("CRASHCODE -1073741571");
+        std::size_t foundW532459699 = cmd_output.find("CRASHCODE -532459699");
 	/*
 	 * Windows codes:
 	 * -1073741819 -1073740791 -1073741571 -532459699
+     * Unix codes:
+	 * 132 134 139 135 136 159 138
 	 */
         std::size_t foundother = cmd_output.find("CRASHCODE " + fault_code);
         if ((found132 != std::string::npos) ||
@@ -455,6 +466,10 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
             (found136 != std::string::npos) ||
             (found159 != std::string::npos) ||
             (found138 != std::string::npos) ||
+			(foundW1073741819 != std::string::npos) ||
+			(foundW1073740791 != std::string::npos) ||
+			(foundW1073741571 != std::string::npos) ||
+			(foundW532459699 != std::string::npos) ||
             (foundother != std::string::npos)) {
           cmd_output = cmd_output.replace(0, 22, "");
 #ifdef __unix__

@@ -9,7 +9,12 @@
 //  (  O )  (/    ( (_ /    \___ \ )(
 //   \__(_/\_\_/\_/\___\_/\_(____/(__)
 
+#ifdef __unix
 #include "src/version.h"
+#endif
+#ifdef _WIN32
+#include "version.h"
+#endif
 #include <cstdlib>
 #include <fstream>
 #include <iostream>

@@ -19,7 +19,12 @@
 #ifdef __unix__
 #include <sys/wait.h>
 #endif
+#ifdef __unix
 #include "src/version.h"
+#endif
+#ifdef _WIN32
+#include "version.h"
+#endif
 #include <thread>
 #include <unistd.h>
 #include <vector>

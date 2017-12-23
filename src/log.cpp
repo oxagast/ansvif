@@ -1,5 +1,10 @@
 #include "../include/xmlwriter/xml_writer.hpp"
+#ifdef __unix
 #include "src/version.h"
+#endif
+#ifdef _WIN32
+#include "version.h"
+#endif
 #include <cstdlib>
 #include <cstring>
 #include <fstream>
@@ -99,6 +104,8 @@ void log_hang(std::string write_file_n, std::string out_str_p,
   xml_output.open(output_logfile_pid.c_str());
 #endif
 #ifdef _WIN32
+  std::string output_logfile =
+      write_file_n + ".output." + ".ansvif.log";
   xml_output.open(output_logfile.c_str());
 #endif
   Writer writer(xml_output);
