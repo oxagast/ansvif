@@ -448,10 +448,10 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
         std::size_t found136 = cmd_output.find("CRASHCODE 136");
         std::size_t found159 = cmd_output.find("CRASHCODE 159");
         std::size_t found138 = cmd_output.find("CRASHCODE 138");
-		std::size_t foundW1073741819 = cmd_output.find("CRASHCODE -1073741819");
-        std::size_t foundW1073740791 = cmd_output.find("CRASHCODE -1073740791");
-        std::size_t foundW1073741571 = cmd_output.find("CRASHCODE -1073741571");
-        std::size_t foundW532459699 = cmd_output.find("CRASHCODE -532459699");
+		std::size_t foundW1073741819 = cmd_output.find("-1073741819");
+        std::size_t foundW1073740791 = cmd_output.find("-1073740791");
+        std::size_t foundW1073741571 = cmd_output.find("-1073741571");
+        std::size_t foundW532459699 = cmd_output.find("-532459699");
 	/*
 	 * Windows codes:
 	 * -1073741819 -1073740791 -1073741571 -532459699
