@@ -1,0 +1,24 @@
+id ICON "icon.ico"
+1 VERSIONINFO
+FILEVERSION     1,8,1,1
+PRODUCTVERSION  1,0,0,0
+BEGIN
+  BLOCK "StringFileInfo"
+  BEGIN
+    BLOCK "080904E4"
+    BEGIN
+      VALUE "CompanyName", "oxagast"
+      VALUE "FileDescription", "ansvif"
+      VALUE "FileVersion", "1.8.1"
+      VALUE "InternalName", "ansvif"
+      VALUE "LegalCopyright", "GPL2"
+      VALUE "OriginalFilename", "ansvif.exe"
+      VALUE "ProductName", "A Not So Very Intelligent Fuzzer"
+      VALUE "ProductVersion", "1"
+    END
+  END
+  BLOCK "VarFileInfo"
+  BEGIN
+    VALUE "Translation", 0x809, 1252
+  END
+END
