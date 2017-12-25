@@ -49,6 +49,7 @@ $ CXX=$(find / -name 'eg++' 2>/dev/null | grep ports | head -n 1) AUTOCONF_VERSI
 
 Windows binaries are now desgined to be compiled with MinGW-W64 (since we use threading download
 a version of MinGW-W64 g++ with seh).
+You can try compiling after installing MinGW-W64 g++ with seh (only) by clicking on the included make_win.bat script.  If that fails, it is likely due to the environment, so try the below.
 
 (Go to where you installed MinGW-W64 and click mingw-64.bat)
 
