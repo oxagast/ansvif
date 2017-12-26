@@ -55,23 +55,20 @@ get_out_str(std::string env_str, std::string valgrind_str, std::string sys_str,
   }
 #endif
 #ifdef _WIN32
-  if (sys_str != "") {
     if (env_str != "") {
       out_str_p = " (.\\printf.exe \\x" + binstr_to_hex(env_str) + "\") " +
-                  "'" + path_str + " " + always_arg_b + "' (.\\printf.exe \\x" +
+                  "'" + path_str + "' (.\\printf.exe \\x" +
                   binstr_to_hex(sys_str) + ")" + always_arg + " " + fuzz_after +
-                  "; echo $LastExitCode";
+                   " > " + log_prefix + ".output.ansvif.log}); echo $LastExitCode";
     }
     if (env_str == "") {
-      out_str_p = "'" + path_str + " " + always_arg_b + "' (.\\printf.exe \\x" +
+      out_str_p = "'" + path_str + "' (.\\printf.exe \\x" +
                   binstr_to_hex(sys_str) + ") " + always_arg + " " +
-                  fuzz_after + "; echo $LastExitCode";
+                  fuzz_after + " > " + log_prefix + ".output.ansvif.log}); echo $LastExitCode";
     }
-    /* shit for windows compatibility through powershell */
-    out_str = "$(" + env_str + " " + path_str + " " + always_arg_b + " " +
-              sys_str + " " + always_arg + " " + fuzz_after;
-  }
-  out_str = out_str + "); echo $lastexitcode";
+    out_str = "cmd /c powershell -c " + env_str + "Start-Process -FilePath '" + path_str + "'" +
+              " -ArgumentList " + always_arg_b + " " + sys_str + " " + always_arg + " " +
+              fuzz_after + " > " + log_prefix + ".output.ansvif.log -PassThru; echo $LastExitCode";
 #endif
   /* here we declare out_all and put the out_str and out_str_p
    * printf compatible stuff into the vector to be fed back into
@@ -128,24 +125,24 @@ get_out_str_pc(std::string env_str, std::string valgrind_str,
  */
 #endif
 #ifdef _WIN32
-  if (sys_str != "") {
+//  if (sys_str != "") {
     if (env_str != "") {
       out_str_p = " (.\\printf.exe \\x" + binstr_to_hex(env_str) + "\") " +
                   "'" + path_str + "' (.\\printf.exe \\x" +
                   binstr_to_hex(sys_str) + ")" + always_arg + " " + fuzz_after +
-                  "; echo $LastExitCode";
+                   " > " + log_prefix + ".output.ansvif.log; echo $LastExitCode}); echo $LastExitCode";
     }
     if (env_str == "") {
       out_str_p = "'" + path_str + "' (.\\printf.exe \\x" +
                   binstr_to_hex(sys_str) + ") " + always_arg + " " +
-                  fuzz_after + "; echo $LastExitCode";
+                  fuzz_after + " > " + log_prefix + ".output.ansvif.log; echo $LastExitCode}); echo $LastExitCode";
     }
     out_str = "powershell -c " + env_str + "(Start-Job {& '" + path_str + "' " +
               always_arg_b + " " + sys_str + " " + always_arg + " " +
-              fuzz_after;
-  }
-  out_str =
-      out_str + " > " + log_prefix + ".output.ansvif.log; echo $LastExitCode}";
+              fuzz_after + " > " + log_prefix + ".output.ansvif.log}); echo $LastExitCode";
+//  }
+ // out_str =
+ //     out_str + " > " + log_prefix + ".output.ansvif.log; echo $LastExitCode\\})";
 #endif
   std::vector<std::string> out_all;
   out_all.push_back(out_str);

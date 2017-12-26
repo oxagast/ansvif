@@ -75,10 +75,8 @@ FILE *popen2(std::string command, std::string type, int &pid,
   return fdopen(fd[WRITE], "w");
 #endif
 #ifdef _WIN32
-  command = "cmd /c "
-            "C:\\Windows\\SysWOW64\\WindowsPowerShell\\v1.0\\Powershell.exe -v "
-            "5 -c " +
-            command;
+  //command =
+  //          command;
   /* char ps_buffer[128]; */
   FILE *process_pipe;
   /* Run DIR so that it writes its output to a pipe. Open this

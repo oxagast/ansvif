@@ -1,5 +1,7 @@
 @echo off
-FOR /F "tokens=* USEBACKQ" %%F IN (`dir "C:\Program Files\mingw-w64\*posix-seh*" /b /S`) DO ( SET mingw=%%F )
+FOR /F "tokens=* USEBACKQ" %%F IN (`dir "C:\Program Files\mingw-w64\*posix-seh*" /b /S`) DO ( 
+SET mingw=%%F
+)
 set PATH=%mingw%\mingw64\bin;%PATH%
 rem echo %PATH%
 @echo on

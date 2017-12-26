@@ -4,6 +4,7 @@
 *.a
 *.exe
 *.swp
+metadata.res
 ansvif
 faulty
 find_suid

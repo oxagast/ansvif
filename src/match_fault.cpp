@@ -379,6 +379,7 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
 } else {
        used_token.push_back(h_output);
 #endif
+#ifdef __linux
         if (buf_size == 0) {
           out_str = before_command + " " + path_str + " " + always_arg_before +
                     " " + always_arg_after;
@@ -386,14 +387,17 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
                       always_arg_before + " " + always_arg_after;
           if (write_file_n == "") {
             /* incase we are logging don't leave a blank file */
-            out_str = out_str + " >/dev/null 2>&1; echo $?";
-          } else {
+           out_str = out_str + " >/dev/null 2>&1; echo $?";
+  
+        } else {
             /* get the signal here and log */
+
             out_str = out_str + " >" + write_file_n +
                       ".output.ansvif.log 2>&1; echo $?";
           }
         }
 
+#endif
         if (debug == true) {
           /* write ALL the junk to STDOUT since we're in
            * debug mode
@@ -406,6 +410,7 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
          * the fuzz
          */
         if (run_command != "") {
+		  run_command = "powershell " + run_command;
           int run_com_pid;
           FILE *fp = popen2(run_command, "r", run_com_pid, low_lvl_user);
           pclose2(fp, run_com_pid);
@@ -416,7 +421,7 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
          * output and put its contense in 'output'
          */
         int pid;
-        FILE *fp = popen2(out_str, "r", pid, low_lvl_user);
+        FILE *fp = popen2(out_all[0], "r", pid, low_lvl_user);
         char command_out[4096] = {0};
         std::stringstream output;
         while (read(fileno(fp), command_out, sizeof(command_out) - 1) != 0) {
