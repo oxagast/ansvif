@@ -93,7 +93,7 @@ std::vector<std::string> get_flags_man(std::string man_page,
      * then just dump them out on STDOUT and be done with it!
      */
     for (int man_ln = 0; man_ln < opt_vec_size; man_ln++) {
-      std::cout << opt_vec.at(man_ln) << std::endl;
+      std::cout << " " << opt_vec.at(man_ln) << " " << std::endl;
     }
     std::cout << std::endl;
     exit(0);
