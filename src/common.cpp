@@ -44,7 +44,8 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
                std::string always_arg_after, bool never_rand,
                std::string run_command, std::string fault_code, bool single_try,
                bool percent_sign, int static_args, bool, bool keep_going,
-               std::string before_command, bool verbose, bool debug);
+               std::string before_command, std::string prog_name, 
+	       bool verbose, bool debug);
 void help_me(std::string mr_me);
 std::vector<std::string> get_flags_man(std::string man_page,
                                        std::string man_loc, bool verbose,
@@ -92,13 +93,21 @@ bool file_exists(const std::string &filen) {
   return (stat(filen.c_str(), &buf) == 0);
 }
 
-int reaper(int grim, int t_timeout) {
-#ifdef __linux
-  /* run the timer and after the timeout we'll run
+int reaper(int grim, int t_timeout, std::string just_kill_me) {
+#ifdef __unix__
+   /* run the timer and after the timeout we'll run
    * SIGKILL on it (kill -9 equivilant on linux)
    */
+  //std::cout << " pid: " << grim << " timeout " << t_timeout << std::endl;
   sleep(t_timeout);
-  kill(grim, 9);
+  kill(grim, 15);
+  /* if the above doesn't work, we can fall back to piggybacking pkill
+   * if they use -N
+   */
+  if ( just_kill_me != "") {
+    just_kill_me = "pkill " + just_kill_me;
+    system(just_kill_me.c_str());
+  }
   return (0);
 #elif _WIN32
 /* windows doesn't support kill 9 */

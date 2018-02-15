@@ -44,7 +44,8 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
                std::string always_arg_after, bool never_rand,
                std::string run_command, std::string fault_code, bool valgrind,
                bool single_try, bool percent_sign, int static_args,
-               bool keep_going, std::string before_command, bool verbose, bool debug);
+               bool keep_going, std::string before_command, std::string prog_name,
+	       bool verbose, bool debug);
 std::vector<std::string> get_flags_template(std::string filename, bool verbose,
                                             bool debug);
 std::vector<std::string> get_other(std::string filename, bool verbose,
@@ -120,6 +121,7 @@ int main(int argc, char *argv[]) { // initialize our main
    * can supply a fault code to the program that it should
    * catch as well as the other default ones.
    */
+  std::string prog_name = "";
   std::string t_timeout = "3";
   std::string man_loc = "8";
   std::string num_threads = "2";
@@ -182,7 +184,7 @@ int main(int argc, char *argv[]) { // initialize our main
   signal(SIGINT, sig_handler);
   /* now we can start grabbing all the options! */
   while ((opt = getopt(argc, argv,
-                       "m:p:t:e:c:f:o:b:s:x:R:A:F:E:S:L:W:B:M:C:y1hrzvdDnVPKi0")) !=
+                       "m:p:t:e:c:f:o:b:s:x:R:A:F:E:S:L:W:B:M:C:N:y1hrzvdDnVPKi0")) !=
          -1) {
     switch (opt) {
     case 'v':
@@ -292,6 +294,9 @@ int main(int argc, char *argv[]) { // initialize our main
     case '0':
       strip_shell = strip_shell + "\\x00";
       break;
+    case 'N':
+      prog_name = optarg;
+      break;
     default:
       help_me(argv[0]);
     }
@@ -361,7 +366,7 @@ int main(int argc, char *argv[]) { // initialize our main
           other_sep, thread_timeout_int, low_lvl_user, junk_file_of_args,
           always_arg_before, always_arg_after, never_rand, run_command,
           fault_code, valgrind, single_try, percent_sign, static_args,
-          keep_going, before_command, verbose, debug));
+          keep_going, before_command, prog_name, verbose, debug));
     /* thrift shop */
     for (auto &all_thread : threads)
       all_thread.join();
@@ -376,7 +381,7 @@ int main(int argc, char *argv[]) { // initialize our main
               other_sep, thread_timeout_int, low_lvl_user, junk_file_of_args,
               always_arg_before, always_arg_after, never_rand, run_command,
               fault_code, valgrind, single_try, percent_sign, static_args,
-              keep_going, before_command, verbose, debug);
+              keep_going, before_command, prog_name, verbose, debug);
   }
   /* exit cleanly! */
   exit(0);
