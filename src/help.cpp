@@ -109,6 +109,7 @@ void help_me(std::string mr_me) {
       << " -K           Keep going after a crash." << std::endl
       << " -E \"cmd\"     A command to be run before the fuzzed progarm." << std::endl
       << " -0           No NULL in fuzz." << std::endl
+      << " -N \"prog\"    Shorthand for -R \"pkill prog\"" << std::endl
       << " -v           Be verbose." << std::endl
       << " -d           Debug data." << std::endl
       << " -i           Prints version information." << std::endl;

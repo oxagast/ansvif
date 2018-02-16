@@ -145,6 +145,7 @@ ansvif
   -K Keep fuzzing after a crash in the target.
   -E A command to be run before the fuzzed progarm.
   -0 No NULL characters in the fuzz.
+  -N Shorthand for -R "pkill prog".
   -v Verbose.
   -d Debug data.
   -h Shows the help page.
