@@ -46,8 +46,10 @@ std::vector<std::string> get_flags_man(std::string man_page,
     std::smatch opt_part_1;
     std::regex start_of_opt_2("^\\.Op Fl (\\w+) Ar.*");
     std::smatch opt_part_2;
-    std::regex start_of_opt_3("^\\\\fB(-.*)\\\\fB.*");
+    std::regex start_of_opt_3("^\\\\fB(-\\w+)( \\\\fI.*)*.*\\\\fB.*");
     std::smatch opt_part_3;
+    std::regex start_of_opt_4("^\\\\fB(-\\w+)\\\\fR");
+    std::smatch opt_part_4;
     while (std::getline(in, gzline)) {
       /* if we've got a manpage, then we match the stuff
        * out of the regex as we're ungzing and putting the
@@ -67,6 +69,11 @@ std::vector<std::string> get_flags_man(std::string man_page,
         std::string opt_3 = opt_part_3[1];
         opt_vec.push_back(opt_3);
       }
+      if (std::regex_match(gzline, opt_part_4, start_of_opt_4)) {
+        std::string opt_4 = opt_part_4[1];
+        opt_vec.push_back(opt_4);
+      }
+
     }
   } else {
     /* either they didn't have the right location or the command
