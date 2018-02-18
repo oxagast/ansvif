@@ -46,7 +46,7 @@ if test "$WITH_GTK" = "false"; then
 else
     AC_DEFINE([WITH_GTK], [], ["build GTK module"])
     AC_MSG_NOTICE([GTK enabled, we will try to compile them])
-    PKG_CHECK_MODULES(GTK, gtk+-2.0 >= 2.0)
+    PKG_CHECK_MODULES([GTK], [gtk+-2.0])
 fi
 
 AC_ARG_ENABLE(testcode,
