@@ -221,6 +221,76 @@ case 0x13 :
     junk = opt_other_str;
 break;
 }
+case 0x14 :
+{
+    junk = "-32768";
+break;
+}
+case 0x15 :
+{
+    junk = "32767";
+break;
+}
+case 0x16 :
+{
+    junk = "-2147483648";
+break;
+}
+case 0x17 :
+{
+    junk = "2147483647";
+break;
+}
+case 0x18 :
+{
+    junk = "-9223372036854775808";
+break;
+}
+case 0x19 :
+{
+    junk = "9223372036854775807";
+break;
+}
+case 0x1A :
+{
+    junk = "65535";
+break;
+}
+case 0x1B :
+{
+    junk = "65536";
+break;
+}
+case 0x1C :
+{
+    junk = "4294967295";
+break;
+}
+case 0x1D :
+{
+    junk = "18446744073709551615";
+break;
+}
+case 0x1E :
+{
+    junk = "18446744073709551616";
+break;
+}
+case 0x1F :
+{
+    junk = "127";
+break;
+}
+case 0x20 :
+{
+    junk = "255";
+break;
+}
+case 0x21 :
+{
+    junk = "256";
+    break;
+}
 default :
 return ("OOR");
 }
