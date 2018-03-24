@@ -48,57 +48,80 @@ std::string trash_generator(int trash, int buf, std::string user_junk,
   std::string junk = "";
   std::string hex_stuff;
   int trash_num;
-  if (trash == 0) {
+
+switch(trash) {
+  case 0x00 :
+{
     for (trash_num = 0; trash_num < buf; trash_num++) {
       junk = "A" + junk;
     }
-  }
-  if (trash == 1) {
-    junk = "-1";
-  }
-  if (trash == 2) {
-    junk = "1";
-  }
-  if (trash == 3) {
-    junk = "0";
-  }
-  if (trash == 4) {
-    junk = "2";
-  }
-  if (trash == 5) {
-    int hex_null_i = 0x00;
-    std::stringstream hex_null_ss;
-    hex_null_ss << hex_null_i;
-    junk = hex_null_ss.str();
-  }
-  if (trash == 6) {
-    for (trash_num = 0; trash_num < buf / 2; trash_num++) {
-      junk = "\%s" + junk;
-    }
-  }
-  if (trash == 7) {
-    for (trash_num = 0; trash_num < buf / 2; trash_num++) {
-      junk = "\%n" + junk;
-    }
-  }
-  if (never_rand == false) {
-    if (trash == 8) {
-      for (trash_num = 0; trash_num < buf; trash_num++) {
-        junk = junk += fortune_cookie();
-      }
-    }
-  }
-  if (trash == 9) { // front
+      break;
+}
+  case 0x01 :
+{
+     junk = "-1";
+     break;
+}
+  case 0x02 :
+{
+     junk = "1";
+     break;
+}
+  case 0x03 :
+{
+     junk = "0";
+     break;
+}
+  case 0x040 :
+{
+     junk = "2";
+     break;
+}
+  case 0x05 : 
+{
+     std::stringstream hex_null_ss;
+     hex_null_ss << 0x00;
+     junk = hex_null_ss.str();
+     break;
+}
+  case 0x06 :
+{
+     for (trash_num = 0; trash_num < buf / 2; trash_num++) {
+       junk = "\%s" + junk;
+     }
+     break;
+}
+  case 0x07 :
+{
+     for (trash_num = 0; trash_num < buf / 2; trash_num++) {
+       junk = "\%n" + junk;
+     }
+break;
+}
+  case 0x08 :
+{
+     if (never_rand == false) {
+       for (trash_num = 0; trash_num < buf; trash_num++) {
+         junk = junk += fortune_cookie();
+       }
+     }
+break;
+}
+   case 0x09 :
+{
     for (trash_num = 0; trash_num < buf; trash_num++) {
       junk = "A" + junk;
     }
     junk = user_junk + junk;
     if (buf - user_junk.length() < junk.size())
       junk = junk.substr(0, buf);
-    else
+    else {
       return ("OOR");
-  }
-  if (trash == 10) {
+}
+break;
+}
+case 0x0A :
+{
     for (trash_num = 0; trash_num < buf / 2; trash_num++) {
       junk = "\%s" + junk;
     }
@@ -107,9 +130,11 @@ std::string trash_generator(int trash, int buf, std::string user_junk,
       junk = junk.substr(0, buf);
     else
       return ("OOR");
-  }
+break;
+}
+case 0x0B :
+{
   if (never_rand == false) {
-    if (trash == 11) {
       for (trash_num = 0; trash_num < buf; trash_num++) {
         junk = junk += fortune_cookie();
       }
@@ -118,9 +143,11 @@ std::string trash_generator(int trash, int buf, std::string user_junk,
         junk = junk.substr(0, buf);
       else
         return ("OOR");
-    }
-  }
-  if (trash == 12) {
+}
+break;
+}
+case 0x0C :
+{
     for (trash_num = 0; trash_num < buf; trash_num++) {
       junk = "A" + junk;
     }
@@ -129,8 +156,10 @@ std::string trash_generator(int trash, int buf, std::string user_junk,
       junk = junk.substr(junk.length() - buf);
     else
       return ("OOR");
-  }
-  if (trash == 13) {
+break;
+}
+case 0x0D :
+{
     for (trash_num = 0; trash_num < buf / 2; trash_num++) {
       junk = "\%s" + junk;
     }
@@ -139,9 +168,11 @@ std::string trash_generator(int trash, int buf, std::string user_junk,
       junk = junk.substr(junk.length() - buf);
     else
       return ("OOR");
-  }
+break;
+}
+case 0x0E :
+{
   if (never_rand == false) {
-    if (trash == 14) {
       for (trash_num = 0; trash_num < buf; trash_num++) {
         junk = junk += fortune_cookie();
       }
@@ -151,8 +182,10 @@ std::string trash_generator(int trash, int buf, std::string user_junk,
       else
         return ("OOR");
     }
-  }
-  if (trash == 15) {
+break;
+}
+case 0x0F :
+{
     for (trash_num = 0; trash_num < buf / 2; trash_num++) {
       junk = "\%n" + junk;
     }
@@ -161,24 +194,37 @@ std::string trash_generator(int trash, int buf, std::string user_junk,
       junk = junk.substr(junk.length() - buf);
     else
       return ("OOR");
-  }
-  if (trash == 16) {
+break;
+}
+case 0x10 :
+{
     std::stringstream int_trash;
     int_trash << rand_me_plz(0, 9999);
     junk = int_trash.str();
-  }
-  if (trash == 17) {
+break;
+}
+case 0x11 :
+{
     std::stringstream int_trash, float_trash;
     int_trash << rand_me_plz(0, 9999);
     float_trash << rand_me_plz(0, 9999);
     junk = int_trash.str() + "." + float_trash.str();
-  }
-  if (trash == 18) {
+break;
+}
+case 0x12 :
+{
     junk = "\"\"";
-  }
-  if (trash == 19) {
+}
+break;
+case 0x13 :
+{
     junk = opt_other_str;
-  }
+break;
+}
+default :
+return ("OOR");
+}
+ 
   /* return the junk to put in between the args */
   return (junk);
 }
