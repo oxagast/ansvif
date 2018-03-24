@@ -52,7 +52,7 @@ void log_head(std::string write_file_n, std::string path_str,
               std::string cmd_output, std::string out_str_p,
               std::string out_str, int pid);
 std::string remove_chars(const std::string &source, const std::string &chars);
-int reaper(int grim, int t_timeout);
+int reaper(int grim, int t_timeout, std::string prog_name);
 FILE *popen2(std::string command, std::string type, int &pid,
              std::string low_lvl_user);
 int pclose2(FILE *fp, pid_t pid);
@@ -85,8 +85,8 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
                std::string always_arg_after, bool never_rand,
                std::string run_command, std::string fault_code, bool valgrind,
                bool single_try, bool percent_sign, int static_args,
-               bool keep_going, std::string before_command, bool verbose,
-               bool debug) {
+               bool keep_going, std::string before_command, std::string prog_name,
+	       bool verbose, bool debug) {
   bool segged = false;
   std::vector<std::string> used_token;
   std::string valgrind_str;
@@ -424,7 +424,15 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
          */
         int pid;
         FILE *fp = popen2(out_all[0], "r", pid, low_lvl_user);
-        char command_out[4096] = {0};
+/* this takes care of killing off the child if it takes
+ *  * too long
+ *   */
+#ifdef __unix__
+	std::thread reaper_thread(reaper, pid, t_timeout, prog_name);
+        /* takes care of the reaper thread */
+        reaper_thread.detach();
+#endif
+ 	char command_out[4096] = {0};
         std::stringstream output;
         while (read(fileno(fp), command_out, sizeof(command_out) - 1) != 0) {
           output << std::string(command_out);
@@ -433,14 +441,6 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
         }
         /* close out the command cleanly */
         pclose2(fp, pid);
-/* this takes care of killing off the child if it takes
- * too long
- */
-#ifdef __unix__
-        std::thread reaper_thread(reaper, pid, t_timeout);
-        /* takes care of the reaper thread */
-        reaper_thread.detach();
-#endif
         /* our output will be stored here! */
         std::string cmd_output = output.str();
         if (write_file_n != "") {

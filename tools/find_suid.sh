@@ -12,4 +12,4 @@ if [ $# -eq 0 ]
     echo " $0 /bin /usr/bin";
   exit 0;
 fi;
-find $@ -perm /6000 2>/dev/null
+find $@ -type f -perm /6000 2>/dev/null
