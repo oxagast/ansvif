@@ -191,7 +191,7 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
                 " ");
             if (oscar_env != "OOR") {
               /* making sure it's not out of range */
-              env_str = env_str + *junk_opt_env + oscar_env + " ";
+              env_str = env_str + *junk_opt_env + "'" + oscar_env + "' ";
             }
           }
 
@@ -207,11 +207,11 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
             if (oscar != "OOR") {
               sep_type = rand_me_plz(0, 1);
               if (sep_type == 0) {
-                sys_str = " " + sys_str + *junk_opt + " " + oscar + " ";
+                sys_str = " " + sys_str + *junk_opt + " '" + oscar + "' ";
               }
               if (sep_type == 1) {
                 sys_str =
-                    sys_str + " " + *junk_opt + other_sep + oscar + other_sep;
+                    sys_str + " " + *junk_opt + other_sep + "'" + oscar + "'" + other_sep;
               }
             }
           }
@@ -227,7 +227,7 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
                 " ");
             if (oscar_env != "OOR") {
               /* really really repetative */
-              env_str = env_str + *junk_opt_env + oscar_env + " ";
+              env_str = env_str + *junk_opt_env + "'" + oscar_env + "' ";
             }
           }
           for (std::vector<std::string>::const_iterator junk_opt =
@@ -244,12 +244,12 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
               sep_type = rand_me_plz(0, 1);
               if (sep_type == 0) {
                 /* space */
-                sys_str = " " + sys_str + *junk_opt + " " + oscar + " ";
+                sys_str = " " + sys_str + *junk_opt + " '" + oscar + "' ";
               }
               if (sep_type == 1) {
                 /* some other seperator like a comma or w/e */
-                sys_str = " " + sys_str + " " + *junk_opt + other_sep + oscar +
-                          other_sep;
+                sys_str = " " + sys_str + " " + *junk_opt + other_sep + "'" + oscar +
+                          "' " + other_sep;
               }
             }
           }
@@ -284,11 +284,11 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
             if (oscar != "OOR") {
               sep_type = rand_me_plz(0, 1);
               if (sep_type == 0) {
-                sys_str = " " + sys_str + *junk_opt + " " + oscar + " ";
+                sys_str = " " + sys_str + *junk_opt + " '" + oscar + "' ";
               }
               if (sep_type == 1) {
                 sys_str =
-                    sys_str + " " + *junk_opt + other_sep + oscar + other_sep;
+                    sys_str + " " + *junk_opt + other_sep + "'" + oscar + "'" + other_sep;
               }
             }
           }
@@ -301,7 +301,7 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
                              buf_size, "", is_other, never_rand),
                 " ");
             if (oscar_env != "OOR") {
-              env_str = env_str + *junk_opt_env + oscar_env + " ";
+              env_str = env_str + *junk_opt_env + "'" + oscar_env + "' ";
             }
           }
 
@@ -316,7 +316,7 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
             if (oscar != "OOR") {
               sep_type = rand_me_plz(0, 1);
               if (sep_type == 0) {
-                sys_str = " " + sys_str + *junk_opt + " " + oscar + " ";
+                sys_str = " " + sys_str + *junk_opt + " '" + oscar + "' ";
               }
               if (sep_type == 1) {
                 sys_str =
