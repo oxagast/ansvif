@@ -22,11 +22,14 @@ aclocal && autoconf && automake -a
 %configure
 %make_build
 
-
 %install
 rm -rf $RPM_BUILD_ROOT
 mkdir -p %{buildroot}/%{_mandir}/man1
-cp man/ansvif.1.gz %{buildroot}/%{_mandir}/man1
+cp man/*gz %{buildroot}/%{_mandir}/man1
+mkdir -p %{buildroot}/%{_bindir}
+cp tools/find_suid.sh %{buildroot}/usr/bin/find_suid
+mkdir -p %{buildroot}/usr/share/ansvif/examples
+cp examples/all examples/specific examples/biglist %{buildroot}/usr/share/ansvif/examples -r
 %make_install
 
 
@@ -34,9 +37,14 @@ cp man/ansvif.1.gz %{buildroot}/%{_mandir}/man1
 %files
 %license LICENSE
 %{_mandir}/man1/ansvif.1.gz
+%{_mandir}/man1/find_suid.1.gz
 %{_bindir}/ansvif
 %{_bindir}/find_suid
+%{_bindir}/ansvif_gtk
+/usr/share/ansvif/examples/biglist
+/usr/share/ansvif/examples/all
+/usr/share/ansvif/examples/specific/
 
 %changelog
-* Fri Oct 24 2016 Marshall Lee Whittaker
+* Fri Nov 18 2016 Marshall Lee Whittaker
 - 
