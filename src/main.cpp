@@ -54,7 +54,7 @@ void write_seg(std::string filename, std::string seg_line);
 
 /* globals to be passed to sig_handler because its easier this way */
 std::string write_file_n, junk_file_of_args;
-std::string ver = "1.9"; /* ansvif version */
+std::string ver = "1.9.1"; /* ansvif version */
 void sig_handler(int sig) {
   /* flush the screen buffer  then sleep before printing
    * the message about killing threads
@@ -129,7 +129,7 @@ int main(int argc, char *argv[]) { // initialize our main
   std::string mp;
   std::string template_file;
 #ifdef __unix__
-  std::string strip_shell = "\"`<>\n|&\[]\()\{}:;\\'$";
+  std::string strip_shell = "\"`<>\n|&\[]\()\{}:;$";
 #endif
 #ifdef _WIN32
   std::string strip_shell = "[]:|<>+;=.?\n\r\\0";

@@ -326,5 +326,5 @@ std::string make_garbage(int trash, int buf, std::string opt_other_str,
     }
   }
   /* return all the junk the trash generator made */
-  return (all_junk);
+  return ("'" + all_junk + "'");
 }
