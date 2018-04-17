@@ -28,9 +28,11 @@
 #include <thread>
 #include <unistd.h>
 #include <vector>
+#include <sys/types.h>
 
 int toint(std::string ints, std::string my_prog);
 void help_me(std::string mr_me);
+bool file_exists(const std::string &filen);
 std::vector<std::string> get_flags_man(std::string man_page,
                                        std::string man_loc, bool verbose,
                                        bool debug, bool dump_opts);
@@ -86,7 +88,7 @@ void version() {
 
 int main(int argc, char *argv[]) { // initialize our main
   /* initialize all our variables for startup! */
-  /* how many options? */
+  /* how many options? */    
   int opt;
   int thread_count_def = 2;
   int thread_timeout_def = 3;
@@ -315,21 +317,21 @@ int main(int argc, char *argv[]) { // initialize our main
     /* send them to help because you can't have a manpage and
      * a template at the same time
      */
+    std::cerr << "Don't specifiy a manpage and template at the same time" <<
+	    std::endl;
     help_me(argv[0]);
   } else if ((man_opt == false) && (template_opt == false)) {
     /* can't fuzz if we don't have a template or manpage as
      * a starting point, if you want nothing just touch a file
      * and use it as a template
      */
+    std::cerr << "You didn't specy a manpage or template." << std::endl;
     help_me(argv[0]);
-  } else if (path_str == "") {
+  } if (file_exists(path_str)==false) {
     /* if they didn't specify a command path then error out */
-    help_me(argv[0]);
-  } else {
-    /* like if the option they supplied doesn't exist... */
-    help_me(argv[0]);
-  }
-  if ((junk_file_of_args != "") && (is_other == false)) {
+          std::cerr << "No command at path to fuzz..." << std::endl;
+	  help_me(argv[0]);
+  } if ((junk_file_of_args != "") && (is_other == false)) {
     /* this will fix the -F no -x bug */
     help_me(argv[0]);
   }
@@ -338,12 +340,16 @@ int main(int argc, char *argv[]) { // initialize our main
    * otherwise we'll turn it into type int
    */
   if ((buf_size_int == 0) && (buf_size != "")) {
-    help_me(argv[0]);
+      	  help_me(argv[0]);
   }
   if ((buf_size_int == -1) && (buf_size != "")) {
     buf_size_int = toint(buf_size, argv[0]);
   }
   if (buf_size_int == -1) {
+    help_me(argv[0]);
+  }
+  if (buf_size_int < 0) {
+    std::cerr << "Buffer must be a positive integer." << std::endl;
     help_me(argv[0]);
   }
   /* make sure the thread count is an integar the same way

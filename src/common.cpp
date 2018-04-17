@@ -135,7 +135,7 @@ std::vector<std::string> get_flags_template(std::string filename, bool verbose,
      * available for some reason
      */
     std::cerr << "Could not open template file..." << std::endl;
-    exit(1);
+    help_me("ansvif");
   }
   return (opt_vec); // return the vector with the options
 }
@@ -153,7 +153,7 @@ std::vector<std::string> get_other(std::string filename, bool verbose,
     other_file.close();
   } else {
     std::cerr << "Could not open template file..." << std::endl;
-    exit(1);
+    help_me("ansvif");
   }
   return (other_vec);
 }
