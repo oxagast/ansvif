@@ -204,7 +204,7 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
                              opt_other.at(rand_me_plz(0, opt_other.size() - 1)),
                              is_other, never_rand),
                              strip_shell);
-            if (oscar != "OOR") {
+            if (oscar != "'OOR'") {
               sep_type = rand_me_plz(0, 1);
               if (sep_type == 0) {
                 sys_str = sys_str + *junk_opt + " " + oscar;
