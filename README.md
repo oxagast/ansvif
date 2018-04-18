@@ -143,7 +143,7 @@ ansvif
   -M Max arguments to use in the fuzz.
   -y Short for -b 0 and usually only useful with -A or -B.
   -K Keep fuzzing after a crash in the target.
-  -E A command to be run before the fuzzed progarm.
+  -E A command to be run before the fuzzed program.
   -0 No NULL characters in the fuzz.
   -N Shorthand for -R "pkill prog".
   -v Verbose.
