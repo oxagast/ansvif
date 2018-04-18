@@ -1,5 +1,5 @@
 Name:           ansvif
-Version:        1.9
+Version:        1.9.1
 Release:        1%{?dist}
 Summary:        A Not So Very Intelligent Fuzzer
 
@@ -46,5 +46,5 @@ cp examples/all examples/specific examples/biglist %{buildroot}/usr/share/ansvif
 /usr/share/ansvif/examples/specific/
 
 %changelog
-* Fri Nov 18 2016 Marshall Lee Whittaker
+* Tue Apr 17 2018 Marshall Lee Whittaker
 - 
