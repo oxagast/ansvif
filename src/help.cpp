@@ -107,7 +107,7 @@ void help_me(std::string mr_me) {
       << " -y           Short for -b 0 and usually only useful with -A or -B"
       << std::endl
       << " -K           Keep going after a crash." << std::endl
-      << " -E \"cmd\"     A command to be run before the fuzzed progarm." << std::endl
+      << " -E \"cmd\"     A command to be run before the fuzzed program." << std::endl
       << " -0           No NULL in fuzz." << std::endl
       << " -N \"prog\"    Shorthand for -R \"pkill prog\"" << std::endl
       << " -v           Be verbose." << std::endl
