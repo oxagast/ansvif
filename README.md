@@ -149,6 +149,7 @@ ansvif
   -v Verbose.
   -d Debug data.
   -h Shows the help page.
+  -i Prints version information.
 ```
 ansvif_gtk
 
