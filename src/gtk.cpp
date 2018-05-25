@@ -42,6 +42,7 @@ std::string before_specifier;
 std::string after_specifier;
 std::string no_null_s;
 std::string runcommand;
+std::string runcommanda;
 GtkWidget *caller_box;
 GtkTextBuffer *buffer;
 GtkTextIter iter;
@@ -71,6 +72,9 @@ GtkWidget *non_null_label;
 GtkWidget *runcom_label;
 GtkWidget *set_run_command;
 GtkWidget *runcom;
+GtkWidget *runcom_label_a;
+GtkWidget *set_run_command_a;
+GtkWidget *runcoma;
 std::string ver = " -i ";
 std::string ansvif_loc = "ansvif ";
 
@@ -91,7 +95,7 @@ std::string ansvif_str() {
   ansvif_call = ansvif_loc + ver + random_data + random_buffer_s + no_null_s + buffer_size +
                 before_specifier + after_specifier + log_file + maximum_args + 
                 other_seperator + binary_file + environment_file + 
-                template_file + crash_code + other_options_file + runcommand;
+                template_file + crash_code + other_options_file + runcommand + runcommanda;
   /* damn son */
   return (ansvif_call);
 }
@@ -99,7 +103,6 @@ std::string ansvif_str() {
 static void enter_callback(GtkWidget *widget, GtkWidget *caller_box) {
   const gchar *entry_text;
   entry_text = gtk_entry_get_text(GTK_ENTRY(caller_box));
-//  gtk_entry_set_text(GTK_ENTRY(caller_box), ansvif_str().c_str());
   gtk_entry_set_text(GTK_ENTRY(caller_box), entry_text);
 }
 
@@ -114,6 +117,13 @@ static void set_run_command_callback(GtkWidget *widget, GtkWidget *runcom) {
   const gchar *runcomt;
   runcomt = gtk_entry_get_text(GTK_ENTRY(set_run_command));
   runcommand = " -R '" + std::string(runcomt) + "'";
+  gtk_entry_set_text(GTK_ENTRY(caller_box), ansvif_str().c_str());
+}
+
+static void set_run_command_a_callback(GtkWidget *widget, GtkWidget *runcoma) {
+  const gchar *runcomat;
+  runcomat = gtk_entry_get_text(GTK_ENTRY(set_run_command_a));
+  runcommanda = " -E '" + std::string(runcomat) + "'";
   gtk_entry_set_text(GTK_ENTRY(caller_box), ansvif_str().c_str());
 }
 
@@ -438,7 +448,6 @@ int main(int argc, char *argv[]) {
   gtk_fixed_put(GTK_FIXED(opters), set_buf_size, 630, 50);
   b_size_label = gtk_label_new("Buffer Size:");
   gtk_label_set_justify(GTK_LABEL(b_size_label), GTK_JUSTIFY_LEFT);
-  //gtk_container_add(GTK_CONTAINER(opters), b_size_label);
   gtk_fixed_put(GTK_FIXED(opters), b_size_label, 540, 55);
   gtk_widget_show(b_size_label);
   gtk_widget_show(set_buf_size);
@@ -453,7 +462,6 @@ int main(int argc, char *argv[]) {
   gtk_fixed_put(GTK_FIXED(opters), set_exit_code, 630, 80);
   exit_code_label = gtk_label_new("Exit Code:");
   gtk_label_set_justify(GTK_LABEL(exit_code_label), GTK_JUSTIFY_LEFT);
-  //  gtk_container_add(GTK_CONTAINER(opters), exit_code_label);
   gtk_fixed_put(GTK_FIXED(opters), exit_code_label, 540, 85);
   gtk_widget_show(exit_code_label);
   gtk_widget_show(set_exit_code);
@@ -482,6 +490,17 @@ int main(int argc, char *argv[]) {
   gtk_fixed_put(GTK_FIXED(opters), runcom_label, 540, 175);
   gtk_widget_show(runcom_label);
   gtk_widget_show(set_run_command);
+  /* Run command after */
+  set_run_command_a = gtk_entry_new();
+  gtk_widget_set_size_request(GTK_WIDGET(set_run_command_a), 50, 25);
+  g_signal_connect(set_run_command_a, "activate", G_CALLBACK((gpointer)set_run_command_a_callback),
+                   set_run_command_a);
+  gtk_fixed_put(GTK_FIXED(opters), set_run_command_a, 630, 200);
+  runcom_label_a = gtk_label_new("Run Before:");
+  gtk_label_set_justify(GTK_LABEL(runcom_label_a), GTK_JUSTIFY_LEFT);
+  gtk_fixed_put(GTK_FIXED(opters), runcom_label_a, 540, 205);
+  gtk_widget_show(runcom_label_a);
+  gtk_widget_show(set_run_command_a);
   /*  Make our template file selection */
   template_sel = gtk_button_new_with_label("Select Template");
   g_signal_connect(GTK_OBJECT(template_sel), "clicked",
@@ -526,7 +545,6 @@ int main(int argc, char *argv[]) {
   tmp_pos = GTK_ENTRY(environ_sel_t)->text_length;
   gtk_fixed_put(GTK_FIXED(opters), environ_sel_t, 200, 110);
   gtk_widget_show(environ_sel_t);
-
 /* Make our fuzz log */
   log_sel = gtk_button_new_with_label("Select Log File");
   g_signal_connect(GTK_OBJECT(log_sel), "clicked", G_CALLBACK((gpointer)log_outfile),
@@ -550,22 +568,9 @@ int main(int argc, char *argv[]) {
   gtk_widget_set_size_request(GTK_WIDGET(set_before), 330, 25);
   before_label = gtk_label_new("Before the fuzz:");
   gtk_label_set_justify(GTK_LABEL(before_label), GTK_JUSTIFY_LEFT);
-  //gtk_container_add(GTK_CONTAINER(opters), before_label);
   gtk_fixed_put(GTK_FIXED(opters), before_label, 30, 270);
   gtk_widget_show(before_label);
   gtk_widget_show(set_before);
-  /* After the other fuzz stuff */
-  set_after = gtk_entry_new();
-  g_signal_connect(set_after, "activate", G_CALLBACK((gpointer)set_after_callback),
-                   set_after);
-  tmp_pos = GTK_ENTRY(set_after)->text_length;
-  gtk_fixed_put(GTK_FIXED(opters), set_after, 200, 290);
-  gtk_widget_set_size_request(GTK_WIDGET(set_after), 330, 25);
-  after_label = gtk_label_new("After the fuzz:");
-  gtk_label_set_justify(GTK_LABEL(after_label), GTK_JUSTIFY_LEFT);
-  gtk_fixed_put(GTK_FIXED(opters), after_label, 30, 295);
-  gtk_widget_show(after_label);
-  gtk_widget_show(set_after);
   /* Other options template */
   oo_sel = gtk_button_new_with_label("Select Other Options");
   g_signal_connect(GTK_OBJECT(oo_sel), "clicked", G_CALLBACK((gpointer)select_oo),
@@ -621,9 +626,7 @@ int main(int argc, char *argv[]) {
   /* ansvif output goes here */
   ansvif_out = gtk_label_new("ansvif output:");
   gtk_label_set_justify(GTK_LABEL(ansvif_out), GTK_JUSTIFY_LEFT);
-  //gtk_container_add(GTK_CONTAINER(opters), ansvif_out);
   gtk_fixed_put(GTK_FIXED(opters), ansvif_out, 30, 500);
-  //gtk_entry_set_text(GTK_ENTRY(ansvif_out), "./ansvif -i");
   gtk_widget_show(ansvif_out);
   text = create_text();
   gtk_fixed_put(GTK_FIXED(opters), text, 30, 540);
