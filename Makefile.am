@@ -31,7 +31,7 @@ ansvif_LDADD = -lstdc++ -lz -L.
 ansvif_LDFLAGS = -I./include/gzstream -I./include/xml_writer -I./src/linux -pthread
 ansvif_CPPFLAGS = -O3 -D __DEBIAN -D __FREEBSD -Wl,--no-as-needed -std=c++11
 else
-ansvif_LDADD = -lestdc++ -lz -L.
+ansvif_LDADD = -lstdc++ -lz -L.
 ansvif_LDFLAGS = -I./include/gzstream -I./include/xml_writer -I./src/linux -pthread
 ansvif_CPPFLAGS = -O3 -D __DEBIAN -Wl,--no-as-needed -std=c++11
 endif

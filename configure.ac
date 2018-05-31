@@ -65,12 +65,12 @@ AC_MSG_NOTICE([Test Code, we will try to compile them])
 fi
 
 
-AM_CONDITIONAL(OS_IS_REDHAT, [ test `test -e /etc/os-release; echo $?` -eq "0" ])
+AM_CONDITIONAL(OS_IS_REDHAT, [ test `grep "Fedora" /etc/os-release | wc -l` -gt "0" ])
 if test "$OS_IS_REDHAT" = "1"; then
     AC_DEFINE([__REDHAT], [], ["build for RedHat"])
     AC_MSG_NOTICE([trying to build for a RedHat based system])
 fi
-AM_CONDITIONAL(OS_IS_DEBIAN, [ test `test -e /etc/debian-version; echo $?` -eq "0" ])
+AM_CONDITIONAL(OS_IS_DEBIAN, [ test `grep "Debian" /etc/os-release | wc -l` -eq "0" ])
 if test "$OS_IS_DEBIAN" = "1"; then
     AC_DEFINE([__DEBIAN], [], ["build for Debian"])
     AC_MSG_NOTICE([trying to build for a Debian based system])

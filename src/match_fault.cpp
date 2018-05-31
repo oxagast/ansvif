@@ -363,10 +363,19 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
        * we've already tried over and over, this
        * speeds things up quite a bit
        */
+#ifdef __REDHAT
       CryptoPP::byte digest[CryptoPP::Weak::MD5::DIGESTSIZE];
+#else
+      byte digest[CryptoPP::Weak::MD5::DIGESTSIZE];
+#endif
       CryptoPP::Weak::MD5 hash;
+#ifdef __REDHAT
       hash.CalculateDigest(digest, (const CryptoPP::byte *)out_str.c_str(),
                            out_str.length());
+#else
+      hash.CalculateDigest(digest, (const byte *)out_str.c_str(),
+		                                 out_str.length());
+#endif
       CryptoPP::HexEncoder encoder;
       std::string h_output;
       encoder.Attach(new CryptoPP::StringSink(h_output));

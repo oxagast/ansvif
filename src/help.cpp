@@ -79,7 +79,6 @@ void help_me(std::string mr_me) {
       << std::endl
       << " -F [file]    A file with junk to be fuzzed with whole." << std::endl
       << " -n           Never use random data in the fuzz." << std::endl
-      << " -R \"ls\"      Always run this command after the fuzz." << std::endl
       << " -C \"13\"      Non default crash recognition error codes."
       << std::endl
 #ifdef _WIN32
@@ -108,8 +107,9 @@ void help_me(std::string mr_me) {
       << std::endl
       << " -K           Keep going after a crash." << std::endl
       << " -E \"cmd\"     A command to be run before the fuzzed program." << std::endl
-      << " -0           No NULL in fuzz." << std::endl
+      << " -R \"ls\"      Always run this command after the fuzz." << std::endl
       << " -N \"prog\"    Shorthand for -R \"pkill prog\"" << std::endl
+      << " -0           No NULL in fuzz." << std::endl
       << " -v           Be verbose." << std::endl
       << " -d           Debug data." << std::endl
       << " -i           Prints version information." << std::endl;
