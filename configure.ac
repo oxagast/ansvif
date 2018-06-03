@@ -1,4 +1,4 @@
-AC_INIT([ansvif], [1.9], [marshallwhittaker@gmail.com])
+AC_INIT([ansvif], [1.9.2], [marshallwhittaker@gmail.com], [], [https://oxagast.github.io/ansvif])
 AC_PROG_CC
 AC_PROG_CXX
 AC_LANG([C++])

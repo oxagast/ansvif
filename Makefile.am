@@ -15,7 +15,7 @@ endif
 
 noinst_LIBRARIES = libgzstream.a
 libgzstream_a_SOURCES = include/gzstream/gzstream.h include/gzstream/gzstream.C
-ansvif_SOURCES = src/log.cpp src/common.cpp src/bin2hex.cpp src/popen2.cpp src/main.cpp src/help.cpp src/match_fault.cpp src/sys_string.cpp src/man_read.cpp src/trash.cpp src/randomizer.cpp include/gzstream/gzstream.h include/xmlwriter/xml_writer.hpp src/version.h
+ansvif_SOURCES = src/log.cpp src/bin2hex.cpp src/popen2.cpp src/main.cpp src/help.cpp src/match_fault.cpp src/sys_string.cpp src/man_read.cpp src/trash.cpp src/randomizer.cpp src/remove_chars.cpp src/to_int.cpp src/file_check.cpp src/reaper.cpp src/write_file.cpp src/templates.cpp include/gzstream/gzstream.h include/xmlwriter/xml_writer.hpp src/version.h
 if OS_IS_REDHAT
 ansvif_LDADD = -lgzstream -lcryptopp -lstdc++ -lpthread -lz -L.
 ansvif_LDFLAGS = -I./include/gzstream -I./include/xml_writer -I./src/linux
