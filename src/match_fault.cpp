@@ -365,7 +365,8 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
        */
 #ifdef __REDHAT
       CryptoPP::byte digest[CryptoPP::Weak::MD5::DIGESTSIZE];
-#else
+#endif
+#ifdef __DEBIAN
       byte digest[CryptoPP::Weak::MD5::DIGESTSIZE];
 #endif
       CryptoPP::Weak::MD5 hash;
