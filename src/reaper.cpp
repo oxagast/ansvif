@@ -11,14 +11,15 @@ int reaper(int grim, int t_timeout, std::string just_kill_me) {
   //std::cout << " pid: " << grim << " timeout " << t_timeout << std::endl;
   sleep(t_timeout);
   kill(grim, 15);
+  int ret = 0;
   /* if the above doesn't work, we can fall back to piggybacking pkill
    * if they use -N
    */
   if ( just_kill_me != "") {
     just_kill_me = "pkill " + just_kill_me;
-    system(just_kill_me.c_str());
+    ret = system(just_kill_me.c_str());
   }
-  return (0);
+  return (ret);
 #elif _WIN32
 /* windows doesn't support kill 9 */
 #else

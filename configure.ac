@@ -70,7 +70,7 @@ if test "$OS_IS_REDHAT" = "0"; then
     AC_DEFINE([__REDHAT], [], ["build for RedHat"])
     AC_MSG_NOTICE([trying to build for a RedHat based system])
 fi
-AM_CONDITIONAL(OS_IS_DEBIAN, [ test `grep "Debian" /etc/os-release | wc -l` -gt "0" ])
+AM_CONDITIONAL(OS_IS_DEBIAN, [ test `grep "Debian\|Ubuntu" /etc/os-release | wc -l` -gt "0" ])
 if test "$OS_IS_DEBIAN" = "0"; then
     AC_DEFINE([__DEBIAN], [], ["build for Debian"])
     AC_MSG_NOTICE([trying to build for a Debian based system])
