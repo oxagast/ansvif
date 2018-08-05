@@ -19,17 +19,17 @@ ansvif_SOURCES = src/log.cpp src/bin2hex.cpp src/popen2.cpp src/main.cpp src/hel
 if OS_IS_REDHAT
 ansvif_LDADD = -lgzstream -lcryptopp -lstdc++ -lpthread -lz -L.
 ansvif_LDFLAGS = -I./include/gzstream -I./include/xml_writer -I./src/linux
-ansvif_CPPFLAGS = -O3 -D __REDHAT -Wall -std=c++11
+ansvif_CPPFLAGS = -O3 -D __REDHAT -Wall -std=c++11 -ftemplate-depth=1024
 endif
 if OS_IS_DEBIAN
 ansvif_LDADD = -lgzstream -lcrypto++ -lstdc++ -lpthread -lz -L.
 ansvif_LDFLAGS = -I./include/gzstream -I./include/xml_writer -I./src/linux
-ansvif_CPPFLAGS = -O3 -D __DEBIAN -Wall -std=c++11
+ansvif_CPPFLAGS = -O3 -D __DEBIAN -Wall -std=c++11 -ftemplate-depth=1024
 endif
 if OS_IS_FREEBSD
 ansvif_LDADD = -lstdc++ -lz -L.
 ansvif_LDFLAGS = -I./include/gzstream -I./include/xml_writer -I./src/linux -pthread
-ansvif_CPPFLAGS = -O3 -D __DEBIAN -D __FREEBSD -Wl,--no-as-needed -std=c++11
+ansvif_CPPFLAGS = -O3 -D __DEBIAN -D __FREEBSD -Wl,--no-as-needed -std=c++11 -ftemplate-depth=1024
 endif
 #else
 #ansvif_LDADD = -lestdc++ -lz -L. -lgzstream -lstdc++ -lpthread -lz -L.
