@@ -571,6 +571,18 @@ int main(int argc, char *argv[]) {
   gtk_fixed_put(GTK_FIXED(opters), before_label, 30, 270);
   gtk_widget_show(before_label);
   gtk_widget_show(set_before);
+  /* Before the rest of the fuzz */
+  set_after = gtk_entry_new();
+  g_signal_connect(set_after, "activate", G_CALLBACK((gpointer)set_after_callback),
+                   set_after);
+  tmp_pos = GTK_ENTRY(set_after)->text_length;
+  gtk_fixed_put(GTK_FIXED(opters), set_after, 200 ,290);
+  gtk_widget_set_size_request(GTK_WIDGET(set_after), 330, 25);
+  after_label = gtk_label_new("After the fuzz:");
+  gtk_label_set_justify(GTK_LABEL(after_label), GTK_JUSTIFY_LEFT);
+  gtk_fixed_put(GTK_FIXED(opters), after_label, 30, 295);
+  gtk_widget_show(after_label);
+  gtk_widget_show(set_after);
   /* Other options template */
   oo_sel = gtk_button_new_with_label("Select Other Options");
   g_signal_connect(GTK_OBJECT(oo_sel), "clicked", G_CALLBACK((gpointer)select_oo),
