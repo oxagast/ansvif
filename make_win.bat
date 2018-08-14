@@ -6,5 +6,5 @@ set PATH=%mingw%\mingw64\bin;%PATH%
 rem echo %PATH%
 @echo on
 "windres.exe" bin\win\metadata.rc -O coff -o metadata.res
-"g++.exe" src/common.cpp src/bin2hex.cpp src/popen2.cpp src/main.cpp src/help.cpp src/match_fault.cpp src/sys_string.cpp src/man_read.cpp src/randomizer.cpp src/trash.cpp src/log.cpp metadata.res src/version.h -I./ -I./include -std=c++11 -lstdc++ -lpthread -O2 -o ansvif.exe -static -static-libgcc -static-libstdc++
+"g++.exe" src/remove_chars.cpp src/bin2hex.cpp src/write_file.cpp src/popen2.cpp src/main.cpp src/help.cpp src/file_check.cpp src/to_int.cpp src/match_fault.cpp src/sys_string.cpp src/man_read.cpp src/randomizer.cpp src/trash.cpp src/templates.cpp src/reaper.cpp src/log.cpp metadata.res src/version.h -I./ -I./include -std=c++11 -lstdc++ -lpthread -O2 -o ansvif.exe -static -static-libgcc -static-libstdc++
 "gcc.exe" src/win/printf.c -o printf.exe metadata.res
