@@ -131,7 +131,7 @@ int main(int argc, char *argv[]) { // initialize our main
   std::string mp;
   std::string template_file;
 #ifdef __unix__
-  std::string strip_shell = "\"`<>\n|&\[]\()\{}:;$";
+  std::string strip_shell = "\"`<>\n|&\[]\()\{}:;$'";
 #endif
 #ifdef _WIN32
   std::string strip_shell = "[]:|<>+;=.?\n\r\\0";

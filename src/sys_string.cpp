@@ -26,6 +26,7 @@ get_out_str(std::string env_str, std::string valgrind_str, std::string sys_str,
    * for easy crash replay, except this is for % for
    * web browsers and such
    */
+  fuzz_after = "";     
   std::string out_str, out_str_p;
 /* no shooting blanks plz */
 #ifdef __unix__
