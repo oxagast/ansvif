@@ -14,7 +14,7 @@ marshallwhittaker@gmail.com
 
 **Compile Dependancies:**
 
-automake autoconf-archive zlib1g-dev libcrypto++  g++ gcc (and libgtk2.0-dev if you want GTK support)
+automake autoconf-archive zlib1g-dev g++ gcc (and libgtk2.0-dev if you want GTK support)
 
 **Compliation:**
 

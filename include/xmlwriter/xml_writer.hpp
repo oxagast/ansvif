@@ -5,8 +5,13 @@
 # define INDENT "  "
 # define NEWLINE "\n"
 
-# include <string>
-# include <stack>
+# include <string.h>
+#ifdef __linux
+#include "include/stack.h"
+#endif
+#ifdef __ANDROID__
+# include "../include/stack.h"
+#endif
 # include <iostream>
 
 class Writer
@@ -69,7 +74,7 @@ private:
   std::ostream& os;
   bool tag_open;
   bool new_line;
-  std::stack<std::string> elt_stack;
+  stack<std::string> elt_stack;
 
   inline void closeTag() {
     if (tag_open)
