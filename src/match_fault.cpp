@@ -9,24 +9,11 @@
 //  (  O )  (/    ( (_ /    \___ \ )(
 //   \__(_/\_\_/\_/\___\_/\_(____/(__)
 
-#define CRYPTOPP_ENABLE_NAMESPACE_WEAK 1
 #include "../include/xmlwriter/xml_writer.hpp"
-#ifdef __linux
-#ifdef __REDHAT
-#include <cryptopp/hex.h>
-#include <cryptopp/md5.h>
-#endif
-#ifdef __DEBIAN
-#include <crypto++/hex.h>
-#include <crypto++/md5.h>
-#endif
-#endif
-#ifdef __unix
-#include "src/version.h"
-#endif
 #ifdef _WIN32
 #include "version.h"
 #endif
+#include "../include/md5.h"
 #include <algorithm>
 #include <cstdlib>
 #include <cstring>
@@ -41,7 +28,6 @@
 #include <thread>
 #include <unistd.h>
 #include <vector>
-
 void log_hang(std::string write_file_n, std::string out_str_p,
               std::string out_str, std::string junk_file_of_args, int pid);
 void log_tail(std::string write_file_n, std::string junk_file_of_args,
@@ -358,37 +344,16 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
       junk_opts.shrink_to_fit();
       junk_opts_env.clear();
       junk_opts_env.shrink_to_fit();
-#ifdef __linux
-      /* Make sure that we don't go and do things
-       * we've already tried over and over, this
-       * speeds things up quite a bit
-       */
-#ifdef __REDHAT
-      CryptoPP::byte digest[CryptoPP::Weak::MD5::DIGESTSIZE];
-#endif
-#ifdef __DEBIAN
-      byte digest[CryptoPP::Weak::MD5::DIGESTSIZE];
-#endif
-      CryptoPP::Weak::MD5 hash;
-#ifdef __REDHAT
-      hash.CalculateDigest(digest, (const CryptoPP::byte *)out_str.c_str(),
-                           out_str.length());
-#else
-      hash.CalculateDigest(digest, (const byte *)out_str.c_str(),
-		                                 out_str.length());
-#endif
-      CryptoPP::HexEncoder encoder;
-      std::string h_output;
-      encoder.Attach(new CryptoPP::StringSink(h_output));
-      encoder.Put(digest, sizeof(digest));
-      encoder.MessageEnd();
-      /* std::cout << h_output << std::endl; */
+      MD5 md5;
+      char *tried = new char[out_str.length()+1];
+      strcpy(tried, out_str.c_str());
+      char *tried_p = tried;
+      std::string h_output = md5.digestString(tried_p);
       if (std::find(used_token.begin(), used_token.end(), h_output) !=
           used_token.end()) {
         used_token.push_back(h_output);
 } else {
        used_token.push_back(h_output);
-#endif
 #ifdef __linux
         if (buf_size == 0) {
           out_str = before_command + " " + path_str + " " + always_arg_before +
@@ -398,7 +363,6 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
           if (write_file_n == "") {
             /* incase we are logging don't leave a blank file */
            out_str = out_str + " >/dev/null 2>&1; echo $?";
-  
         } else {
             /* get the signal here and log */
 
@@ -406,7 +370,6 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
                       ".output.ansvif.log 2>&1; echo $?";
           }
         }
-
 #endif
         if (debug == true) {
           /* write ALL the junk to STDOUT since we're in
@@ -514,7 +477,7 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
           }
 #ifdef __linux
         }  // For the checksum algorithm under linux
-#endif   
+#endif
       }
       if (single_try == true) {
         /* do all that shit but only once! */

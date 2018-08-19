@@ -130,11 +130,15 @@ int main(int argc, char *argv[]) { // initialize our main
   std::string buf_size;
   std::string mp;
   std::string template_file;
+  std::string strip_shell;
 #ifdef __unix__
-  std::string strip_shell = "\"`<>\n|&\[]\()\{}:;$'";
+  strip_shell = "\"`<>\n|&\[]\()\{}:;$'";
 #endif
 #ifdef _WIN32
-  std::string strip_shell = "[]:|<>+;=.?\n\r\\0";
+  strip_shell = "[]:|<>+;=.?\n\r\\0";
+#endif
+#ifdef __ANDROID__
+  strip_shell = "\"`<>\n|&\[]\()\{}:;$'";
 #endif
   std::string u_strip_shell;
   std::string write_file_n = "";
