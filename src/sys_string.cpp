@@ -29,7 +29,7 @@ get_out_str(std::string env_str, std::string valgrind_str, std::string sys_str,
   fuzz_after = "";     
   std::string out_str, out_str_p;
 /* no shooting blanks plz */
-#ifdef __unix__
+#ifdef __DEBIAN
   if (sys_str != "") {
     if (env_str != "") {
       out_str_p = "$(printf \"" + binstr_to_hex(env_str) + "\") " +
@@ -53,6 +53,32 @@ get_out_str(std::string env_str, std::string valgrind_str, std::string sys_str,
     /* logging here */
     out_str = out_str + " >" + log_prefix +
               ".output.ansvif.log 2>&1; echo magic_token_CRASHCODE $?";
+  }
+#endif
+#ifdef __ANDROID__
+  if (sys_str != "") {
+    if (env_str != "") {
+      out_str_p = "$(printf \"" + binstr_to_hex(env_str) + "\") " +
+                  valgrind_str + " " + path_str + " " + always_arg_b +
+                  " $(printf \"" + binstr_to_hex(sys_str) + "\") " +
+                  always_arg + fuzz_after;
+    }
+    if (env_str == "") { // if we have no environment string
+      out_str_p = valgrind_str + " " + path_str + " " + always_arg_b +
+                  " $(printf \"" + binstr_to_hex(sys_str) + "\") " +
+                  always_arg + " $(printf \"" + binstr_to_hex(fuzz_after) +
+                  "\") ";
+    }
+    out_str = env_str + " " + valgrind_str + " " + before_command + " " + path_str + " " +
+              always_arg_b + sys_str + " " + always_arg + fuzz_after;
+  }
+  if (log_prefix == "") {
+    /* not logging here */
+    out_str = out_str + " >/dev/null 2>&1; if [ $? -ge 130 ]; then touch /sdcard/ansvif/crashed; fi";
+  } else {
+    /* logging here */
+    out_str = out_str + " >" + log_prefix +
+              ".output.ansvif.log 2>&1; if [ $? -ge 130 ]; then touch /sdcard/ansvif/crashed; fi";
   }
 #endif
 #ifdef _WIN32
@@ -93,7 +119,7 @@ get_out_str_pc(std::string env_str, std::string valgrind_str,
    */
   std::string out_str, out_str_p;
 /* make sure we're not shooting blanks */
-#ifdef __unix__
+#ifdef __DEBIAN
   if (sys_str != "") {
     if (env_str != "") {
       /* this is if we have an environment string */
@@ -119,6 +145,38 @@ get_out_str_pc(std::string env_str, std::string valgrind_str,
   } else {
     /* get the signal here and log */
     out_str = out_str + " >" + log_prefix + ".output.ansvif.log 2>&1; echo $?";
+  }
+/* we're putting the normal version and the printf
+ * version in this vector, normal first, printf second,
+ * then feeding it back to the calling routing
+ */
+#endif
+#ifdef __ANDROID__
+  if (sys_str != "") {
+    if (env_str != "") {
+      /* this is if we have an environment string */
+      out_str_p = "$(printf \"" + binstr_to_hex(env_str) + "\") " +
+                  valgrind_str + " " + path_str + " $(printf \"" +
+                  binstr_to_hex(binstr_to_hex_pc(sys_str)) + "\") " +
+                  always_arg + binstr_to_hex(binstr_to_hex_pc(fuzz_after));
+    }
+    if (env_str == "") {
+      /* and if we don't have environment variables to fuzz */
+      out_str_p = valgrind_str + " " + path_str + " " + always_arg_b +
+                  " $(printf \"" + binstr_to_hex(binstr_to_hex_pc(sys_str)) +
+                  "\") " + always_arg + " $(printf \"" +
+                  binstr_to_hex(binstr_to_hex_pc(fuzz_after)) + "\") ";
+    }
+    out_str = env_str + " " + valgrind_str + " " + before_command + " " + path_str + " " +
+              always_arg_b + binstr_to_hex_pc(sys_str) + " " + always_arg +
+              binstr_to_hex_pc(fuzz_after);
+  }
+  if (log_prefix == "") {
+    /* incase we are logging don't leave a blank file */
+    out_str = out_str + " >/dev/null 2>&1; if [ $? -ge 130 ]; then touch /sdcard/ansvif/crashed; fi";
+  } else {
+    /* get the signal here and log */
+    out_str = out_str + " >" + log_prefix + ".output.ansvif.log 2>&1; if [ $? -ge 130 ]; then touch /sdcard/ansvif/crashed; fi";
   }
 /* we're putting the normal version and the printf
  * version in this vector, normal first, printf second,

@@ -10,7 +10,7 @@
 #include <fstream>
 #include <sstream>
 #include <stdio.h>
-#include <string>
+#include <string.h>
 #include <unistd.h>
 
 void log_head(std::string write_file_n, std::string path_str,

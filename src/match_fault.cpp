@@ -420,6 +420,10 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
           /* logging */
           log_head(write_file_n, path_str, cmd_output, out_str_p, out_str, pid);
         }
+#ifdef __ANDROID__
+	        if (file_exists("/sdcard/ansvif/crashed") == true) {
+#endif
+#ifdef __DEBIAN
 	/* std::cout << cmd_output << std::endl; */
         std::size_t found132 = cmd_output.find("CRASHCODE 132");
         std::size_t found134 = cmd_output.find("CRASHCODE 134");
@@ -452,6 +456,7 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
 			(foundW532459699 != std::string::npos) ||
             (foundother != std::string::npos)) {
           cmd_output = cmd_output.replace(0, 22, "");
+#endif
 #ifdef __unix__
           std::cout << "PID: " << pid << std::endl;
 #endif
@@ -490,6 +495,12 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
         exit(64);
       }
     }
-  }
+ 
+#ifdef __ANDROID__
+}
+#endif
+#ifdef __DEBIAN
+}
+#endif
   return (true);
 }

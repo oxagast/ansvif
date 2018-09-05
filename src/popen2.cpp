@@ -29,7 +29,8 @@
 FILE *popen2(std::string command, std::string type, int &pid,
              std::string low_lvl_user) {
 #ifdef __unix__
-  pid_t child_pid;
+  /* here the child begins */
+ pid_t child_pid;
   int fd[2];
   pid = pipe(fd);
   if ((child_pid = fork()) == -1) {
@@ -38,14 +39,8 @@ FILE *popen2(std::string command, std::string type, int &pid,
   }
   /* here the child begins */
   if (child_pid == 0) {
-    if (type == "r") {
-      /* redirect stdout and stdin to pipe */
-      close(fd[READ]);
-      dup2(fd[WRITE], 1);
-    } else {
-      close(fd[WRITE]);
-      dup2(fd[READ], 0);
-    }
+
+#ifdef __REDHAT
     if (getuid() == 0) {
       /* if we're root we're going to drop our privs
        * this fixes not being able to reap processes that
@@ -58,7 +53,21 @@ FILE *popen2(std::string command, std::string type, int &pid,
       /* or just run it like we normally would */
       execl("/bin/sh", "/bin/sh", "-c", command.c_str(), NULL);
     }
-    exit(0);
+#endif
+#ifdef __DEBIAN
+    if (getuid() == 0) {
+      execl("/bin/su", "su", "-c", "/bin/sh", "-c", command.c_str(),
+            low_lvl_user.c_str(), NULL);
+    } else {
+      /* or just run it like we normally would */
+      execl("/bin/sh", "/bin/sh", "-c", command.c_str(), NULL);
+    }
+#endif
+#ifdef __ANDROID__
+      //command = "'" + command + "'";
+      execl("/system/bin/sh", "sh", "-c", command.c_str(), NULL);
+#endif
+
   } else {
     if (type == "r") {
       close(fd[WRITE]);
@@ -71,7 +80,7 @@ FILE *popen2(std::string command, std::string type, int &pid,
   if (type == "r") {
     /* return the junk to the rest of the program */
     return fdopen(fd[READ], "r");
-  }
+}
   return fdopen(fd[WRITE], "w");
 #endif
 #ifdef _WIN32
@@ -89,6 +98,8 @@ FILE *popen2(std::string command, std::string type, int &pid,
   return (process_pipe);
 #endif
 }
+
+
 
 /* we have to close it all our so we don't fuck
  * ourselves on OOM later
@@ -117,3 +128,4 @@ int pclose2(FILE *fp, pid_t pid) {
   return -1;
 #endif
 }
+

@@ -88,7 +88,7 @@ void version() {
 
 int main(int argc, char *argv[]) { // initialize our main
   /* initialize all our variables for startup! */
-  /* how many options? */    
+  /* how many options? */
   int opt;
   int thread_count_def = 2;
   int thread_timeout_def = 3;
@@ -152,6 +152,9 @@ int main(int argc, char *argv[]) { // initialize our main
   std::string man_page = "";
   std::string before_command = "";
 #ifdef __unix__
+  std::string fault_code = "134";
+#endif
+#ifdef __ANDROID
   std::string fault_code = "134";
 #endif
 #ifdef _WIN32
@@ -307,6 +310,11 @@ int main(int argc, char *argv[]) { // initialize our main
       help_me(argv[0]);
     }
   }
+#ifdef __ANDROID__
+if (file_exists("/sdcard/ansvif/crashed") == true) {
+  unlink("/sdcard/ansvif/crashed");
+}
+#endif
   if (u_strip_shell_set == true) {
     /* always strip a new line no matter what the user says */
     strip_shell = u_strip_shell + ">\n";
