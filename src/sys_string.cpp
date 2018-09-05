@@ -29,7 +29,7 @@ get_out_str(std::string env_str, std::string valgrind_str, std::string sys_str,
   fuzz_after = "";     
   std::string out_str, out_str_p;
 /* no shooting blanks plz */
-#ifdef __DEBIAN
+#ifdef __NOTANDROID__
   if (sys_str != "") {
     if (env_str != "") {
       out_str_p = "$(printf \"" + binstr_to_hex(env_str) + "\") " +
@@ -48,11 +48,11 @@ get_out_str(std::string env_str, std::string valgrind_str, std::string sys_str,
   }
   if (log_prefix == "") {
     /* not logging here */
-    out_str = out_str + " >/dev/null 2>&1; echo magic_token_CRASHCODE $?";
+    out_str = out_str + " >/dev/null 2>&1; if [ $? -ge 130 ]; then touch /tmp/a.crashed; fi";
   } else {
     /* logging here */
     out_str = out_str + " >" + log_prefix +
-              ".output.ansvif.log 2>&1; echo magic_token_CRASHCODE $?";
+              ".output.ansvif.log 2>&1; if [ $? -ge 130 ]; then touch /tmp/a.crashed; fi";
   }
 #endif
 #ifdef __ANDROID__
@@ -119,7 +119,7 @@ get_out_str_pc(std::string env_str, std::string valgrind_str,
    */
   std::string out_str, out_str_p;
 /* make sure we're not shooting blanks */
-#ifdef __DEBIAN
+#ifdef __NOTANDROID__
   if (sys_str != "") {
     if (env_str != "") {
       /* this is if we have an environment string */

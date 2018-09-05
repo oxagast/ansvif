@@ -423,15 +423,10 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
 #ifdef __ANDROID__
 	        if (file_exists("/sdcard/ansvif/crashed") == true) {
 #endif
-#ifdef __DEBIAN
-	/* std::cout << cmd_output << std::endl; */
-        std::size_t found132 = cmd_output.find("CRASHCODE 132");
-        std::size_t found134 = cmd_output.find("CRASHCODE 134");
-        std::size_t found139 = cmd_output.find("CRASHCODE 139");
-        std::size_t found135 = cmd_output.find("CRASHCODE 135");
-        std::size_t found136 = cmd_output.find("CRASHCODE 136");
-        std::size_t found159 = cmd_output.find("CRASHCODE 159");
-        std::size_t found138 = cmd_output.find("CRASHCODE 138");
+#ifdef __NOTANDROID__
+		if (file_exists("/tmp/a.crashed") == true) {
+#endif
+#ifdef __WIN32
 		std::size_t foundW1073741819 = cmd_output.find("-1073741819");
         std::size_t foundW1073740791 = cmd_output.find("-1073740791");
         std::size_t foundW1073741571 = cmd_output.find("-1073741571");
@@ -443,18 +438,10 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
 	 * 132 134 139 135 136 159 138
 	 */
         std::size_t foundother = cmd_output.find("CRASHCODE " + fault_code);
-        if ((found132 != std::string::npos) ||
-            (found134 != std::string::npos) ||
-            (found139 != std::string::npos) ||
-            (found135 != std::string::npos) ||
-            (found136 != std::string::npos) ||
-            (found159 != std::string::npos) ||
-            (found138 != std::string::npos) ||
-			(foundW1073741819 != std::string::npos) ||
-			(foundW1073740791 != std::string::npos) ||
-			(foundW1073741571 != std::string::npos) ||
-			(foundW532459699 != std::string::npos) ||
-            (foundother != std::string::npos)) {
+        if ((foundW1073741819 != std::string::npos) ||
+	(foundW1073740791 != std::string::npos) ||
+	(foundW1073741571 != std::string::npos) ||
+	(foundW532459699 != std::string::npos) {
           cmd_output = cmd_output.replace(0, 22, "");
 #endif
 #ifdef __unix__
@@ -480,9 +467,7 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
           if (keep_going == false) {
             return (false);
           }
-#ifdef __linux
         }  // For the checksum algorithm under linux
-#endif
       }
       if (single_try == true) {
         /* do all that shit but only once! */
@@ -496,11 +481,6 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
       }
     }
  
-#ifdef __ANDROID__
 }
-#endif
-#ifdef __DEBIAN
-}
-#endif
   return (true);
 }

@@ -40,22 +40,13 @@ FILE *popen2(std::string command, std::string type, int &pid,
   /* here the child begins */
   if (child_pid == 0) {
 
-#ifdef __REDHAT
+#ifdef __NOTANDROID__
     if (getuid() == 0) {
       /* if we're root we're going to drop our privs
        * this fixes not being able to reap processes that
        * are suid
        */
       // command = "DISPLAY=localhost:1 " + command;
-      execl("/bin/su", "su", "-c", "/bin/sh", "-c", command.c_str(),
-            low_lvl_user.c_str(), NULL);
-    } else {
-      /* or just run it like we normally would */
-      execl("/bin/sh", "/bin/sh", "-c", command.c_str(), NULL);
-    }
-#endif
-#ifdef __DEBIAN
-    if (getuid() == 0) {
       execl("/bin/su", "su", "-c", "/bin/sh", "-c", command.c_str(),
             low_lvl_user.c_str(), NULL);
     } else {

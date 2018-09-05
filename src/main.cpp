@@ -151,10 +151,10 @@ int main(int argc, char *argv[]) { // initialize our main
   std::string run_command = "";
   std::string man_page = "";
   std::string before_command = "";
-#ifdef __unix__
+#ifdef __NOTANDROID__
   std::string fault_code = "134";
 #endif
-#ifdef __ANDROID
+#ifdef __ANDROID__
   std::string fault_code = "134";
 #endif
 #ifdef _WIN32
@@ -315,7 +315,12 @@ if (file_exists("/sdcard/ansvif/crashed") == true) {
   unlink("/sdcard/ansvif/crashed");
 }
 #endif
-  if (u_strip_shell_set == true) {
+#ifdef __NOTANDROID__
+if (file_exists("/tmp/a.crashed") == true) {
+	  unlink("/tmp/a.crashed");
+}
+#endif
+if (u_strip_shell_set == true) {
     /* always strip a new line no matter what the user says */
     strip_shell = u_strip_shell + ">\n";
   }
