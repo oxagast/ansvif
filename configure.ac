@@ -47,6 +47,7 @@ else
     AC_DEFINE([WITH_GTK], [], ["build GTK module"])
     AC_MSG_NOTICE([GTK enabled, we will try to compile them])
     PKG_CHECK_MODULES([GTK], [gtk+-2.0])
+#     PKG_CHECK_MODULES([gtk+-2.0])
 fi
 
 AC_ARG_ENABLE(testcode,
@@ -65,15 +66,20 @@ AC_MSG_NOTICE([Test Code, we will try to compile them])
 fi
 
 
-AM_CONDITIONAL(OS_IS_REDHAT, [ test `grep "Fedora" /etc/os-release | wc -l` -gt "0" ])
+AM_CONDITIONAL(OS_IS_REDHAT, [ test `grep "Fedora\|Redhat" /etc/os-release | wc -l` -gt "0" ])
 if test "$OS_IS_REDHAT" = "0"; then
     AC_DEFINE([__REDHAT], [], ["build for RedHat"])
     AC_MSG_NOTICE([trying to build for a RedHat based system])
 fi
-AM_CONDITIONAL(OS_IS_DEBIAN, [ test `grep "Debian\|Ubuntu" /etc/os-release | wc -l` -gt "0" ])
+AM_CONDITIONAL(OS_IS_DEBIAN, [ test `grep "Debian\|Ubuntu\|Kali" /etc/os-release | wc -l` -gt "0" ])
 if test "$OS_IS_DEBIAN" = "0"; then
     AC_DEFINE([__DEBIAN], [], ["build for Debian"])
     AC_MSG_NOTICE([trying to build for a Debian based system])
+fi
+AM_CONDITIONAL(OS_IS_KALI, [ test `grep "Kali" /etc/os-release | wc -l` -gt "0" ])
+if test "$OS_IS_KALI" = "0"; then
+   AC_DEFINE([__KALI__], [], ["build for Kali"])
+   AC_MSG_NOTICE([trying to build for a Kali based system])
 fi
 AM_CONDITIONAL(OS_IS_FREEBSD, [ test `uname -o` == "FreeBSD" ])
 if test "$IS_IS_FREEBSD" = "0"; then

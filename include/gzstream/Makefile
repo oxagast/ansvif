@@ -35,7 +35,7 @@
 # CXX      = CC -n32 -LANG:std   # for SGI Irix 6.5, MIPSpro CC version 7.30
 CXX      = g++   # for Linux RedHat 6.1, g++ version 2.95.2
 
-CPPFLAGS = -I. -O
+CPPFLAGS = -I. -O -D __KALI__
 LDFLAGS  = -L. -lgzstream -lz
 AR       = ar cr
 
@@ -47,7 +47,7 @@ AR       = ar cr
 # make cleanall;  removes temporary files, the library, and programs
 # ----------------------------------------------------------------------------
 
-default: libgzstream.a
+all: libgzstream.a
 
 test:    test_gzip test_gunzip
 	./test_gzip COPYING.LIB gz.tmp.gz
@@ -59,8 +59,8 @@ test:    test_gzip test_gunzip
 	rm gz.tmp.gz gz.tmp
 	# *** O.K. Test finished successfully. ***
 
-gzstream.o : gzstream.C gzstream.h
-	${CXX} ${CPPFLAGS} -c -o gzstream.o gzstream.C
+gzstream.o : gzstream.cpp gzstream.h
+	${CXX} ${CPPFLAGS} -c -o gzstream.o gzstream.cpp
 
 test_gzip.o : test_gzip.C gzstream.h
 	${CXX} ${CPPFLAGS} -c -o test_gzip.o test_gzip.C
@@ -70,6 +70,7 @@ test_gunzip.o : test_gunzip.C gzstream.h
 
 libgzstream.a : gzstream.o
 	${AR} libgzstream.a gzstream.o
+	cp libgzstream.a ../../
 
 test_gzip : test_gzip.o libgzstream.a
 	${CXX} -o test_gzip test_gzip.o ${LDFLAGS}

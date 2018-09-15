@@ -26,7 +26,11 @@
 // Standard C++ Library".
 // ============================================================================
 
-#include <include/gzstream/gzstream.h>
+#ifdef __KALI__
+#include "./gzstream.h"
+#else
+#include "include/gzstream/gzstream.h"
+#endif
 #include <iostream>
 #include <string.h>  // for memcpy
 
