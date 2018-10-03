@@ -63,7 +63,7 @@ get_out_str_pc(std::string env_str, std::string valgrind_str,
                std::string before_command);
 bool match_seg(int buf_size, std::vector<std::string> opts,
                std::vector<std::string> spec_env, std::string path_str,
-               std::string strip_shell, bool rand_all, bool write_to_file,
+               std::string strip_shell, bool rand_all,
                std::string write_file_n, bool rand_buf,
                std::vector<std::string> opt_other, bool is_other,
                std::string other_sep, int t_timeout, std::string low_lvl_user,
@@ -455,7 +455,7 @@ bool match_seg(int buf_size, std::vector<std::string> opts,
             std::cout << "File data left in: " << junk_file_of_args
                       << std::endl;
           }
-          if (write_to_file == true) {
+          if (write_file_n != "") {
             /* since we crashed we're going to finish writing to the
              * xml file
              */

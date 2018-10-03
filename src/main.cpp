@@ -38,8 +38,8 @@ std::vector<std::string> get_flags_man(std::string man_page,
                                        bool debug, bool dump_opts);
 bool match_seg(int buf_size, std::vector<std::string> opts,
                std::vector<std::string> spec_env, std::string path_str,
-               std::string strip_shell, bool rand_all, bool write_to_file,
-               std::string write_file_n, bool rand_buf,
+               std::string strip_shell, bool rand_all, 
+	       std::string write_file_n, bool rand_buf,
                std::vector<std::string> opt_other, bool is_other,
                std::string other_sep, int t_timeout, std::string low_lvl_user,
                std::string junk_file_of_args, std::string always_arg_before,
@@ -175,7 +175,6 @@ int main(int argc, char *argv[]) { // initialize our main
   bool man_opt = false;
   bool rand_all = false;
   bool rand_buf = false;
-  bool write_to_file = false;
   bool u_strip_shell_set = false;
   bool verbose = false;
   bool debug = false;
@@ -226,7 +225,6 @@ int main(int argc, char *argv[]) { // initialize our main
       num_threads = optarg;
       break;
     case 'o':
-      write_to_file = true;
       write_file_n = optarg;
       break;
     case 'h':
@@ -385,7 +383,7 @@ if (u_strip_shell_set == true) {
     for (int cur_thread = 1; cur_thread <= thread_count_int; ++cur_thread)
       threads.push_back(std::thread(
           match_seg, buf_size_int, opts, spec_env, path_str, strip_shell,
-          rand_all, write_to_file, write_file_n, rand_buf, opt_other, is_other,
+          rand_all, write_file_n, rand_buf, opt_other, is_other,
           other_sep, thread_timeout_int, low_lvl_user, junk_file_of_args,
           always_arg_before, always_arg_after, never_rand, run_command,
           fault_code, valgrind, single_try, percent_sign, static_args,
@@ -400,7 +398,7 @@ if (u_strip_shell_set == true) {
      * single run
      */
     match_seg(buf_size_int, opts, spec_env, path_str, strip_shell, rand_all,
-              write_to_file, write_file_n, rand_buf, opt_other, is_other,
+              write_file_n, rand_buf, opt_other, is_other,
               other_sep, thread_timeout_int, low_lvl_user, junk_file_of_args,
               always_arg_before, always_arg_after, never_rand, run_command,
               fault_code, valgrind, single_try, percent_sign, static_args,
