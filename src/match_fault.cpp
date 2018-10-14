@@ -9,7 +9,12 @@
 //  (  O )  (/    ( (_ /    \___ \ )(
 //   \__(_/\_\_/\_/\___\_/\_(____/(__)
 
+#ifdef __NOTANDROID
 #include "../include/xmlwriter/xml_writer.hpp"
+#endif
+#ifdef __ANDROID__
+#include "../include/xmlwriter/xml_writer.hpp"
+#endif
 #ifdef _WIN32
 #include "version.h"
 #endif

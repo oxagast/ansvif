@@ -6,11 +6,11 @@
 # define NEWLINE "\n"
 
 # include <string.h>
-#ifdef __linux
+#ifdef __NOTANDROID__
 #include "include/stack.h"
 #endif
 #ifdef __ANDROID__
-# include "../include/stack.h"
+# include "../stack.h"
 #endif
 # include <iostream>
 

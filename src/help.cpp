@@ -9,8 +9,11 @@
 //  (  O )  (/    ( (_ /    \___ \ )(
 //   \__(_/\_\_/\_/\___\_/\_(____/(__)
 
-#ifdef __unix
+#ifdef __NOTANDROID__
 #include "src/version.h"
+#ifdef __ANDROID__
+#include "../version.h"
+#endif
 #endif
 #ifdef _WIN32
 #include "version.h"
@@ -19,6 +22,7 @@
 #include <iostream>
 #include <stdio.h>
 #include <string>
+#include "version.h"
 
 void help_me(std::string mr_me) {
   /* print all the help shit to STDOUT */

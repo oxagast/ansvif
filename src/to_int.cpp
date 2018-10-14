@@ -3,7 +3,7 @@
 #include <fstream>
 #include <iostream>
 #ifdef __unix
-#include "src/version.h"
+#include "version.h"
 #endif
 #ifdef _WIN32
 #include "version.h"

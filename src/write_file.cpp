@@ -10,7 +10,7 @@
 //   \__(_/\_\_/\_/\___\_/\_(____/(__)
 
 #ifdef __unix
-#include "src/version.h"
+#include "version.h"
 #endif
 #ifdef _WIN32
 #include "version.h"

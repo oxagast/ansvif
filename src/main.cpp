@@ -19,7 +19,10 @@
 #ifdef __unix__
 #include <sys/wait.h>
 #endif
-#ifdef __unix
+#ifdef __ANDROID__
+#include "version.h"
+#endif
+#ifdef __NOTANDROID__
 #include "src/version.h"
 #endif
 #ifdef _WIN32
