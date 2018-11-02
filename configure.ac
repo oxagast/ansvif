@@ -1,4 +1,4 @@
-AC_INIT([ansvif], [1.10], [marshallwhittaker@gmail.com], [], [https://oxagast.github.io/ansvif])
+AC_INIT([ansvif], [1.11], [marshallwhittaker@gmail.com], [], [https://oxagast.github.io/ansvif])
 AC_PROG_CC
 AC_PROG_CXX
 AC_LANG([C++])
@@ -56,7 +56,7 @@ AC_ARG_ENABLE(testcode,
 	       yes) WITH_TESTCODE=true ;;
 	       no)  WITH_TESTCODE=false ;;
 	     *) AC_MSG_ERROR(bad value ${enableval} for --disable-testcode) ;;
-	     esac],[WITH_GTK=true])
+	     esac],[WITH_TESTCODE=true])
 AM_CONDITIONAL([WITH_TESTCODE], [test "$WITH_TESTCODE" = "true"])
 if test "$WITH_TESTCODE" = "false"; then
     AC_MSG_NOTICE([Test Code is disabled])

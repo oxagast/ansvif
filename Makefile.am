@@ -1,9 +1,7 @@
 AUTOMAKE_OPTIONS = foreign
 ACLOCAL_AMFLAGS = ${ACLOCAL_FLAGS}
-
-
 if WITH_GTK
-bin_PROGRAMS = ansvif ansvif_gtk
+bin_PROGRAMS = ansvif ansvif_gtk generic_buffer_overflow string_format null_pointer
 endif
 if WITH_SYSCALLS
 bin_PROGRAMS = ansvif syscalls
@@ -40,21 +38,13 @@ ansvif_LDADD = -lgzstream -lstdc++ -lpthread -lz -L.
 ansvif_LDFLAGS = -I./include/gzstream -I./include/xml_writer -I./src/linux
 ansvif_CPPFLAGS = -O3 -D __KALI__ -D __DEBIAN__ -D __NOTANDROID__ -Wall -std=c++11 -ftemplate-depth=1024
 endif
-
-
-#else
-#ansvif_LDADD = -lestdc++ -lz -L. -lgzstream -lstdc++ -lpthread -lz -L.
-#ansvif_LDFLAGS = -I./include/gzstream -I./include/xml_writer -I./src/linux
-#ansvif_CPPFLAGS = -O3 -D __DEBIAN -Wl,--no-as-needed -std=c++11
-#endif
-
-#find_suid_SOURCES = src/linux/find_suid.cpp
-#buffer_overflow_SOURCES = src/buffer_overflow.c
-#buffer_overflow_CFLAGS = -ansi -fno-stack-protector -D_GNU_SOURCE -Wno-implicit-function-declarationw
+if WITH_TESTCODE
+generic_buffer_overflow_SOURCES = src/generic_buffer_overflow.c
+generic_buffer_overflow_CFLAGS = -ansi -fno-stack-protector -D_GNU_SOURCE -Wno-implicit-function-declaration
 string_format_SOURCES = src/string_format.c
 string_format_CFLAGS = -ansi -D_GNU_SOURCE -Wno-format-security
-generic_buffer_overflow_SOURCES = src/generic_buffer_overflow.c
 null_pointer_SOURCES = src/null_pointer.c
+endif
 if WITH_SYSCALLS
 syscalls_SOURCES = src/linux/syscalls.cpp
 syscalls_CPPFLAGS = -ansi -Wno-unused-result -Wno-nonnull -std=c++11
@@ -66,10 +56,10 @@ ansvif_gtk_CPPFLAGS = @GTK_CFLAGS@ -fpermissive
 endif
 ansvifdir = bin
 check: all
-	./ansvif -t examples/space.txt -c ./generic_buffer_overflow -b 64 -o checkfaulty && rm checkfaulty.*
+	./ansvif -t examples/specific/space.txt -c ./generic_buffer_overflow -b 64 -o checkfaulty && rm checkfaulty.*
 	@echo "*** CHECK 1 PASSED ***"
-	./ansvif -t examples/space.txt -c ./generic_buffer_overflow -b 64
+	./ansvif -t examples/specific/space.txt -c ./generic_buffer_overflow -b 64
 	@echo "*** CHECK 2 PASSED ***"
-	./ansvif -t examples/space.txt -c ./string_format -b 32
+	./ansvif -t examples/specific/space.txt -c ./string_format -b 32
 	@echo "*** CHECK 3 PASSED ***"
 	@echo "*** ALL TESTS PASSED ***"
