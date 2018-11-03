@@ -10,7 +10,7 @@ faulty
 find_suid
 syscalls
 ansvif_gtk
-buffer_overflow
+null_pointer
 string_format
 generic_buffer_overflow
 configure

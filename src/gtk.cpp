@@ -25,7 +25,7 @@ FILE *popen2(std::string command, std::string type, int &pid,
              std::string low_lvl_user);
 int pclose2(FILE *fp, pid_t pid);
 
-std::string version = "1.8.1"; /* ansvif version */
+std::string version = "1.11a"; /* ansvif version */
 std::string buffer_size;
 std::string random_data;
 std::string random_buffer_s;
