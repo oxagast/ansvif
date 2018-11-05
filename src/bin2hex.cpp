@@ -39,24 +39,22 @@ std::string binstr_to_hex(std::string bin_str) {
   }
 #endif
 #ifdef __linux
+hexxy = hex_out.str();
   std::copy(bin_str.begin(), bin_str.end(),
-            std::ostream_iterator<unsigned int>(hex_out, "\\\\x"));
-  if (hex_out.str() != "") {
-    hexxy = hex_out.str() + "20";
-  }
+            std::ostream_iterator<int>(hex_out, "\\\\x"));
+//  if (hex_out.str() != "") {
+//    hexxy = hex_out.str() + "20";
+//  }
   /* make sure that it begins in \\x for output */
-  hexxy = "\\\\x" + hexxy;
+//  hexxy = "\\\\x" + hexxy;
   /* if the output is only spaces then return nothing */
-  if (hexxy == "\\\\x20\\\\x20") {
-    return ("");
-  }
+//  if (hexxy == "\\\\x20\\\\x20") {
+//    return ("");
+//  }
   /* return to sys_string in hex */
-  else {
-    return (hexxy);
+    return (hex_out.str());
   }
 #endif
-  return ("");
-}
 
 std::string binstr_to_hex_pc(std::string bin_str) {
   /* initialize the hex to go out */
