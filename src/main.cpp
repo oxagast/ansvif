@@ -133,7 +133,7 @@ int main(int argc, char *argv[]) { // initialize our main
   std::string buf_size;
   std::string mp;
   std::string template_file;
-  std::string strip_shell;
+  std::string strip_shell, u_strip_shell;
 #ifdef __unix__
   strip_shell = "\"`<>\n|&\[]\()\{}:;$'";
 #endif
@@ -143,7 +143,6 @@ int main(int argc, char *argv[]) { // initialize our main
 #ifdef __ANDROID__
   strip_shell = "\"`<>\n|&\[]\()\{}:;$'";
 #endif
-  std::string u_strip_shell;
   std::string write_file_n = "";
   std::string path_str = "";
   std::string other_sep = "";
@@ -178,7 +177,6 @@ int main(int argc, char *argv[]) { // initialize our main
   bool man_opt = false;
   bool rand_all = false;
   bool rand_buf = false;
-  bool u_strip_shell_set = false;
   bool verbose = false;
   bool debug = false;
   bool is_other = false;
@@ -241,7 +239,6 @@ int main(int argc, char *argv[]) { // initialize our main
       break;
     case 's':
       u_strip_shell = optarg;
-      u_strip_shell_set = true;
       break;
     case 'x':
       opt_other = get_other(optarg, verbose, debug);
@@ -321,10 +318,8 @@ if (file_exists("/tmp/a.crashed") == true) {
 	  unlink("/tmp/a.crashed");
 }
 #endif
-if (u_strip_shell_set == true) {
     /* always strip a new line no matter what the user says */
     strip_shell = u_strip_shell + ">\n";
-  }
   if ((man_opt == true) && (template_opt == false)) {
     /* because we're getting stuff from the manpage */
     opts = get_flags_man(man_page, man_loc, verbose, debug, dump_opts);
