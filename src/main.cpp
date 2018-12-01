@@ -28,10 +28,10 @@
 #ifdef _WIN32
 #include "version.h"
 #endif
+#include <sys/types.h>
 #include <thread>
 #include <unistd.h>
 #include <vector>
-#include <sys/types.h>
 
 int toint(std::string ints, std::string my_prog);
 void help_me(std::string mr_me);
@@ -39,18 +39,50 @@ bool file_exists(const std::string &filen);
 std::vector<std::string> get_flags_man(std::string man_page,
                                        std::string man_loc, bool verbose,
                                        bool debug, bool dump_opts);
-bool match_seg(int buf_size, std::vector<std::string> opts,
-               std::vector<std::string> spec_env, std::string path_str,
-               std::string strip_shell, bool rand_all, 
-	       std::string write_file_n, bool rand_buf,
-               std::vector<std::string> opt_other, bool is_other,
-               std::string other_sep, int t_timeout, std::string low_lvl_user,
-               std::string junk_file_of_args, std::string always_arg_before,
-               std::string always_arg_after, bool never_rand,
-               std::string run_command, std::string fault_code, bool valgrind,
-               bool single_try, bool percent_sign, int static_args,
-               bool keep_going, std::string before_command, std::string prog_name,
-	       bool verbose, bool debug);
+
+struct Options {
+public:
+  int static_args;
+  int buf_size_int;
+  std::vector<std::string> opts;
+  std::vector<std::string> spec_env;
+  std::vector<std::string> opt_other;
+  std::string prog_name;
+  std::string t_timeout;
+  std::string man_loc;
+  std::string num_threads;
+  std::string buf_size;
+  std::string mp;
+  std::string template_file;
+  std::string strip_shell;
+  std::string u_strip_shell;
+  std::string write_file_n;
+  std::string path_str;
+  std::string other_sep;
+  std::string low_lvl_user;
+  std::string junk_file_of_args;
+  std::string always_arg_before;
+  std::string always_arg_after;
+  std::string run_command;
+  std::string man_page;
+  std::string before_command;
+  std::string fault_code;
+  bool template_opt;
+  bool man_opt;
+  bool rand_all;
+  bool rand_buf;
+  bool verbose;
+  bool debug;
+  bool is_other;
+  bool dump_opts;
+  bool never_rand;
+  bool valgrind;
+  bool single_try;
+  bool percent_sign;
+  bool keep_going;
+} options;
+
+void match_seg(Options);
 std::vector<std::string> get_flags_template(std::string filename, bool verbose,
                                             bool debug);
 std::vector<std::string> get_other(std::string filename, bool verbose,
@@ -84,267 +116,239 @@ void sig_handler(int sig) {
 
 void version() {
   std::cout << "ansvif v" << ver << " -- A Not So Very Intelligent Fuzzer"
-  << std::endl;
+            << std::endl;
   exit(0);
 }
-
 
 int main(int argc, char *argv[]) { // initialize our main
   /* initialize all our variables for startup! */
   /* how many options? */
   int opt;
   int thread_count_def = 2;
-  int thread_timeout_def = 3;
-  int static_args = 4;
-  int buf_size_int = -1;
-  /* the options that are pulled out of the manpage or
-   * template go into the opts vector, the environment
-   * variables go into spec_env and the extra variables
-   * that are invoked with -x go into opt_other
-   */
-  std::vector<std::string> opts;
-  std::vector<std::string> spec_env;
-  std::vector<std::string> opt_other;
-  /* here we're initializing the variables for the thread
-   * timeout, the manpage location (8 is the default because
-   * thats where most manpages are stored, but 1 could also
-   * work.) as a string so we can check int later, the number
-   * of threads we're using, the buffer size as a string so
-   * that we chan check later if it is really an integar,
-   * the string that holds the manpage, the location of the
-   * template file, the characters we should strip that are
-   * sh dependant (characters that would interfere with the
-   * fuzz), if the user supplied any extra characters to
-   * strip out of the fuzz, the log file's name, the path
-   * of the command, the other seperator that should be used
-   * if not space with the -x option, the lower level user
-   * is initialized as 'nobody' by default if we're running
-   * as root, the command to run after the fuzz (good for
-   * killing off nasty processes afterwards if the reaper
-   * doesn't get them), the man page name, as well as
-   * a dummy fault code thats a duplicate so that the user
-   * can supply a fault code to the program that it should
-   * catch as well as the other default ones.
-   */
-  std::string prog_name = "";
-  std::string t_timeout = "3";
-  std::string man_loc = "8";
-  std::string num_threads = "2";
-  std::string buf_size;
-  std::string mp;
-  std::string template_file;
-  std::string strip_shell, u_strip_shell;
-#ifdef __unix__
-  strip_shell = "\"`<>\n|&\[]\()\{}:;$'";
-#endif
-#ifdef _WIN32
-  strip_shell = "[]:|<>+;=.?\n\r\\0";
-#endif
-#ifdef __ANDROID__
-  strip_shell = "\"`<>\n|&\[]\()\{}:;$'";
-#endif
-  std::string write_file_n = "";
-  std::string path_str = "";
-  std::string other_sep = "";
-  std::string low_lvl_user = "nobody";
-  std::string junk_file_of_args = "";
-  std::string always_arg_before = "";
-  std::string always_arg_after = "";
-  std::string run_command = "";
-  std::string man_page = "";
-  std::string before_command = "";
+  /* int thread_timeout_def = 3; */
+
+  Options options = {
+    static_args : 4,
+    buf_size_int : -1,
+    opts : {},
+    spec_env : {},
+    opt_other : {},
+    prog_name : "",
+    t_timeout : "3",
+    man_loc : "8",
+    num_threads : "2",
+    buf_size : "",
+    mp : "",
+    template_file : "",
 #ifdef __NOTANDROID__
-  std::string fault_code = "134";
-#endif
-#ifdef __ANDROID__
-  std::string fault_code = "134";
+    strip_shell : "\"`<>\n|&\[]\()\{}:;$'",
 #endif
 #ifdef _WIN32
-  std::string fault_code = "-1073741819";
+    strip_shell : "[]:|<>+;=.?\n\r\\0",
 #endif
-  /* declare some more variables as boolean, the template_opt,
-   * manpage option, if random is always used, if we're randomizing
-   * the buffer size, if we're writing to a file (logging), if the
-   * user has set custom stripping characters, if we're going to be
-   * jabbering a lot, if we're going to print the printf stuff as we
-   * fuzz, if there is another seperator besides space, if we're just
-   * going to dump the manpage options, if we're never going to
-   * inject random data, if we're using valgrind, if we're going to
-   * do a single dry run, if we're going to need the % sign (this is
-   * good for web browser fuzzing)
-   */
-  bool template_opt = false;
-  bool man_opt = false;
-  bool rand_all = false;
-  bool rand_buf = false;
-  bool verbose = false;
-  bool debug = false;
-  bool is_other = false;
-  bool dump_opts = false;
-  bool never_rand = false;
-  bool valgrind = false;
-  bool single_try = false;
-  bool percent_sign = false;
-  bool keep_going = false;
+#ifdef __ANDROID__
+    strip_shell : "\"`<>\n|&\[]\()\{}:;$'",
+#endif
+    u_strip_shell : "",
+    write_file_n : "",
+    path_str : "",
+    other_sep : "",
+    low_lvl_user : "nobody",
+    junk_file_of_args : "",
+    always_arg_before : "",
+    always_arg_after : "",
+    run_command : "",
+    man_page : "",
+    before_command : "",
+#ifdef __NOTANDROID__
+    fault_code : "134",
+#endif
+#ifdef __ANDROID__
+    fault_code : "134",
+#endif
+#ifdef _WIN32
+    fault_code : "-1073741819",
+#endif
+    template_opt : false,
+    man_opt : false,
+    rand_all : false,
+    rand_buf : false,
+    verbose : false,
+    debug : false,
+    is_other : false,
+    dump_opts : false,
+    never_rand : false,
+    valgrind : false,
+    single_try : false,
+    percent_sign : false,
+    keep_going : false
+  };
 
   /* first off we're going to start the signal handler incase they
    * do ctrl+c or something
    */
   signal(SIGINT, sig_handler);
   /* now we can start grabbing all the options! */
-  while ((opt = getopt(argc, argv,
-                       "m:p:t:e:c:f:o:b:s:x:R:A:F:E:S:L:W:B:M:C:N:y1hrzvdDnVPKi0")) !=
+  while ((opt = getopt(
+              argc, argv,
+              "m:p:t:e:c:f:o:b:s:x:R:A:F:E:S:L:W:B:M:C:N:y1hrzvdDnVPKi0")) !=
          -1) {
     switch (opt) {
     case 'v':
-      verbose = true;
+      options.verbose = true;
       break;
     case 'd':
-      debug = true;
+      options.debug = true;
       break;
     case 't':
-      template_opt = true;
-      template_file = optarg;
+      options.template_opt = true;
+      options.template_file = optarg;
       break;
     case 'c':
-      path_str = optarg;
+      options.path_str = optarg;
       break;
     case 'b':
-      buf_size = optarg;
+      options.buf_size = optarg;
       break;
     case 'e':
-      spec_env = get_flags_template(optarg, verbose, debug);
+      options.spec_env =
+          get_flags_template(optarg, options.verbose, options.debug);
       break;
     case 'p':
-      man_loc = optarg;
+      options.man_loc = optarg;
       break;
     case 'm':
-      man_opt = true;
-      man_page = optarg;
+      options.man_opt = true;
+      options.man_page = optarg;
       break;
     case 'f':
-      num_threads = optarg;
+      options.num_threads = optarg;
       break;
     case 'o':
-      write_file_n = optarg;
+      options.write_file_n = optarg;
       break;
     case 'h':
       help_me(argv[0]);
       break;
     case 'r':
-      rand_all = true;
+      options.rand_all = true;
       break;
     case 'z':
-      rand_buf = true;
+      options.rand_buf = true;
       break;
     case 's':
-      u_strip_shell = optarg;
+      options.u_strip_shell = optarg;
       break;
     case 'x':
-      opt_other = get_other(optarg, verbose, debug);
-      is_other = true;
+      options.opt_other = get_other(optarg, options.verbose, options.debug);
+      options.is_other = true;
       break;
     case 'D':
-      dump_opts = true;
+      options.dump_opts = true;
       break;
     case 'S':
-      other_sep = optarg;
+      options.other_sep = optarg;
       break;
     case 'L':
-      low_lvl_user = optarg;
+      options.low_lvl_user = optarg;
       break;
     case 'F':
-      junk_file_of_args = optarg;
+      options.junk_file_of_args = optarg;
       break;
     case 'A':
-      always_arg_after = optarg;
+      options.always_arg_after = optarg;
       break;
     case 'B':
-      always_arg_before = optarg;
+      options.always_arg_before = optarg;
       break;
     case 'n':
-      never_rand = true;
+      options.never_rand = true;
       break;
     case 'R':
-      run_command = optarg;
+      options.run_command = optarg;
       break;
     case 'W':
-      t_timeout = optarg;
+      options.t_timeout = optarg;
       break;
     case 'C':
-      fault_code = optarg;
+      options.fault_code = optarg;
       break;
     case 'V':
-      valgrind = true;
+      options.valgrind = true;
       break;
     case '1':
-      single_try = true;
+      options.single_try = true;
       break;
     case 'P':
-      percent_sign = true;
+      options.percent_sign = true;
       break;
     case 'M':
-      static_args = toint(optarg, argv[0]);
+      options.static_args = toint(optarg, argv[0]);
       break;
     case 'y':
-      buf_size_int = 0;
+      options.buf_size_int = 0;
       break;
     case 'K':
-      keep_going = true;
+      options.keep_going = true;
       break;
     case 'E':
-      before_command = optarg;
+      options.before_command = optarg;
       break;
     case 'i':
       version();
       break;
     case '0':
-      strip_shell = strip_shell + "\\x00";
+      options.strip_shell = options.strip_shell + "\\x00";
       break;
     case 'N':
-      prog_name = optarg;
+      options.prog_name = optarg;
       break;
     default:
       help_me(argv[0]);
     }
   }
 #ifdef __ANDROID__
-if (file_exists("/sdcard/ansvif/crashed") == true) {
-  unlink("/sdcard/ansvif/crashed");
-}
+  if (file_exists("/sdcard/ansvif/crashed") == true) {
+    unlink("/sdcard/ansvif/crashed");
+  }
 #endif
 #ifdef __NOTANDROID__
-if (file_exists("/tmp/a.crashed") == true) {
-	  unlink("/tmp/a.crashed");
-}
+  if (file_exists("/tmp/a.crashed") == true) {
+    unlink("/tmp/a.crashed");
+  }
 #endif
-    /* always strip a new line no matter what the user says */
-    strip_shell = u_strip_shell + ">\n";
-  if ((man_opt == true) && (template_opt == false)) {
+  /* always strip a new line no matter what the user says */
+  options.strip_shell = options.u_strip_shell + ">\n";
+  if ((options.man_opt == true) && (options.template_opt == false)) {
     /* because we're getting stuff from the manpage */
-    opts = get_flags_man(man_page, man_loc, verbose, debug, dump_opts);
-  } else if ((man_opt == false) && (template_opt == true)) {
+    options.opts =
+        get_flags_man(options.man_page, options.man_loc, options.verbose,
+                      options.debug, options.dump_opts);
+  } else if ((options.man_opt == false) && (options.template_opt == true)) {
     /* we're getting stuff from a template */
-    opts = get_flags_template(template_file, verbose, debug);
-  } else if ((man_opt == true) && (template_opt == true)) {
+    options.opts = get_flags_template(options.template_file, options.verbose,
+                                      options.debug);
+  } else if ((options.man_opt == true) && (options.template_opt == true)) {
     /* send them to help because you can't have a manpage and
      * a template at the same time
      */
-    std::cerr << "Don't specifiy a manpage and template at the same time" <<
-	    std::endl;
+    std::cerr << "Don't specifiy a manpage and template at the same time"
+              << std::endl;
     help_me(argv[0]);
-  } else if ((man_opt == false) && (template_opt == false)) {
+  } else if ((options.man_opt == false) && (options.template_opt == false)) {
     /* can't fuzz if we don't have a template or manpage as
      * a starting point, if you want nothing just touch a file
      * and use it as a template
      */
     std::cerr << "You didn't specy a manpage or template." << std::endl;
     help_me(argv[0]);
-  } if (file_exists(path_str)==false) {
+  }
+  if (file_exists(options.path_str) == false) {
     /* if they didn't specify a command path then error out */
-          std::cerr << "No command at path to fuzz..." << std::endl;
-	  help_me(argv[0]);
-  } if ((junk_file_of_args != "") && (is_other == false)) {
+    std::cerr << "No command at path to fuzz..." << std::endl;
+    help_me(argv[0]);
+  }
+  if ((options.junk_file_of_args != "") && (options.is_other == false)) {
     /* this will fix the -F no -x bug */
     help_me(argv[0]);
   }
@@ -352,16 +356,16 @@ if (file_exists("/tmp/a.crashed") == true) {
    * happens to not be, then we'll send them to the help page,
    * otherwise we'll turn it into type int
    */
-  if ((buf_size_int == 0) && (buf_size != "")) {
-      	  help_me(argv[0]);
-  }
-  if ((buf_size_int == -1) && (buf_size != "")) {
-    buf_size_int = toint(buf_size, argv[0]);
-  }
-  if (buf_size_int == -1) {
+  if ((options.buf_size_int == 0) && (options.buf_size != "")) {
     help_me(argv[0]);
   }
-  if (buf_size_int < 0) {
+  if ((options.buf_size_int == -1) && (options.buf_size != "")) {
+    options.buf_size_int = toint(options.buf_size, argv[0]);
+  }
+  if (options.buf_size_int == -1) {
+    help_me(argv[0]);
+  }
+  if (options.buf_size_int < 0) {
     std::cerr << "Buffer must be a positive integer." << std::endl;
     help_me(argv[0]);
   }
@@ -369,38 +373,27 @@ if (file_exists("/tmp/a.crashed") == true) {
    * we did with the buffer size
    */
   int thread_count_int = thread_count_def;
-  thread_count_int = toint(num_threads, argv[0]);
-  int thread_timeout_int = thread_timeout_def;
-  thread_timeout_int = toint(t_timeout, argv[0]);
+  thread_count_int = toint(options.num_threads, argv[0]);
+  /* int thread_timeout_int = thread_timeout_def; */
+  /* thread_timeout_int = toint(options.t_timeout, argv[0]); */
   /* if we're not doing a single try then turn on
    * threading
    */
-  if (single_try == false) {
+  if (options.single_try == false) {
     /* initialize threading! */
     std::vector<std::thread> threads;
     for (int cur_thread = 1; cur_thread <= thread_count_int; ++cur_thread)
-      threads.push_back(std::thread(
-          match_seg, buf_size_int, opts, spec_env, path_str, strip_shell,
-          rand_all, write_file_n, rand_buf, opt_other, is_other,
-          other_sep, thread_timeout_int, low_lvl_user, junk_file_of_args,
-          always_arg_before, always_arg_after, never_rand, run_command,
-          fault_code, valgrind, single_try, percent_sign, static_args,
-          keep_going, before_command, prog_name, verbose, debug));
+      threads.push_back(std::thread(match_seg, options));
     /* thrift shop */
     for (auto &all_thread : threads)
       all_thread.join();
     /* is that your grandma's coat??? */
   }
-  if (single_try == true) {
+  if (options.single_try == true) {
     /* no threads or anything since we're only doing a
      * single run
      */
-    match_seg(buf_size_int, opts, spec_env, path_str, strip_shell, rand_all,
-              write_file_n, rand_buf, opt_other, is_other,
-              other_sep, thread_timeout_int, low_lvl_user, junk_file_of_args,
-              always_arg_before, always_arg_after, never_rand, run_command,
-              fault_code, valgrind, single_try, percent_sign, static_args,
-              keep_going, before_command, prog_name, verbose, debug);
+    match_seg(options);
   }
   /* exit cleanly! */
   exit(0);
