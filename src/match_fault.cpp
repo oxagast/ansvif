@@ -45,7 +45,6 @@ public:
   std::string t_timeout;
   std::string man_loc;
   std::string num_threads;
-  std::string buf_size;
   std::string mp;
   std::string template_file;
   std::string strip_shell;
@@ -76,6 +75,14 @@ public:
   bool keep_going;
 } o;
 
+struct Out {
+  public:
+  std::string o;
+  std::string p;
+}out;
+       
+      
+      
 void log_hang(std::string write_file_n, std::string out_str_p,
               std::string out_str, std::string junk_file_of_args, int pid);
 void log_tail(std::string write_file_n, std::string junk_file_of_args,
@@ -98,12 +105,12 @@ bool file_exists(const std::string &filen);
 void write_junk_file(std::string filename, std::vector<std::string> opt_other,
                      int buf_size, int rand_spec_one, int rand_spec_two,
                      bool never_rand, std::string other_sep, bool verbose);
-std::vector<std::string>
+std::string
 get_out_str(std::string env_str, std::string valgrind_str, std::string sys_str,
             std::string path_str, std::string always_arg_before,
             std::string always_arg_after, std::string fuzz_after,
             std::string log_prefix, std::string before_command);
-std::vector<std::string>
+std::string
 get_out_str_pc(std::string env_str, std::string valgrind_str,
                std::string sys_str, std::string path_str,
                std::string always_arg_before, std::string always_arg_after,
@@ -358,7 +365,7 @@ bool match_seg(struct Options o) {
           make_garbage(rand_me_plz(rand_spec_one, rand_spec_two),
                        o.buf_size_int, "", o.is_other, o.never_rand),
           o.strip_shell);
-      std::vector<std::string> out_all;
+      Out out_str;
       if (fuzz_after == "'OOR'") {
         fuzz_after = "";
       }
@@ -367,28 +374,25 @@ bool match_seg(struct Options o) {
          * put together and ready to be sent out to the
          * subroutine, $? is done in sys_string.cpp
          */
-        out_all = get_out_str_pc(env_str, valgrind_str, sys_str, o.path_str,
+        out_str.p = get_out_str_pc(env_str, valgrind_str, sys_str, o.path_str,
                                  o.always_arg_before, o.always_arg_after,
                                  fuzz_after, o.write_file_n, o.before_command);
       }
       if (o.percent_sign == false) {
-        out_all = get_out_str(env_str, valgrind_str, sys_str, o.path_str,
+        out_str.o = get_out_str(env_str, valgrind_str, sys_str, o.path_str,
                               o.always_arg_before, o.always_arg_after,
                               fuzz_after, o.write_file_n, o.before_command);
       }
       /* coming to the stuff from sys_string either
        * normal or printf output
        */
-      std::string out_str = out_all[0];
-      std::string out_str_p = out_all[1];
-      /* claer the vector and shrink it */
       junk_opts.clear();
       junk_opts.shrink_to_fit();
       junk_opts_env.clear();
       junk_opts_env.shrink_to_fit();
       MD5 md5;
-      char *tried = new char[out_str.length() + 1];
-      strcpy(tried, out_str.c_str());
+      char *tried = new char[out_str.o.length() + 1];
+      strcpy(tried, out_str.o.c_str());
       char *tried_p = tried;
       std::string h_output = md5.digestString(tried_p);
       if (std::find(used_token.begin(), used_token.end(), h_output) !=
@@ -398,17 +402,17 @@ bool match_seg(struct Options o) {
         used_token.push_back(h_output);
 #ifdef __linux
         if (o.buf_size_int == 0) {
-          out_str = o.before_command + " " + o.path_str + " " +
+          out_str.o = o.before_command + " " + o.path_str + " " +
                     o.always_arg_before + " " + o.always_arg_after;
-          out_str_p = o.before_command + " " + o.path_str + " " +
+          out_str.p = o.before_command + " " + o.path_str + " " +
                       o.always_arg_before + " " + o.always_arg_after;
           if (o.write_file_n == "") {
             /* incase we are logging don't leave a blank file */
-            out_str = out_str + " >/dev/null 2>&1; echo $?";
+            out_str.o = out_str.o + " >/dev/null 2>&1; echo $?";
           } else {
             /* get the signal here and log */
 
-            out_str = out_str + " >" + o.write_file_n +
+            out_str.o = out_str.o + " >" + o.write_file_n +
                       ".output.ansvif.log 2>&1; echo $?";
           }
         }
@@ -417,8 +421,8 @@ bool match_seg(struct Options o) {
           /* write ALL the junk to STDOUT since we're in
            * debug mode
            */
-          std::cout << out_str << std::endl
-                    << out_str_p << std::endl
+          std::cout << out_str.o << std::endl
+                    << out_str.p << std::endl
                     << std::endl;
         }
         /* this here takes care of the command that is run after
@@ -438,7 +442,7 @@ bool match_seg(struct Options o) {
          * output and put its contense in 'output'
          */
         int pid;
-        FILE *fp = popen2(out_all[0], "r", pid, o.low_lvl_user);
+        FILE *fp = popen2(out_str.o, "r", pid, o.low_lvl_user);
         /* this takes care of killing off the child if it takes
          *  * too long
          *   */
@@ -461,7 +465,7 @@ bool match_seg(struct Options o) {
         std::string cmd_output = output.str();
         if (o.write_file_n != "") {
           /* logging */
-          log_head(o.write_file_n, o.path_str, cmd_output, out_str_p, out_str,
+          log_head(o.write_file_n, o.path_str, cmd_output, out_str.p, out_str.o,
                    pid);
         }
 #ifdef __ANDROID__
@@ -495,7 +499,7 @@ bool match_seg(struct Options o) {
 #endif
               std::cout << "Exit Code: " << cmd_output << std::endl;
               std::cout << "Crashed with command: " << std::endl
-                        << out_str_p << std::endl;
+                        << out_str.o << std::endl;
               if (o.junk_file_of_args != "") {
                 /* log the file data too */
                 std::cout << "File data left in: " << o.junk_file_of_args
@@ -506,7 +510,7 @@ bool match_seg(struct Options o) {
                  * xml file
                  */
                 log_tail(o.write_file_n, o.junk_file_of_args, output_logfile,
-                         crash_logfile, cmd_output, out_str_p, out_str, pid);
+                         crash_logfile, cmd_output, out_str.p, out_str.o, pid);
                 /* then exit cleanly because we crashed it! Get it? :) */
                 /* logging hangs */
               }

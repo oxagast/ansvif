@@ -51,7 +51,6 @@ public:
   std::string t_timeout;
   std::string man_loc;
   std::string num_threads;
-  std::string buf_size;
   std::string mp;
   std::string template_file;
   std::string strip_shell;
@@ -137,7 +136,6 @@ int main(int argc, char *argv[]) { // initialize our main
     t_timeout : "3",
     man_loc : "8",
     num_threads : "2",
-    buf_size : "",
     mp : "",
     template_file : "",
 #ifdef __NOTANDROID__
@@ -188,6 +186,7 @@ int main(int argc, char *argv[]) { // initialize our main
    * do ctrl+c or something
    */
   signal(SIGINT, sig_handler);
+  std::string buf_size;
   /* now we can start grabbing all the options! */
   while ((opt = getopt(
               argc, argv,
@@ -208,7 +207,7 @@ int main(int argc, char *argv[]) { // initialize our main
       options.path_str = optarg;
       break;
     case 'b':
-      options.buf_size = optarg;
+      buf_size = optarg;
       break;
     case 'e':
       options.spec_env =
@@ -356,11 +355,11 @@ int main(int argc, char *argv[]) { // initialize our main
    * happens to not be, then we'll send them to the help page,
    * otherwise we'll turn it into type int
    */
-  if ((options.buf_size_int == 0) && (options.buf_size != "")) {
+  if ((options.buf_size_int == 0) && (buf_size != "")) {
     help_me(argv[0]);
   }
-  if ((options.buf_size_int == -1) && (options.buf_size != "")) {
-    options.buf_size_int = toint(options.buf_size, argv[0]);
+  if ((options.buf_size_int == -1) && (buf_size != "")) {
+    options.buf_size_int = toint(buf_size, argv[0]);
   }
   if (options.buf_size_int == -1) {
     help_me(argv[0]);
