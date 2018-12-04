@@ -43,7 +43,6 @@ std::vector<std::string> get_flags_man(std::string man_page,
 struct Options {
 public:
   int static_args;
-  int buf_size_int;
   std::vector<std::string> opts;
   std::vector<std::string> spec_env;
   std::vector<std::string> opt_other;
@@ -66,7 +65,6 @@ public:
   bool template_opt;
   bool man_opt;
   bool rand_all;
-  bool rand_buf;
   bool verbose;
   bool debug;
   bool is_other;
@@ -75,6 +73,12 @@ public:
   bool valgrind;
   bool percent_sign;
 } options;
+
+struct BuffCont {
+  public:
+  int buf_size_int;
+  bool rand_buf;
+} buffercontrol;
 
 struct RunCommands {
   public:
@@ -89,7 +93,7 @@ struct Monopoly {
   bool single_try;
 } dontpassgo;
 
-void match_seg(Options, RunCommands, Monopoly);
+void match_seg(Options, RunCommands, Monopoly, BuffCont);
 std::vector<std::string> get_flags_template(std::string filename, bool verbose,
                                             bool debug);
 std::vector<std::string> get_other(std::string filename, bool verbose,
@@ -136,7 +140,6 @@ int main(int argc, char *argv[]) { // initialize our main
 
   Options options = {
     static_args : 4,
-    buf_size_int : -1,
     opts : {},
     spec_env : {},
     opt_other : {},
@@ -175,7 +178,6 @@ int main(int argc, char *argv[]) { // initialize our main
     template_opt : false,
     man_opt : false,
     rand_all : false,
-    rand_buf : false,
     verbose : false,
     debug : false,
     is_other : false,
@@ -183,6 +185,11 @@ int main(int argc, char *argv[]) { // initialize our main
     never_rand : false,
     valgrind : false,
     percent_sign : false,
+  };
+
+  BuffCont buffercontrol {
+    buf_size_int : -1,
+    rand_buf : false
   };
 
   Monopoly dontpassgo {
@@ -247,7 +254,7 @@ int main(int argc, char *argv[]) { // initialize our main
       options.rand_all = true;
       break;
     case 'z':
-      options.rand_buf = true;
+      buffercontrol.rand_buf = true;
       break;
     case 's':
       options.u_strip_shell = optarg;
@@ -299,7 +306,7 @@ int main(int argc, char *argv[]) { // initialize our main
       options.static_args = toint(optarg, argv[0]);
       break;
     case 'y':
-      options.buf_size_int = 0;
+      buffercontrol.buf_size_int = 0;
       break;
     case 'K':
       dontpassgo.keep_going = true;
@@ -369,16 +376,16 @@ int main(int argc, char *argv[]) { // initialize our main
    * happens to not be, then we'll send them to the help page,
    * otherwise we'll turn it into type int
    */
-  if ((options.buf_size_int == 0) && (buf_size != "")) {
+  if ((buffercontrol.buf_size_int == 0) && (buf_size != "")) {
     help_me(argv[0]);
   }
-  if ((options.buf_size_int == -1) && (buf_size != "")) {
-    options.buf_size_int = toint(buf_size, argv[0]);
+  if ((buffercontrol.buf_size_int == -1) && (buf_size != "")) {
+    buffercontrol.buf_size_int = toint(buf_size, argv[0]);
   }
-  if (options.buf_size_int == -1) {
+  if (buffercontrol.buf_size_int == -1) {
     help_me(argv[0]);
   }
-  if (options.buf_size_int < 0) {
+  if (buffercontrol.buf_size_int < 0) {
     std::cerr << "Buffer must be a positive integer." << std::endl;
     help_me(argv[0]);
   }
@@ -397,7 +404,7 @@ int main(int argc, char *argv[]) { // initialize our main
     /* initialize threading! */
     std::vector<std::thread> threads;
     for (int cur_thread = 1; cur_thread <= thread_count_int; ++cur_thread)
-      threads.push_back(std::thread(match_seg, options, runcoms, dontpassgo));
+      threads.push_back(std::thread(match_seg, options, runcoms, dontpassgo, buffercontrol));
     /* thrift shop */
     for (auto &all_thread : threads)
       all_thread.join();
@@ -407,7 +414,7 @@ int main(int argc, char *argv[]) { // initialize our main
     /* no threads or anything since we're only doing a
      * single run
      */
-    match_seg(options, runcoms, dontpassgo);
+    match_seg(options, runcoms, dontpassgo, buffercontrol);
   }
   /* exit cleanly! */
   exit(0);

@@ -37,7 +37,6 @@
 struct Options {
 public:
   int static_args;
-  int buf_size_int;
   std::vector<std::string> opts;
   std::vector<std::string> spec_env;
   std::vector<std::string> opt_other;
@@ -60,7 +59,6 @@ public:
   bool template_opt;
   bool man_opt;
   bool rand_all;
-  bool rand_buf;
   bool verbose;
   bool debug;
   bool is_other;
@@ -90,6 +88,11 @@ struct Monopoly {
   bool single_try;
 } go;
       
+struct BuffCont {
+  public:
+  int buf_size_int;
+  bool rand_buf;
+} bufctl;
 void log_hang(std::string write_file_n, std::string out_str_p,
               std::string out_str, std::string junk_file_of_args, int pid);
 void log_tail(std::string write_file_n, std::string junk_file_of_args,
@@ -123,7 +126,7 @@ get_out_str_pc(std::string env_str, std::string valgrind_str,
                std::string always_arg_before, std::string always_arg_after,
                std::string fuzz_after, std::string log_prefix,
                std::string before_command);
-bool match_seg(struct Options o, struct RunCommands runit, struct Monopoly go) {
+bool match_seg(struct Options o, struct RunCommands runit, struct Monopoly go, struct BuffCont bufctl) {
   bool segged = false;
   std::vector<std::string> used_token;
   std::string valgrind_str;
@@ -179,7 +182,7 @@ bool match_seg(struct Options o, struct RunCommands runit, struct Monopoly go) {
       std::string env_str, sys_str;
       if (o.junk_file_of_args != "") {
         /* write a junk file */
-        write_junk_file(o.junk_file_of_args, o.opt_other, o.buf_size_int,
+        write_junk_file(o.junk_file_of_args, o.opt_other, bufctl.buf_size_int,
                         rand_spec_one, rand_spec_two, o.never_rand, o.other_sep,
                         o.verbose);
       }
@@ -218,7 +221,7 @@ bool match_seg(struct Options o, struct RunCommands runit, struct Monopoly go) {
         }
       }
       if (o.is_other == true) {
-        if (o.rand_buf == true) {
+        if (bufctl.rand_buf == true) {
           for (std::vector<std::string>::const_iterator junk_opt_env =
                    junk_opts_env.begin();
                junk_opt_env != junk_opts_env.end(); ++junk_opt_env) {
@@ -226,7 +229,7 @@ bool match_seg(struct Options o, struct RunCommands runit, struct Monopoly go) {
             std::string oscar_env = remove_chars(
                 make_garbage(
                     rand_me_plz(rand_spec_one, rand_spec_two),
-                    rand_me_plz(1, o.buf_size_int),
+                    rand_me_plz(1, bufctl.buf_size_int),
                     o.opt_other.at(rand_me_plz(0, o.opt_other.size() - 1)),
                     o.is_other, o.never_rand),
                 " ");
@@ -242,7 +245,7 @@ bool match_seg(struct Options o, struct RunCommands runit, struct Monopoly go) {
             std::string oscar = remove_chars(
                 make_garbage(
                     rand_me_plz(rand_spec_one, rand_spec_two),
-                    rand_me_plz(1, o.buf_size_int),
+                    rand_me_plz(1, bufctl.buf_size_int),
                     o.opt_other.at(rand_me_plz(0, o.opt_other.size() - 1)),
                     o.is_other, o.never_rand),
                 o.strip_shell);
@@ -257,13 +260,13 @@ bool match_seg(struct Options o, struct RunCommands runit, struct Monopoly go) {
               }
             }
           }
-        } else if (o.rand_buf == false) {
+        } else if (bufctl.rand_buf == false) {
           for (std::vector<std::string>::const_iterator junk_opt_env =
                    junk_opts_env.begin();
                junk_opt_env != junk_opts_env.end(); ++junk_opt_env) {
             std::string oscar_env = remove_chars(
                 make_garbage(
-                    rand_me_plz(rand_spec_one, rand_spec_two), o.buf_size_int,
+                    rand_me_plz(rand_spec_one, rand_spec_two), bufctl.buf_size_int,
                     o.opt_other.at(rand_me_plz(0, o.opt_other.size() - 1)),
                     o.is_other, o.never_rand),
                 " ");
@@ -277,7 +280,7 @@ bool match_seg(struct Options o, struct RunCommands runit, struct Monopoly go) {
                junk_opt != junk_opts.end(); ++junk_opt) {
             std::string oscar = remove_chars(
                 make_garbage(
-                    rand_me_plz(rand_spec_one, rand_spec_two), o.buf_size_int,
+                    rand_me_plz(rand_spec_one, rand_spec_two), bufctl.buf_size_int,
                     o.opt_other.at(rand_me_plz(0, o.opt_other.size() - 1)),
                     o.is_other, o.never_rand),
                 o.strip_shell);
@@ -298,7 +301,7 @@ bool match_seg(struct Options o, struct RunCommands runit, struct Monopoly go) {
         }
       }
       if (o.is_other == false) {
-        if (o.rand_buf == true) {
+        if (bufctl.rand_buf == true) {
           for (std::vector<std::string>::const_iterator junk_opt_env =
                    junk_opts_env.begin();
                junk_opt_env != junk_opts_env.end(); ++junk_opt_env) {
@@ -307,7 +310,7 @@ bool match_seg(struct Options o, struct RunCommands runit, struct Monopoly go) {
              */
             std::string oscar_env = remove_chars(
                 make_garbage(rand_me_plz(rand_spec_one, rand_spec_two),
-                             rand_me_plz(1, o.buf_size_int), "", o.is_other,
+                             rand_me_plz(1, bufctl.buf_size_int), "", o.is_other,
                              o.never_rand),
                 " ");
             if (oscar_env != "'OOR'") {
@@ -320,7 +323,7 @@ bool match_seg(struct Options o, struct RunCommands runit, struct Monopoly go) {
             /* loop through the vector of junk options */
             std::string oscar = remove_chars(
                 make_garbage(rand_me_plz(rand_spec_one, rand_spec_two),
-                             rand_me_plz(1, o.buf_size_int), "", o.is_other,
+                             rand_me_plz(1, bufctl.buf_size_int), "", o.is_other,
                              o.never_rand),
                 o.strip_shell);
             if (oscar != "'OOR'") {
@@ -334,13 +337,13 @@ bool match_seg(struct Options o, struct RunCommands runit, struct Monopoly go) {
               }
             }
           }
-        } else if (o.rand_buf == false) {
+        } else if (bufctl.rand_buf == false) {
           for (std::vector<std::string>::const_iterator junk_opt_env =
                    junk_opts_env.begin();
                junk_opt_env != junk_opts_env.end(); ++junk_opt_env) {
             std::string oscar_env = remove_chars(
                 make_garbage(rand_me_plz(rand_spec_one, rand_spec_two),
-                             o.buf_size_int, "", o.is_other, o.never_rand),
+                             bufctl.buf_size_int, "", o.is_other, o.never_rand),
                 " ");
             if (oscar_env != "'OOR'") {
               env_str = env_str + *junk_opt_env + " " + oscar_env;
@@ -353,7 +356,7 @@ bool match_seg(struct Options o, struct RunCommands runit, struct Monopoly go) {
 
             std::string oscar = remove_chars(
                 make_garbage(rand_me_plz(rand_spec_one, rand_spec_two),
-                             o.buf_size_int, "", o.is_other, o.never_rand),
+                             bufctl.buf_size_int, "", o.is_other, o.never_rand),
                 o.strip_shell);
             if (oscar != "'OOR'") {
               sep_type = rand_me_plz(0, 1);
@@ -370,7 +373,7 @@ bool match_seg(struct Options o, struct RunCommands runit, struct Monopoly go) {
       }
       std::string fuzz_after = remove_chars(
           make_garbage(rand_me_plz(rand_spec_one, rand_spec_two),
-                       o.buf_size_int, "", o.is_other, o.never_rand),
+                       bufctl.buf_size_int, "", o.is_other, o.never_rand),
           o.strip_shell);
       Out out_str;
       if (fuzz_after == "'OOR'") {
@@ -408,7 +411,7 @@ bool match_seg(struct Options o, struct RunCommands runit, struct Monopoly go) {
       } else {
         used_token.push_back(h_output);
 #ifdef __linux
-        if (o.buf_size_int == 0) {
+        if (bufctl.buf_size_int == 0) {
           out_str.o = runit.before_command + " " + o.path_str + " " +
                     o.always_arg_before + " " + o.always_arg_after;
           out_str.p = runit.before_command + " " + o.path_str + " " +
