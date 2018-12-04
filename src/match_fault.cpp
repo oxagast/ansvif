@@ -67,9 +67,7 @@ public:
   bool dump_opts;
   bool never_rand;
   bool valgrind;
-  bool single_try;
   bool percent_sign;
-  bool keep_going;
 } o;
 
 struct RunCommands {
@@ -86,7 +84,11 @@ struct Out {
   std::string p;
 }out;
        
-      
+struct Monopoly {
+  public:
+  bool keep_going;
+  bool single_try;
+} go;
       
 void log_hang(std::string write_file_n, std::string out_str_p,
               std::string out_str, std::string junk_file_of_args, int pid);
@@ -121,7 +123,7 @@ get_out_str_pc(std::string env_str, std::string valgrind_str,
                std::string always_arg_before, std::string always_arg_after,
                std::string fuzz_after, std::string log_prefix,
                std::string before_command);
-bool match_seg(struct Options o, struct RunCommands runit) {
+bool match_seg(struct Options o, struct RunCommands runit, struct Monopoly go) {
   bool segged = false;
   std::vector<std::string> used_token;
   std::string valgrind_str;
@@ -519,12 +521,12 @@ bool match_seg(struct Options o, struct RunCommands runit) {
                 /* then exit cleanly because we crashed it! Get it? :) */
                 /* logging hangs */
               }
-              if (o.keep_going == false) {
+              if (go.keep_going == false) {
                 return (false);
               }
         }  // For the checksum algorithm under linux
           }
-          if (o.single_try == true) {
+          if (go.single_try == true) {
             /* do all that shit but only once! */
             if ((o.verbose == true) || (o.debug == true)) {
               std::cout << "No fault of mine!" << std::endl;

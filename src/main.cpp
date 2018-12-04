@@ -73,9 +73,7 @@ public:
   bool dump_opts;
   bool never_rand;
   bool valgrind;
-  bool single_try;
   bool percent_sign;
-  bool keep_going;
 } options;
 
 struct RunCommands {
@@ -85,8 +83,13 @@ struct RunCommands {
   std::string prog_name;
 } runcoms;
 
+struct Monopoly {
+  public:
+  bool keep_going;
+  bool single_try;
+} dontpassgo;
 
-void match_seg(Options, RunCommands);
+void match_seg(Options, RunCommands, Monopoly);
 std::vector<std::string> get_flags_template(std::string filename, bool verbose,
                                             bool debug);
 std::vector<std::string> get_other(std::string filename, bool verbose,
@@ -179,9 +182,12 @@ int main(int argc, char *argv[]) { // initialize our main
     dump_opts : false,
     never_rand : false,
     valgrind : false,
-    single_try : false,
     percent_sign : false,
-    keep_going : false
+  };
+
+  Monopoly dontpassgo {
+    keep_going : false,
+    single_try : false
   };
 
   RunCommands runcoms {
@@ -284,7 +290,7 @@ int main(int argc, char *argv[]) { // initialize our main
       options.valgrind = true;
       break;
     case '1':
-      options.single_try = true;
+      dontpassgo.single_try = true;
       break;
     case 'P':
       options.percent_sign = true;
@@ -296,7 +302,7 @@ int main(int argc, char *argv[]) { // initialize our main
       options.buf_size_int = 0;
       break;
     case 'K':
-      options.keep_going = true;
+      dontpassgo.keep_going = true;
       break;
     case 'E':
       runcoms.before_command = optarg;
@@ -387,21 +393,21 @@ int main(int argc, char *argv[]) { // initialize our main
   /* if we're not doing a single try then turn on
    * threading
    */
-  if (options.single_try == false) {
+  if (dontpassgo.single_try == false) {
     /* initialize threading! */
     std::vector<std::thread> threads;
     for (int cur_thread = 1; cur_thread <= thread_count_int; ++cur_thread)
-      threads.push_back(std::thread(match_seg, options, runcoms));
+      threads.push_back(std::thread(match_seg, options, runcoms, dontpassgo));
     /* thrift shop */
     for (auto &all_thread : threads)
       all_thread.join();
     /* is that your grandma's coat??? */
   }
-  if (options.single_try == true) {
+  if (dontpassgo.single_try == true) {
     /* no threads or anything since we're only doing a
      * single run
      */
-    match_seg(options, runcoms);
+    match_seg(options, runcoms, dontpassgo);
   }
   /* exit cleanly! */
   exit(0);
