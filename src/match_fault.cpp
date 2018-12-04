@@ -41,7 +41,6 @@ public:
   std::vector<std::string> opts;
   std::vector<std::string> spec_env;
   std::vector<std::string> opt_other;
-  std::string prog_name;
   std::string t_timeout;
   std::string man_loc;
   std::string num_threads;
@@ -56,9 +55,7 @@ public:
   std::string junk_file_of_args;
   std::string always_arg_before;
   std::string always_arg_after;
-  std::string run_command;
   std::string man_page;
-  std::string before_command;
   std::string fault_code;
   bool template_opt;
   bool man_opt;
@@ -74,6 +71,14 @@ public:
   bool percent_sign;
   bool keep_going;
 } o;
+
+struct RunCommands {
+  public:
+  std::string run_command;
+  std::string before_command;
+  std::string prog_name;
+}runit;
+
 
 struct Out {
   public:
@@ -116,7 +121,7 @@ get_out_str_pc(std::string env_str, std::string valgrind_str,
                std::string always_arg_before, std::string always_arg_after,
                std::string fuzz_after, std::string log_prefix,
                std::string before_command);
-bool match_seg(struct Options o) {
+bool match_seg(struct Options o, struct RunCommands runit) {
   bool segged = false;
   std::vector<std::string> used_token;
   std::string valgrind_str;
@@ -376,12 +381,12 @@ bool match_seg(struct Options o) {
          */
         out_str.p = get_out_str_pc(env_str, valgrind_str, sys_str, o.path_str,
                                  o.always_arg_before, o.always_arg_after,
-                                 fuzz_after, o.write_file_n, o.before_command);
+                                 fuzz_after, o.write_file_n, runit.before_command);
       }
       if (o.percent_sign == false) {
         out_str.o = get_out_str(env_str, valgrind_str, sys_str, o.path_str,
                               o.always_arg_before, o.always_arg_after,
-                              fuzz_after, o.write_file_n, o.before_command);
+                              fuzz_after, o.write_file_n, runit.before_command);
       }
       /* coming to the stuff from sys_string either
        * normal or printf output
@@ -402,9 +407,9 @@ bool match_seg(struct Options o) {
         used_token.push_back(h_output);
 #ifdef __linux
         if (o.buf_size_int == 0) {
-          out_str.o = o.before_command + " " + o.path_str + " " +
+          out_str.o = runit.before_command + " " + o.path_str + " " +
                     o.always_arg_before + " " + o.always_arg_after;
-          out_str.p = o.before_command + " " + o.path_str + " " +
+          out_str.p = runit.before_command + " " + o.path_str + " " +
                       o.always_arg_before + " " + o.always_arg_after;
           if (o.write_file_n == "") {
             /* incase we are logging don't leave a blank file */
@@ -428,12 +433,12 @@ bool match_seg(struct Options o) {
         /* this here takes care of the command that is run after
          * the fuzz
          */
-        if (o.run_command != "") {
+        if (runit.run_command != "") {
 #ifdef _WIN32
-          o.run_command = "powershell " + o.run_command;
+          runit.run_command = "powershell " + runit.run_command;
 #endif
           int run_com_pid;
-          FILE *fp = popen2(o.run_command, "r", run_com_pid, o.low_lvl_user);
+          FILE *fp = popen2(runit.run_command, "r", run_com_pid, o.low_lvl_user);
           pclose2(fp, run_com_pid);
         }
         /* inititalize the child and open the child process fork

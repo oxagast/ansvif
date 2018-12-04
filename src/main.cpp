@@ -47,7 +47,6 @@ public:
   std::vector<std::string> opts;
   std::vector<std::string> spec_env;
   std::vector<std::string> opt_other;
-  std::string prog_name;
   std::string t_timeout;
   std::string man_loc;
   std::string num_threads;
@@ -62,9 +61,7 @@ public:
   std::string junk_file_of_args;
   std::string always_arg_before;
   std::string always_arg_after;
-  std::string run_command;
   std::string man_page;
-  std::string before_command;
   std::string fault_code;
   bool template_opt;
   bool man_opt;
@@ -81,7 +78,15 @@ public:
   bool keep_going;
 } options;
 
-void match_seg(Options);
+struct RunCommands {
+  public:
+  std::string run_command;
+  std::string before_command;
+  std::string prog_name;
+} runcoms;
+
+
+void match_seg(Options, RunCommands);
 std::vector<std::string> get_flags_template(std::string filename, bool verbose,
                                             bool debug);
 std::vector<std::string> get_other(std::string filename, bool verbose,
@@ -132,7 +137,6 @@ int main(int argc, char *argv[]) { // initialize our main
     opts : {},
     spec_env : {},
     opt_other : {},
-    prog_name : "",
     t_timeout : "3",
     man_loc : "8",
     num_threads : "2",
@@ -155,9 +159,7 @@ int main(int argc, char *argv[]) { // initialize our main
     junk_file_of_args : "",
     always_arg_before : "",
     always_arg_after : "",
-    run_command : "",
     man_page : "",
-    before_command : "",
 #ifdef __NOTANDROID__
     fault_code : "134",
 #endif
@@ -180,6 +182,12 @@ int main(int argc, char *argv[]) { // initialize our main
     single_try : false,
     percent_sign : false,
     keep_going : false
+  };
+
+  RunCommands runcoms {
+    run_command : "",
+    before_command : "",
+    prog_name : ""
   };
 
   /* first off we're going to start the signal handler incase they
@@ -264,7 +272,7 @@ int main(int argc, char *argv[]) { // initialize our main
       options.never_rand = true;
       break;
     case 'R':
-      options.run_command = optarg;
+      runcoms.run_command = optarg;
       break;
     case 'W':
       options.t_timeout = optarg;
@@ -291,7 +299,7 @@ int main(int argc, char *argv[]) { // initialize our main
       options.keep_going = true;
       break;
     case 'E':
-      options.before_command = optarg;
+      runcoms.before_command = optarg;
       break;
     case 'i':
       version();
@@ -300,7 +308,7 @@ int main(int argc, char *argv[]) { // initialize our main
       options.strip_shell = options.strip_shell + "\\x00";
       break;
     case 'N':
-      options.prog_name = optarg;
+      runcoms.prog_name = optarg;
       break;
     default:
       help_me(argv[0]);
@@ -370,6 +378,7 @@ int main(int argc, char *argv[]) { // initialize our main
   }
   /* make sure the thread count is an integar the same way
    * we did with the buffer size
+   * a
    */
   int thread_count_int = thread_count_def;
   thread_count_int = toint(options.num_threads, argv[0]);
@@ -382,7 +391,7 @@ int main(int argc, char *argv[]) { // initialize our main
     /* initialize threading! */
     std::vector<std::thread> threads;
     for (int cur_thread = 1; cur_thread <= thread_count_int; ++cur_thread)
-      threads.push_back(std::thread(match_seg, options));
+      threads.push_back(std::thread(match_seg, options, runcoms));
     /* thrift shop */
     for (auto &all_thread : threads)
       all_thread.join();
@@ -392,7 +401,7 @@ int main(int argc, char *argv[]) { // initialize our main
     /* no threads or anything since we're only doing a
      * single run
      */
-    match_seg(options);
+    match_seg(options, runcoms);
   }
   /* exit cleanly! */
   exit(0);
