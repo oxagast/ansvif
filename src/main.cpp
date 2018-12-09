@@ -47,10 +47,6 @@ public:
   std::vector<std::string> spec_env;
   std::vector<std::string> opt_other;
   std::string t_timeout;
-  std::string man_loc;
-  std::string num_threads;
-  std::string mp;
-  std::string template_file;
   std::string strip_shell;
   std::string u_strip_shell;
   std::string write_file_n;
@@ -60,14 +56,10 @@ public:
   std::string junk_file_of_args;
   std::string always_arg_before;
   std::string always_arg_after;
-  std::string man_page;
   std::string fault_code;
-  bool template_opt;
-  bool man_opt;
   bool rand_all;
   bool verbose;
   bool debug;
-  bool is_other;
   bool dump_opts;
   bool never_rand;
   bool valgrind;
@@ -144,10 +136,6 @@ int main(int argc, char *argv[]) { // initialize our main
     spec_env : {},
     opt_other : {},
     t_timeout : "3",
-    man_loc : "8",
-    num_threads : "2",
-    mp : "",
-    template_file : "",
 #ifdef __NOTANDROID__
     strip_shell : "\"`<>\n|&\[]\()\{}:;$'",
 #endif
@@ -165,7 +153,6 @@ int main(int argc, char *argv[]) { // initialize our main
     junk_file_of_args : "",
     always_arg_before : "",
     always_arg_after : "",
-    man_page : "",
 #ifdef __NOTANDROID__
     fault_code : "134",
 #endif
@@ -175,12 +162,9 @@ int main(int argc, char *argv[]) { // initialize our main
 #ifdef _WIN32
     fault_code : "-1073741819",
 #endif
-    template_opt : false,
-    man_opt : false,
     rand_all : false,
     verbose : false,
     debug : false,
-    is_other : false,
     dump_opts : false,
     never_rand : false,
     valgrind : false,
@@ -207,7 +191,7 @@ int main(int argc, char *argv[]) { // initialize our main
    * do ctrl+c or something
    */
   signal(SIGINT, sig_handler);
-  std::string buf_size;
+  std::string buf_size, template_file, man_loc, man_page, num_threads;
   /* now we can start grabbing all the options! */
   while ((opt = getopt(
               argc, argv,
@@ -221,8 +205,7 @@ int main(int argc, char *argv[]) { // initialize our main
       options.debug = true;
       break;
     case 't':
-      options.template_opt = true;
-      options.template_file = optarg;
+      template_file = optarg;
       break;
     case 'c':
       options.path_str = optarg;
@@ -235,14 +218,13 @@ int main(int argc, char *argv[]) { // initialize our main
           get_flags_template(optarg, options.verbose, options.debug);
       break;
     case 'p':
-      options.man_loc = optarg;
+      man_loc = optarg;
       break;
     case 'm':
-      options.man_opt = true;
-      options.man_page = optarg;
+      man_page = optarg;
       break;
     case 'f':
-      options.num_threads = optarg;
+      num_threads = optarg;
       break;
     case 'o':
       options.write_file_n = optarg;
@@ -261,7 +243,6 @@ int main(int argc, char *argv[]) { // initialize our main
       break;
     case 'x':
       options.opt_other = get_other(optarg, options.verbose, options.debug);
-      options.is_other = true;
       break;
     case 'D':
       options.dump_opts = true;
@@ -339,23 +320,23 @@ int main(int argc, char *argv[]) { // initialize our main
 #endif
   /* always strip a new line no matter what the user says */
   options.strip_shell = options.u_strip_shell + ">\n";
-  if ((options.man_opt == true) && (options.template_opt == false)) {
+  if ((man_page != "") && (template_file == "")) {
     /* because we're getting stuff from the manpage */
     options.opts =
-        get_flags_man(options.man_page, options.man_loc, options.verbose,
+        get_flags_man(man_page, man_loc, options.verbose,
                       options.debug, options.dump_opts);
-  } else if ((options.man_opt == false) && (options.template_opt == true)) {
+  } else if ((man_page == "") && (template_file != "")) {
     /* we're getting stuff from a template */
-    options.opts = get_flags_template(options.template_file, options.verbose,
+    options.opts = get_flags_template(template_file, options.verbose,
                                       options.debug);
-  } else if ((options.man_opt == true) && (options.template_opt == true)) {
+  } else if ((man_page != "") && (template_file != "")) {
     /* send them to help because you can't have a manpage and
      * a template at the same time
      */
     std::cerr << "Don't specifiy a manpage and template at the same time"
               << std::endl;
     help_me(argv[0]);
-  } else if ((options.man_opt == false) && (options.template_opt == false)) {
+  } else if ((man_page == "") && (template_file == "")) {
     /* can't fuzz if we don't have a template or manpage as
      * a starting point, if you want nothing just touch a file
      * and use it as a template
@@ -368,7 +349,7 @@ int main(int argc, char *argv[]) { // initialize our main
     std::cerr << "No command at path to fuzz..." << std::endl;
     help_me(argv[0]);
   }
-  if ((options.junk_file_of_args != "") && (options.is_other == false)) {
+  if ((options.junk_file_of_args != "") && (options.opt_other.size() != 0)) {
     /* this will fix the -F no -x bug */
     help_me(argv[0]);
   }
@@ -383,7 +364,7 @@ int main(int argc, char *argv[]) { // initialize our main
     buffercontrol.buf_size_int = toint(buf_size, argv[0]);
   }
   if (buffercontrol.buf_size_int == -1) {
-    help_me(argv[0]);
+      	  help_me(argv[0]);
   }
   if (buffercontrol.buf_size_int < 0) {
     std::cerr << "Buffer must be a positive integer." << std::endl;
@@ -394,7 +375,9 @@ int main(int argc, char *argv[]) { // initialize our main
    * a
    */
   int thread_count_int = thread_count_def;
-  thread_count_int = toint(options.num_threads, argv[0]);
+  if(num_threads != "") {
+  thread_count_int = toint(num_threads, argv[0]);
+  }
   /* int thread_timeout_int = thread_timeout_def; */
   /* thread_timeout_int = toint(options.t_timeout, argv[0]); */
   /* if we're not doing a single try then turn on

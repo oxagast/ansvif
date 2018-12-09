@@ -41,10 +41,6 @@ public:
   std::vector<std::string> spec_env;
   std::vector<std::string> opt_other;
   std::string t_timeout;
-  std::string man_loc;
-  std::string num_threads;
-  std::string mp;
-  std::string template_file;
   std::string strip_shell;
   std::string u_strip_shell;
   std::string write_file_n;
@@ -54,14 +50,10 @@ public:
   std::string junk_file_of_args;
   std::string always_arg_before;
   std::string always_arg_after;
-  std::string man_page;
   std::string fault_code;
-  bool template_opt;
-  bool man_opt;
   bool rand_all;
   bool verbose;
   bool debug;
-  bool is_other;
   bool dump_opts;
   bool never_rand;
   bool valgrind;
@@ -129,6 +121,10 @@ get_out_str_pc(std::string env_str, std::string valgrind_str,
 bool match_seg(struct Options o, struct RunCommands runit, struct Monopoly go, struct BuffCont bufctl) {
   bool segged = false;
   std::vector<std::string> used_token;
+  bool is_other = false;
+  if (o.opt_other.size() != 0) {
+	  is_other = true;
+  }
   std::string valgrind_str;
   std::string output_logfile = o.write_file_n + ".output.ansvif.log";
   std::string crash_logfile = o.write_file_n + ".crash.ansvif.log";
@@ -220,7 +216,7 @@ bool match_seg(struct Options o, struct RunCommands runit, struct Monopoly go, s
           junk_opts_env.push_back(o.spec_env.at(cmd_flag_a));
         }
       }
-      if (o.is_other == true) {
+      if (is_other == true) {
         if (bufctl.rand_buf == true) {
           for (std::vector<std::string>::const_iterator junk_opt_env =
                    junk_opts_env.begin();
@@ -231,7 +227,7 @@ bool match_seg(struct Options o, struct RunCommands runit, struct Monopoly go, s
                     rand_me_plz(rand_spec_one, rand_spec_two),
                     rand_me_plz(1, bufctl.buf_size_int),
                     o.opt_other.at(rand_me_plz(0, o.opt_other.size() - 1)),
-                    o.is_other, o.never_rand),
+                    is_other, o.never_rand),
                 " ");
             if (oscar_env != "'OOR'") {
               /* making sure it's not out of range */
@@ -247,7 +243,7 @@ bool match_seg(struct Options o, struct RunCommands runit, struct Monopoly go, s
                     rand_me_plz(rand_spec_one, rand_spec_two),
                     rand_me_plz(1, bufctl.buf_size_int),
                     o.opt_other.at(rand_me_plz(0, o.opt_other.size() - 1)),
-                    o.is_other, o.never_rand),
+                    is_other, o.never_rand),
                 o.strip_shell);
             if (oscar != "'OOR'") {
               sep_type = rand_me_plz(0, 1);
@@ -268,7 +264,7 @@ bool match_seg(struct Options o, struct RunCommands runit, struct Monopoly go, s
                 make_garbage(
                     rand_me_plz(rand_spec_one, rand_spec_two), bufctl.buf_size_int,
                     o.opt_other.at(rand_me_plz(0, o.opt_other.size() - 1)),
-                    o.is_other, o.never_rand),
+                    is_other, o.never_rand),
                 " ");
             if (oscar_env != "'OOR'") {
               /* really really repetative */
@@ -282,7 +278,7 @@ bool match_seg(struct Options o, struct RunCommands runit, struct Monopoly go, s
                 make_garbage(
                     rand_me_plz(rand_spec_one, rand_spec_two), bufctl.buf_size_int,
                     o.opt_other.at(rand_me_plz(0, o.opt_other.size() - 1)),
-                    o.is_other, o.never_rand),
+                    is_other, o.never_rand),
                 o.strip_shell);
             if (oscar != "'OOR'") { // if not out of range
               /* here we randomize if we have a space or not */
@@ -300,7 +296,7 @@ bool match_seg(struct Options o, struct RunCommands runit, struct Monopoly go, s
           }
         }
       }
-      if (o.is_other == false) {
+      if (is_other == false) {
         if (bufctl.rand_buf == true) {
           for (std::vector<std::string>::const_iterator junk_opt_env =
                    junk_opts_env.begin();
@@ -310,7 +306,7 @@ bool match_seg(struct Options o, struct RunCommands runit, struct Monopoly go, s
              */
             std::string oscar_env = remove_chars(
                 make_garbage(rand_me_plz(rand_spec_one, rand_spec_two),
-                             rand_me_plz(1, bufctl.buf_size_int), "", o.is_other,
+                             rand_me_plz(1, bufctl.buf_size_int), "", is_other,
                              o.never_rand),
                 " ");
             if (oscar_env != "'OOR'") {
@@ -323,7 +319,7 @@ bool match_seg(struct Options o, struct RunCommands runit, struct Monopoly go, s
             /* loop through the vector of junk options */
             std::string oscar = remove_chars(
                 make_garbage(rand_me_plz(rand_spec_one, rand_spec_two),
-                             rand_me_plz(1, bufctl.buf_size_int), "", o.is_other,
+                             rand_me_plz(1, bufctl.buf_size_int), "", is_other,
                              o.never_rand),
                 o.strip_shell);
             if (oscar != "'OOR'") {
@@ -343,7 +339,7 @@ bool match_seg(struct Options o, struct RunCommands runit, struct Monopoly go, s
                junk_opt_env != junk_opts_env.end(); ++junk_opt_env) {
             std::string oscar_env = remove_chars(
                 make_garbage(rand_me_plz(rand_spec_one, rand_spec_two),
-                             bufctl.buf_size_int, "", o.is_other, o.never_rand),
+                             bufctl.buf_size_int, "", is_other, o.never_rand),
                 " ");
             if (oscar_env != "'OOR'") {
               env_str = env_str + *junk_opt_env + " " + oscar_env;
@@ -356,7 +352,7 @@ bool match_seg(struct Options o, struct RunCommands runit, struct Monopoly go, s
 
             std::string oscar = remove_chars(
                 make_garbage(rand_me_plz(rand_spec_one, rand_spec_two),
-                             bufctl.buf_size_int, "", o.is_other, o.never_rand),
+                             bufctl.buf_size_int, "", is_other, o.never_rand),
                 o.strip_shell);
             if (oscar != "'OOR'") {
               sep_type = rand_me_plz(0, 1);
@@ -373,7 +369,7 @@ bool match_seg(struct Options o, struct RunCommands runit, struct Monopoly go, s
       }
       std::string fuzz_after = remove_chars(
           make_garbage(rand_me_plz(rand_spec_one, rand_spec_two),
-                       bufctl.buf_size_int, "", o.is_other, o.never_rand),
+                       bufctl.buf_size_int, "", is_other, o.never_rand),
           o.strip_shell);
       Out out_str;
       if (fuzz_after == "'OOR'") {
