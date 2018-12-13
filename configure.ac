@@ -11,7 +11,7 @@ AX_CXX_COMPILE_STDCXX_11
 AC_CHECK_HEADERS([string])
 AC_CHECK_HEADERS([ipstream])
 AC_CHECK_HEADERS([lz])
-AC_CHECK_HEADERS([crypto])
+#AC_CHECK_HEADERS([crypto])
 AC_CONFIG_FILES([Makefile])
 AM_INIT_AUTOMAKE([subdir-objects])
 # This adds the option of compiling without using the ctemplate library,

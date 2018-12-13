@@ -11,11 +11,10 @@ bin_PROGRAMS = ansvif generic_buffer_overflow string_format null_pointer
 else
 bin_PROGRAMS = ansvif
 endif
-
 noinst_LIBRARIES = libgzstream.a
 libgzstream_a_SOURCES = include/gzstream/gzstream.h include/gzstream/gzstream.cpp
 if OS_IS_KALI
-SUBDIRS= include/gzstream/
+SUBDIRS = include/gzstream/
 endif
 ansvif_SOURCES = src/log.cpp src/bin2hex.cpp src/popen2.cpp src/main.cpp src/help.cpp src/match_fault.cpp src/sys_string.cpp src/man_read.cpp src/trash.cpp src/randomizer.cpp src/remove_chars.cpp src/to_int.cpp src/file_check.cpp src/reaper.cpp src/write_file.cpp src/templates.cpp include/gzstream/gzstream.h include/xmlwriter/xml_writer.hpp src/version.h
 if OS_IS_REDHAT
@@ -31,7 +30,7 @@ endif
 if OS_IS_FREEBSD
 ansvif_LDADD = -lstdc++ -lz -L.
 ansvif_LDFLAGS = -I./include/gzstream -I./include/xml_writer -I./src/linux -pthread
-ansvif_CPPFLAGS = -O3 -D __DEBIAN__ -D __FREEBSD__ -D NOTANDROID -Wl,--no-as-needed -std=c++11 -ftemplate-depth=1024
+ansvif_CPPFLAGS = -O3 -D __DEBIAN__ -D __FREEBSD__ -D __NOTANDROID__ -Wl,--no-as-needed -std=c++11 -ftemplate-depth=1024
 endif
 if OS_IS_KALI
 ansvif_LDADD = -lgzstream -lstdc++ -lpthread -lz -L.
