@@ -53,8 +53,8 @@ hexxy = hex_out.str();
 //  }
   /* return to sys_string in hex */
     return (hex_out.str());
-  }
 #endif
+}
 
 std::string binstr_to_hex_pc(std::string bin_str) {
   /* initialize the hex to go out */

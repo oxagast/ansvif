@@ -12,6 +12,7 @@
 #endif
 #ifdef _WIN32
 #include "version.h"
+#include "../include/xmlwriter/xml_writer.hpp"
 #endif
 #include <cstdlib>
 #include <cstring>

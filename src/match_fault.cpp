@@ -497,7 +497,7 @@ bool match_seg(struct Options o, struct RunCommands runit, struct Monopoly go, s
         if ((foundW1073741819 != std::string::npos) ||
 	(foundW1073740791 != std::string::npos) ||
 	(foundW1073741571 != std::string::npos) ||
-	(foundW532459699 != std::string::npos) {
+	(foundW532459699 != std::string::npos)) {
               cmd_output = cmd_output.replace(0, 22, "");
 #endif
 #ifdef __unix__

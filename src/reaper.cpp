@@ -22,6 +22,7 @@ int reaper(int grim, int t_timeout, std::string just_kill_me) {
   return (ret);
 #elif _WIN32
 /* windows doesn't support kill 9 */
+  return(1);
 #else
   return (0);
 #endif

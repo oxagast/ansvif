@@ -10,7 +10,10 @@
 #include "include/stack.h"
 #endif
 #ifdef __ANDROID__
-# include "../stack.h"
+#include "../stack.h"
+#endif
+#ifdef __WIN32
+#include "../stack.h"
 #endif
 # include <iostream>
 
