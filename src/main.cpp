@@ -40,6 +40,7 @@ std::vector<std::string> get_flags_man(std::string man_page,
                                        std::string man_loc, bool verbose,
                                        bool debug, bool dump_opts);
 
+void oxagast();
 struct Options {
 public:
   int static_args;
@@ -195,7 +196,7 @@ int main(int argc, char *argv[]) { // initialize our main
   /* now we can start grabbing all the options! */
   while ((opt = getopt(
               argc, argv,
-              "m:p:t:e:c:f:o:b:s:x:R:A:F:E:S:L:W:B:M:C:N:y1hrzvdDnVPKi0")) !=
+              "m:p:t:e:c:f:o:b:s:x:R:A:F:E:S:L:W:B:M:C:N:ay1hrzvdDnVPKi0")) !=
          -1) {
     switch (opt) {
     case 'v':
@@ -206,6 +207,9 @@ int main(int argc, char *argv[]) { // initialize our main
       break;
     case 't':
       template_file = optarg;
+      break;
+    case 'a':
+      oxagast();
       break;
     case 'c':
       options.path_str = optarg;
