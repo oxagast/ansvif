@@ -211,6 +211,7 @@ int main(int argc, char *argv[]) { // initialize our main
       break;
     case 'd':
       debugo.debug = true;
+      debugo.verbose = true;
       break;
     case 't':
       template_file = optarg;
