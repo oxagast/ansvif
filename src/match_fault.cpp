@@ -28,10 +28,10 @@
 #include <random>
 #include <regex>
 #include <sstream>
-#include <stdio.h>
+#include "stdio.h"
 #include <string>
 #include <thread>
-#include <unistd.h>
+#include "unistd.h"
 #include <vector>
 
 struct Options {
@@ -59,6 +59,13 @@ public:
   bool valgrind;
   bool percent_sign;
 } o;
+
+struct Debug {
+  public:
+  bool debug;
+  bool verbose;
+  bool dump_opts;
+} debugopts;
 
 struct RunCommands {
   public:
@@ -118,7 +125,7 @@ get_out_str_pc(std::string env_str, std::string valgrind_str,
                std::string always_arg_before, std::string always_arg_after,
                std::string fuzz_after, std::string log_prefix,
                std::string before_command);
-bool match_seg(struct Options o, struct RunCommands runit, struct Monopoly go, struct BuffCont bufctl) {
+bool match_seg(struct Options o, struct RunCommands runit, struct Monopoly go, struct BuffCont bufctl, struct Debug debugopts) {
   bool segged = false;
   std::vector<std::string> used_token;
   bool is_other = false;
@@ -180,7 +187,7 @@ bool match_seg(struct Options o, struct RunCommands runit, struct Monopoly go, s
         /* write a junk file */
         write_junk_file(o.junk_file_of_args, o.opt_other, bufctl.buf_size_int,
                         rand_spec_one, rand_spec_two, o.never_rand, o.other_sep,
-                        o.verbose);
+                        debugopts.verbose);
       }
       int sep_type;
       /* so we don't have warnings with -Wall */
@@ -423,7 +430,7 @@ bool match_seg(struct Options o, struct RunCommands runit, struct Monopoly go, s
           }
         }
 #endif
-        if (o.debug == true) {
+        if (debugopts.debug == true) {
           /* write ALL the junk to STDOUT since we're in
            * debug mode
            */
@@ -527,7 +534,7 @@ bool match_seg(struct Options o, struct RunCommands runit, struct Monopoly go, s
           }
           if (go.single_try == true) {
             /* do all that shit but only once! */
-            if ((o.verbose == true) || (o.debug == true)) {
+            if ((debugopts.verbose == true) || (debugopts.debug == true)) {
               std::cout << "No fault of mine!" << std::endl;
             }
             /* this non standard code 64 is to tell a wrapper that

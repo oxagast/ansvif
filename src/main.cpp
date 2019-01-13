@@ -13,9 +13,9 @@
 #include <fstream>
 #include <iostream>
 #include <regex>
-#include <signal.h>
-#include <stdio.h>
-#include <sys/stat.h>
+#include "signal.h"
+#include "stdio.h"
+#include "sys/stat.h"
 #ifdef __unix__
 #include <sys/wait.h>
 #endif
@@ -28,9 +28,9 @@
 #ifdef _WIN32
 #include "version.h"
 #endif
-#include <sys/types.h>
+#include "sys/types.h"
 #include <thread>
-#include <unistd.h>
+#include "unistd.h"
 #include <vector>
 
 int toint(std::string ints, std::string my_prog);
@@ -39,8 +39,8 @@ bool file_exists(const std::string &filen);
 std::vector<std::string> get_flags_man(std::string man_page,
                                        std::string man_loc, bool verbose,
                                        bool debug, bool dump_opts);
-
 void oxagast();
+
 struct Options {
 public:
   int static_args;
@@ -59,13 +59,17 @@ public:
   std::string always_arg_after;
   std::string fault_code;
   bool rand_all;
-  bool verbose;
-  bool debug;
-  bool dump_opts;
   bool never_rand;
   bool valgrind;
   bool percent_sign;
 } options;
+
+struct Debug {
+  public:
+  bool debug;
+  bool verbose;
+  bool dump_opts;
+} debugo;
 
 struct BuffCont {
   public:
@@ -86,7 +90,7 @@ struct Monopoly {
   bool single_try;
 } dontpassgo;
 
-void match_seg(Options, RunCommands, Monopoly, BuffCont);
+void match_seg(Options, RunCommands, Monopoly, BuffCont, Debug);
 std::vector<std::string> get_flags_template(std::string filename, bool verbose,
                                             bool debug);
 std::vector<std::string> get_other(std::string filename, bool verbose,
@@ -164,12 +168,15 @@ int main(int argc, char *argv[]) { // initialize our main
     fault_code : "-1073741819",
 #endif
     rand_all : false,
-    verbose : false,
-    debug : false,
-    dump_opts : false,
     never_rand : false,
     valgrind : false,
     percent_sign : false,
+  };
+
+  Debug debugo {
+    debug : false,
+    verbose : false,
+    dump_opts : false
   };
 
   BuffCont buffercontrol {
@@ -200,10 +207,10 @@ int main(int argc, char *argv[]) { // initialize our main
          -1) {
     switch (opt) {
     case 'v':
-      options.verbose = true;
+      debugo.verbose = true;
       break;
     case 'd':
-      options.debug = true;
+      debugo.debug = true;
       break;
     case 't':
       template_file = optarg;
@@ -219,7 +226,7 @@ int main(int argc, char *argv[]) { // initialize our main
       break;
     case 'e':
       options.spec_env =
-          get_flags_template(optarg, options.verbose, options.debug);
+          get_flags_template(optarg, debugo.verbose, debugo.debug);
       break;
     case 'p':
       man_loc = optarg;
@@ -246,10 +253,10 @@ int main(int argc, char *argv[]) { // initialize our main
       options.u_strip_shell = optarg;
       break;
     case 'x':
-      options.opt_other = get_other(optarg, options.verbose, options.debug);
+      options.opt_other = get_other(optarg, debugo.verbose, debugo.debug);
       break;
     case 'D':
-      options.dump_opts = true;
+      debugo.dump_opts = true;
       break;
     case 'S':
       options.other_sep = optarg;
@@ -327,12 +334,12 @@ int main(int argc, char *argv[]) { // initialize our main
   if ((man_page != "") && (template_file == "")) {
     /* because we're getting stuff from the manpage */
     options.opts =
-        get_flags_man(man_page, man_loc, options.verbose,
-                      options.debug, options.dump_opts);
+        get_flags_man(man_page, man_loc, debugo.verbose,
+                      debugo.debug, debugo.dump_opts);
   } else if ((man_page == "") && (template_file != "")) {
     /* we're getting stuff from a template */
-    options.opts = get_flags_template(template_file, options.verbose,
-                                      options.debug);
+    options.opts = get_flags_template(template_file, debugo.verbose,
+                                      debugo.debug);
   } else if ((man_page != "") && (template_file != "")) {
     /* send them to help because you can't have a manpage and
      * a template at the same time
@@ -391,7 +398,7 @@ int main(int argc, char *argv[]) { // initialize our main
     /* initialize threading! */
     std::vector<std::thread> threads;
     for (int cur_thread = 1; cur_thread <= thread_count_int; ++cur_thread)
-      threads.push_back(std::thread(match_seg, options, runcoms, dontpassgo, buffercontrol));
+      threads.push_back(std::thread(match_seg, options, runcoms, dontpassgo, buffercontrol, debugo));
     /* thrift shop */
     for (auto &all_thread : threads)
       all_thread.join();
@@ -401,7 +408,7 @@ int main(int argc, char *argv[]) { // initialize our main
     /* no threads or anything since we're only doing a
      * single run
      */
-    match_seg(options, runcoms, dontpassgo, buffercontrol);
+    match_seg(options, runcoms, dontpassgo, buffercontrol, debugo);
   }
   /* exit cleanly! */
   exit(0);

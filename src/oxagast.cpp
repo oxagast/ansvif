@@ -1,5 +1,3 @@
-#include <stdio.h>
-#include <unistd.h>
 #include <iostream>
 static const char o[] =  
 "\x0A\x20\x20\x20\x5F\x5F\x20\x5F\x20\x20\x5F\x20\x20\x5F\x5F"\
