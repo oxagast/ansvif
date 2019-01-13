@@ -52,9 +52,6 @@ public:
   std::string always_arg_after;
   std::string fault_code;
   bool rand_all;
-  bool verbose;
-  bool debug;
-  bool dump_opts;
   bool never_rand;
   bool valgrind;
   bool percent_sign;
