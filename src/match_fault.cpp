@@ -115,13 +115,14 @@ std::string
 get_out_str(std::string env_str, std::string valgrind_str, std::string sys_str,
             std::string path_str, std::string always_arg_before,
             std::string always_arg_after, std::string fuzz_after,
-            std::string log_prefix, std::string before_command);
+            std::string log_prefix, std::string before_command,
+            bool verbose);
 std::string
 get_out_str_pc(std::string env_str, std::string valgrind_str,
                std::string sys_str, std::string path_str,
                std::string always_arg_before, std::string always_arg_after,
                std::string fuzz_after, std::string log_prefix,
-               std::string before_command);
+               std::string before_command, bool verbose);
 bool match_seg(struct Options o, struct RunCommands runit, struct Monopoly go, struct BuffCont bufctl, struct Debug debugopts) {
   bool segged = false;
   std::vector<std::string> used_token;
@@ -386,12 +387,12 @@ bool match_seg(struct Options o, struct RunCommands runit, struct Monopoly go, s
          */
         out_str.p = get_out_str_pc(env_str, valgrind_str, sys_str, o.path_str,
                                  o.always_arg_before, o.always_arg_after,
-                                 fuzz_after, o.write_file_n, runit.before_command);
+                                 fuzz_after, o.write_file_n, runit.before_command, debugopts.verbose);
       }
       if (o.percent_sign == false) {
         out_str.o = get_out_str(env_str, valgrind_str, sys_str, o.path_str,
                               o.always_arg_before, o.always_arg_after,
-                              fuzz_after, o.write_file_n, runit.before_command);
+                              fuzz_after, o.write_file_n, runit.before_command, debugopts.verbose);
       }
       /* coming to the stuff from sys_string either
        * normal or printf output

@@ -19,7 +19,7 @@ std::string binstr_to_hex_pc(std::string bin_str_pc);
 std::string get_out_str(std::string env_str, std::string valgrind_str, std::string sys_str,
             std::string path_str, std::string always_arg_b,
             std::string always_arg, std::string fuzz_after,
-            std::string log_prefix, std::string before_command) {
+            std::string log_prefix, std::string before_command, bool verbose) {
   /* these are the strings that will go to be run in popen
    * out_str is normal, and out_str_p is pritnf compatible
    * for easy crash replay, except this is for % for
@@ -47,7 +47,12 @@ std::string get_out_str(std::string env_str, std::string valgrind_str, std::stri
   }
   if (log_prefix == "") {
     /* not logging here */
-    out_str = out_str + " >/dev/null 2>&1; if [ $? -ge 130 ]; then touch /tmp/a.crashed; fi";
+    if (verbose == true) {
+      out_str = out_str + "; if [ $? -ge 130 ]; then touch /tmp/a.crashed; fi";
+    }
+    if (verbose == false) {
+      out_str = out_str + " >/dev/null 2>&1; if [ $? -ge 130 ]; then touch /tmp/a.crashed; fi";
+    }
   } else {
     /* logging here */
     out_str = out_str + " >" + log_prefix +
@@ -107,7 +112,7 @@ std::string
 get_out_str_pc(std::string env_str, std::string valgrind_str,
                std::string sys_str, std::string path_str,
                std::string always_arg_b, std::string always_arg,
-               std::string fuzz_after, std::string log_prefix, std::string before_command) {
+               std::string fuzz_after, std::string log_prefix, std::string before_command, bool verbose) {
   /* these are the strings that will go to be run in popen
    * out_str is normal, and out_str_p is pritnf compatible
    * for easy crash replay, except this is for % for
@@ -137,10 +142,10 @@ get_out_str_pc(std::string env_str, std::string valgrind_str,
   }
   if (log_prefix == "") {
     /* incase we are logging don't leave a blank file */
-    out_str = out_str + " >/dev/null 2>&1; echo $?";
+    out_str = out_str + " >/dev/null 2>&1; if [ $? -ge 130 ]; then touch /tmp/a.crashed; fi";
   } else {
     /* get the signal here and log */
-    out_str = out_str + " >" + log_prefix + ".output.ansvif.log 2>&1; echo $?";
+    out_str = out_str + " >" + log_prefix + ".output.ansvif.log 2>&1; if [ $? -ge 130 ]; then touch /tmp/a.crashed; fi";
   }
 /* we're putting the normal version and the printf
  * version in this vector, normal first, printf second,
