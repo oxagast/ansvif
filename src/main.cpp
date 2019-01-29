@@ -82,6 +82,7 @@ struct RunCommands {
   std::string run_command;
   std::string before_command;
   std::string prog_name;
+  bool write_pipe;
 } runcoms;
 
 struct Monopoly {
@@ -203,7 +204,7 @@ int main(int argc, char *argv[]) { // initialize our main
   /* now we can start grabbing all the options! */
   while ((opt = getopt(
               argc, argv,
-              "m:p:t:e:c:f:o:b:s:x:R:A:F:E:S:L:W:B:M:C:N:ay1hrzvdDnVPKi0")) !=
+              "m:p:t:e:c:f:o:b:s:x:R:A:F:E:S:L:W:B:M:C:N:way1hrzvdDnVPKi0")) !=
          -1) {
     switch (opt) {
     case 'v':
@@ -306,6 +307,9 @@ int main(int argc, char *argv[]) { // initialize our main
       break;
     case 'E':
       runcoms.before_command = optarg;
+      break;
+    case 'w':
+      runcoms.write_pipe = true;
       break;
     case 'i':
       version();
