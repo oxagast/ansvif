@@ -20,3 +20,10 @@ std::string remove_chars(const std::string &source, const std::string &chars) {
   }
   return (result);
 }
+
+int count_quotes(std::string s) {
+  unsigned int count = 0;
+  for (unsigned int i = 0; i < s.size(); i++)
+    if (s[i] == '\'') count++;
+  return count;
+}

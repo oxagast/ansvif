@@ -51,7 +51,7 @@ endif
 if WITH_GTK
 ansvif_gtk_SOURCES = src/gtk.cpp src/popen2.cpp
 ansvif_gtk_LDADD = @GTK_LIBS@
-ansvif_gtk_CPPFLAGS = @GTK_CFLAGS@ -fpermissive
+ansvif_gtk_CPPFLAGS = @GTK_CFLAGS@ -D __NOTANDROID__
 endif
 ansvifdir = bin
 check: all

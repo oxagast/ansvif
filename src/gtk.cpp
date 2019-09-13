@@ -44,7 +44,6 @@ std::string no_null_s;
 std::string runcommand;
 std::string runcommanda;
 GtkWidget *caller_box;
-GtkTextBuffer *buffer;
 GtkTextIter iter;
 GtkWidget *buf_size_zero;
 GtkWidget *random_buffer_size;
@@ -77,6 +76,8 @@ GtkWidget *set_run_command_a;
 GtkWidget *runcoma;
 std::string ver = " -i ";
 std::string ansvif_loc = "ansvif ";
+//GtkTextBuffer *buffer;
+GtkWidget *buffer = gtk_entry_new();
 
 int help_me(std::string mr_me) {
   std::cout << "ansvif v" << version << " -- A Not So Very Intelligent Fuzzer"
@@ -89,7 +90,9 @@ int help_me(std::string mr_me) {
 }
 
 
-static void destroy(GtkWidget *widget, gpointer *data) { gtk_main_quit(); }
+static void destroy(GtkWidget *widget, gpointer *data) { 
+  gtk_main_quit();
+}
 
 std::string ansvif_str() {
   ansvif_call = ansvif_loc + ver + random_data + random_buffer_s + no_null_s + buffer_size +
@@ -172,18 +175,19 @@ const char *get_user() {
 }
 
 static void fuzz_call() {
-  /* put together the call to ansvif */
-  int com_pid;
-  FILE *fp = popen2(ansvif_str(), "r", com_pid, get_user());
+/* put together the call to ansvif */
+  int ansvif_pid;
+  FILE *fp = popen2(ansvif_str(), "r", ansvif_pid, get_user());
   char command_out[4096] = {0};
   std::stringstream output;
   while (read(fileno(fp), command_out, sizeof(command_out) - 1) != 0) {
     output << std::string(command_out);
-    gtk_main_iteration_do(TRUE);
     memset(&command_out, 0, sizeof(command_out));
+   gtk_main_iteration_do(TRUE);
   }
-  gtk_text_buffer_set_text(buffer, output.str().c_str(), -1);
-  pclose2(fp, com_pid);
+  gtk_entry_set_text(GTK_ENTRY(buffer), output.str().c_str());
+  pclose(fp);
+//  execl("/bin/sh", "sh", "-c", ansvif_str().c_str(), NULL);
 }
 
 static void template_selected(GtkWidget *w, GtkFileSelection *fs) {
@@ -351,21 +355,17 @@ const void set_no_null(void*) {
 }
 
 /* Create a scrolled text area that displays a "message" */
-static GtkWidget *create_text(void) {
+ GtkWidget *create_text(void) {
   GtkWidget *scrolled_window;
   GtkWidget *view;
-
   view = gtk_text_view_new();
-  buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(view));
-
+//  buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(view));
   scrolled_window = gtk_scrolled_window_new(NULL, NULL);
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window),
                                  GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-
   gtk_container_add(GTK_CONTAINER(scrolled_window), view);
   fuzz_call();
   gtk_widget_show_all(scrolled_window);
-
   return (scrolled_window);
 }
 
@@ -377,10 +377,8 @@ int main(int argc, char *argv[]) {
   GtkWidget *fuzz_it;
   GtkWidget *command_sel;
   GtkWidget *environ_sel;
-  GtkWidget *logging_file;
   GtkWidget *template_sel;
   GtkWidget *ansvif_out;
-  GtkWidget *text;
   GtkWidget *random_data_only;
   GtkWidget *b_size_label;
   GtkWidget *exit_code_label;
@@ -388,6 +386,7 @@ int main(int argc, char *argv[]) {
   GtkWidget *other_sep_label;
   GtkWidget *oo_sel;
   GtkWidget *log_sel;
+  GtkWidget *text;
   gint tmp_pos;
   int c;
   
@@ -451,7 +450,7 @@ int main(int argc, char *argv[]) {
   gtk_fixed_put(GTK_FIXED(opters), b_size_label, 540, 55);
   gtk_widget_show(b_size_label);
   gtk_widget_show(set_buf_size);
-  /*A text box where we enter the custom crashcode */
+  /* A text box where we enter the custom crashcode */
   set_exit_code = gtk_entry_new();
   gtk_entry_set_max_length(GTK_ENTRY(set_exit_code), 3);
   gtk_widget_set_size_request(GTK_WIDGET(set_exit_code), 50, 25);
@@ -489,8 +488,8 @@ int main(int argc, char *argv[]) {
   gtk_label_set_justify(GTK_LABEL(runcom_label), GTK_JUSTIFY_LEFT);
   gtk_fixed_put(GTK_FIXED(opters), runcom_label, 540, 175);
   gtk_widget_show(runcom_label);
-  gtk_widget_show(set_run_command);
-  /* Run command after */
+  gtk_widget_show(set_run_command);  
+/* Run command after */
   set_run_command_a = gtk_entry_new();
   gtk_widget_set_size_request(GTK_WIDGET(set_run_command_a), 50, 25);
   g_signal_connect(set_run_command_a, "activate", G_CALLBACK((gpointer)set_run_command_a_callback),
@@ -503,8 +502,7 @@ int main(int argc, char *argv[]) {
   gtk_widget_show(set_run_command_a);
   /*  Make our template file selection */
   template_sel = gtk_button_new_with_label("Select Template");
-  g_signal_connect(GTK_OBJECT(template_sel), "clicked",
-                   G_CALLBACK((gpointer)select_template), NULL);
+  g_signal_connect(GTK_OBJECT(template_sel), "clicked", G_CALLBACK((gpointer)select_template), template_sel);
   gtk_fixed_put(GTK_FIXED(opters), template_sel, 30, 80);
   gtk_widget_show(template_sel);
   template_sel_t = gtk_entry_new();
@@ -614,25 +612,25 @@ int main(int argc, char *argv[]) {
   /* A toggle for turning buffer size 0 on and off */
   buf_size_zero = gtk_check_button_new_with_label("Buffer Size 0");
   g_signal_connect(GTK_OBJECT(buf_size_zero), "clicked",
-                   G_CALLBACK((gpointer)set_buffer_size), NULL);
+                   G_CALLBACK((gpointer)set_buffer_size), buf_size_zero);
   gtk_fixed_put(GTK_FIXED(opters), buf_size_zero, 30, 200);
   gtk_widget_show(buf_size_zero);
   /* A toggle for turning all random data on and off */
   random_data_only = gtk_check_button_new_with_label("Random Data Only");
   g_signal_connect(GTK_OBJECT(random_data_only), "clicked",
-                   G_CALLBACK((gpointer)set_random_data), NULL);
+                   G_CALLBACK((gpointer)set_random_data), random_data_only);
   gtk_fixed_put(GTK_FIXED(opters), random_data_only, 30, 220);
   gtk_widget_show(random_data_only);
   /* A toggle for turning buffer random buffer size on and off */
   random_buffer_size = gtk_check_button_new_with_label("Random Buffer Size");
   g_signal_connect(GTK_OBJECT(random_buffer_size), "clicked",
-                   G_CALLBACK((gpointer)set_random_size), NULL);
+                   G_CALLBACK((gpointer)set_random_size), random_buffer_size);
   gtk_fixed_put(GTK_FIXED(opters), random_buffer_size, 30, 180);
   gtk_widget_show(random_buffer_size);
   /* A toggle for turning non null on and off */
   no_null = gtk_check_button_new_with_label("No NULL In Fuzz"); 
   g_signal_connect(GTK_OBJECT(no_null), "clicked",
-                   G_CALLBACK((gpointer)set_no_null), NULL);
+                   G_CALLBACK((gpointer)set_no_null), no_null);
   gtk_fixed_put(GTK_FIXED(opters), no_null, 220, 180);
   gtk_widget_show(no_null);
   /* ansvif output goes here */

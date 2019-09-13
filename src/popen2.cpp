@@ -48,10 +48,10 @@ FILE *popen2(std::string command, std::string type, int &pid,
        */
       // command = "DISPLAY=localhost:1 " + command;
       execl("/bin/su", "su", "-c", "/bin/sh", "-c", command.c_str(),
-            low_lvl_user.c_str(), NULL);
+         low_lvl_user.c_str(), NULL);
     } else {
       /* or just run it like we normally would */
-      execl("/bin/sh", "/bin/sh", "-c", command.c_str(), NULL);
+      execl("/bin/sh", "sh", "-c", command.c_str(), NULL);
     }
 #endif
 #ifdef __ANDROID__

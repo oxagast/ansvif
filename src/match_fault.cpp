@@ -90,6 +90,7 @@ struct BuffCont {
   int buf_size_int;
   bool rand_buf;
 } bufctl;
+
 void log_hang(std::string write_file_n, std::string out_str_p,
               std::string out_str, std::string junk_file_of_args, int pid);
 void log_tail(std::string write_file_n, std::string junk_file_of_args,
@@ -124,6 +125,7 @@ get_out_str_pc(std::string env_str, std::string valgrind_str,
                std::string always_arg_before, std::string always_arg_after,
                std::string fuzz_after, std::string log_prefix,
                std::string before_command, bool write_pipe, bool verbose);
+int count_quotes(std::string quotes_str);
 bool match_seg(struct Options o, struct RunCommands runit, struct Monopoly go, struct BuffCont bufctl, struct Debug debugopts) {
   bool segged = false;
   std::vector<std::string> used_token;
@@ -429,6 +431,8 @@ bool match_seg(struct Options o, struct RunCommands runit, struct Monopoly go, s
           }
         }
 #endif
+        if ((count_quotes(out_str.o) % 2) != 0) { return(false);}
+      //std::cout << count_quotes(out_str.o) << std::endl;
         if (debugopts.debug == true) {
           /* write ALL the junk to STDOUT since we're in
            * debug mode
