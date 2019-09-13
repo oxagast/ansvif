@@ -76,8 +76,8 @@ GtkWidget *set_run_command_a;
 GtkWidget *runcoma;
 std::string ver = " -i ";
 std::string ansvif_loc = "ansvif ";
-//GtkTextBuffer *buffer;
-GtkWidget *buffer = gtk_entry_new();
+GtkTextBuffer *buffer;
+std::stringstream output;
 
 int help_me(std::string mr_me) {
   std::cout << "ansvif v" << version << " -- A Not So Very Intelligent Fuzzer"
@@ -176,17 +176,18 @@ const char *get_user() {
 
 static void fuzz_call() {
 /* put together the call to ansvif */
+  std::string out;
   int ansvif_pid;
   FILE *fp = popen2(ansvif_str(), "r", ansvif_pid, get_user());
   char command_out[4096] = {0};
-  std::stringstream output;
   while (read(fileno(fp), command_out, sizeof(command_out) - 1) != 0) {
     output << std::string(command_out);
+   // out = std::string(command_out);
     memset(&command_out, 0, sizeof(command_out));
    gtk_main_iteration_do(TRUE);
   }
-  gtk_entry_set_text(GTK_ENTRY(buffer), output.str().c_str());
-  pclose(fp);
+  gtk_text_buffer_set_text(buffer, output.str().c_str(), -1);
+  pclose2(fp, ansvif_pid);
 //  execl("/bin/sh", "sh", "-c", ansvif_str().c_str(), NULL);
 }
 
@@ -359,7 +360,7 @@ const void set_no_null(void*) {
   GtkWidget *scrolled_window;
   GtkWidget *view;
   view = gtk_text_view_new();
-//  buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(view));
+  buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(view));
   scrolled_window = gtk_scrolled_window_new(NULL, NULL);
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window),
                                  GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);

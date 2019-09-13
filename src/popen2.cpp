@@ -38,8 +38,15 @@ FILE *popen2(std::string command, std::string type, int &pid,
     exit(1);
   }
   /* here the child begins */
-  if (child_pid == 0) {
-
+if (child_pid == 0) {
+    if (type == "r") {
+      /* redirect stdout and stdin to pipe */
+      close(fd[READ]); /* donno why this stuff was once taken */
+      dup2(fd[WRITE], 1); /* out but it doesn't work right without it */
+    } else {
+      close(fd[WRITE]);
+      dup2(fd[READ], 0);
+    }
 #ifdef __NOTANDROID__
     if (getuid() == 0) {
       /* if we're root we're going to drop our privs
