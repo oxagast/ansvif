@@ -24,7 +24,7 @@
 FILE *popen2(std::string command, std::string type, int &pid,
              std::string low_lvl_user);
 int pclose2(FILE *fp, pid_t pid);
-
+bool file_exists(const std::string &filen);
 std::string version = "1.11a"; /* ansvif version */
 std::string buffer_size;
 std::string random_data;
@@ -408,7 +408,9 @@ int main(int argc, char *argv[]) {
       }
   }
   
-  
+  if(file_exists("./ansvif")) {
+    ansvif_loc = "./ansvif ";
+  } 
   /* Pull in the args for gtk */
   gtk_init(&argc, &argv);
   /* Create gtk window */
