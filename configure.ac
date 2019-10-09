@@ -10,8 +10,11 @@ AC_HEADER_STDC
 AX_CXX_COMPILE_STDCXX_11
 AC_CHECK_HEADERS([string])
 AC_CHECK_HEADERS([ipstream])
-AC_CHECK_HEADERS([lz])
+AC_CHECK_HEADERS(zlib.h)
+#AC_CHECK_HEADERS([lz])
+#AC_SEARCH_LIBS(z)
 #AC_CHECK_HEADERS([crypto])
+AC_CHECK_LIB(pthread, pthread_create, have_pthread=yes)
 AC_CONFIG_FILES([Makefile])
 AM_INIT_AUTOMAKE([subdir-objects])
 # This adds the option of compiling without using the ctemplate library,
@@ -46,7 +49,7 @@ if test "$WITH_GTK" = "false"; then
 else
     AC_DEFINE([WITH_GTK], [], ["build GTK module"])
     AC_MSG_NOTICE([GTK enabled, we will try to compile them])
-    PKG_CHECK_MODULES([GTK], [gtk+-2.0])
+    PKG_CHECK_MODULES(GTK, [gtk+-2.0])
 #     PKG_CHECK_MODULES([gtk+-2.0])
 fi
 
