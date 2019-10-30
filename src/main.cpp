@@ -325,13 +325,13 @@ int main(int argc, char *argv[]) { // initialize our main
     }
   }
 #ifdef __ANDROID__
-  if (file_exists("/sdcard/ansvif/crashed") == true) {
-    unlink("/sdcard/ansvif/crashed");
+  if (file_exists("/sdcard/ansvif/ansvif.crashed") == true) {
+    unlink("/sdcard/ansvif/ansvif.crashed");
   }
 #endif
 #ifdef __NOTANDROID__
-  if (file_exists("/tmp/a.crashed") == true) {
-    unlink("/tmp/a.crashed");
+  if (file_exists("/tmp/ansvif.crashed") == true) {
+    unlink("/tmp/ansvif.crashed");
   }
 #endif
   /* always strip a new line no matter what the user says */

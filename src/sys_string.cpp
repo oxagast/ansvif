@@ -52,15 +52,15 @@ std::string get_out_str(std::string env_str, std::string valgrind_str, std::stri
   if (log_prefix == "") {
     /* not logging here */
     if (verbose == true) {
-      out_str = out_str + "; if [ $? -ge 130 ]; then touch /tmp/a.crashed; fi";
+      out_str = out_str + ";  CC=$?; if  [ $CC -eq 132 -o $CC -eq 136 -o  $CC -eq 139 -o $CC -eq 135 -o  $CC -eq 134 -o $CC -eq 159 ]; then echo CRASHCODE $CC; touch /tmp/ansvif.crashed; fi";
     }
     if (verbose == false) {
-      out_str = out_str + " >/dev/null 2>&1; if [ $? -ge 130 ]; then touch /tmp/a.crashed; fi";
+      out_str = out_str + " >/dev/null 2>&1; CC=$?; if  [ $CC -eq 132 -o $CC -eq 136 -o  $CC -eq 139 -o $CC -eq 135 -o  $CC -eq 134 -o $CC -eq 159 ]; then echo CRASHCODE $CC; touch /tmp/ansvif.crashed; fi";
     }
   } else {
     /* logging here */
     out_str = out_str + " >" + log_prefix +
-              ".output.ansvif.log 2>&1; if [ $? -ge 130 ]; then touch /tmp/a.crashed; fi";
+              ".output.ansvif.log 2>&1; CC=$?; if  [ $CC -eq 132 -o $CC -eq 136 -o  $CC -eq 139 -o $CC -eq 135 -o  $CC -eq 134 -o $CC -eq 159 ]; then echo CRASHCODE $CC; touch /tmp/ansvif.crashed; fi";
   }
 #endif
 #ifdef __ANDROID__
@@ -82,11 +82,11 @@ std::string get_out_str(std::string env_str, std::string valgrind_str, std::stri
   }
   if (log_prefix == "") {
     /* not logging here */
-    out_str = out_str + " >/dev/null 2>&1; if [ $? -ge 130 ]; then touch /sdcard/ansvif/crashed; fi";
+    out_str = out_str + " >/dev/null 2>&1; CC=$?; if  [ $CC -eq 132 -o $CC -eq 136 -o  $CC -eq 139 -o $CC -eq 135 -o  $CC -eq 134 -o $CC -eq 159 ]; then echo CRASHCODE $CC; touch /sdcard/ansvif/ansvif.crashed; fi";
   } else {
     /* logging here */
     out_str = out_str + " >" + log_prefix +
-              ".output.ansvif.log 2>&1; if [ $? -ge 130 ]; then touch /sdcard/ansvif/crashed; fi";
+              ".output.ansvif.log 2>&1; CC=$?; if  [ $CC -eq 132 -o $CC -eq 136 -o  $CC -eq 139 -o $CC -eq 135 -o  $CC -eq 134 -o $CC -eq 159 ]; then echo CRASHCODE $CC; touch /sdcard/ansvif/ansvif.crashed; fi";
   }
 #endif
 #ifdef _WIN32
@@ -146,10 +146,10 @@ get_out_str_pc(std::string env_str, std::string valgrind_str,
   }
   if (log_prefix == "") {
     /* incase we are logging don't leave a blank file */
-    out_str = out_str + " >/dev/null 2>&1; if [ $? -ge 130 ]; then touch /tmp/a.crashed; fi";
+    out_str = out_str + " >/dev/null 2>&1; CC=$?; if  [ $CC -eq 132 -o $CC -eq 136 -o  $CC -eq 139 -o $CC -eq 135 -o  $CC -eq 134 -o $CC -eq 159 ]; then echo CRASHCODE $CC; touch /tmp/ansvif.crashed; fi";
   } else {
     /* get the signal here and log */
-    out_str = out_str + " >" + log_prefix + ".output.ansvif.log 2>&1; if [ $? -ge 130 ]; then touch /tmp/a.crashed; fi";
+    out_str = out_str + " >" + log_prefix + ".output.ansvif.log 2>&1; CC=$?; if  [ $CC -eq 132 -o $CC -eq 136 -o  $CC -eq 139 -o $CC -eq 135 -o  $CC -eq 134 -o $CC -eq 159 ]; then echo CRASHCODE $CC; touch /tmp/ansvif.crashed; fi";
   }
 /* we're putting the normal version and the printf
  * version in this vector, normal first, printf second,
@@ -178,10 +178,10 @@ get_out_str_pc(std::string env_str, std::string valgrind_str,
   }
   if (log_prefix == "") {
     /* incase we are logging don't leave a blank file */
-    out_str = out_str + " >/dev/null 2>&1; if [ $? -ge 130 ]; then touch /sdcard/ansvif/crashed; fi";
+    out_str = out_str + " >/dev/null 2>&1; CC=$?; if  [ $CC -eq 132 -o $CC -eq 136 -o  $CC -eq 139 -o $CC -eq 135 -o  $CC -eq 134 -o $CC -eq 159 ]; then echo CRASHCODE $CC; touch /sdcard/ansvif/ansvif.crashed; fi";
   } else {
     /* get the signal here and log */
-    out_str = out_str + " >" + log_prefix + ".output.ansvif.log 2>&1; if [ $? -ge 130 ]; then touch /sdcard/ansvif/crashed; fi";
+    out_str = out_str + " >" + log_prefix + ".output.ansvif.log 2>&1; CC=$?; if  [ $CC -eq 132 -o $CC -eq 136 -o  $CC -eq 139 -o $CC -eq 135 -o  $CC -eq 134 -o $CC -eq 159 ]; then echo CRASHCODE $CC; touch /sdcard/ansvif/ansvif.crashed; fi";
   }
 /* we're putting the normal version and the printf
  * version in this vector, normal first, printf second,

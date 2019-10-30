@@ -485,10 +485,10 @@ bool match_seg(struct Options o, struct RunCommands runit, struct Monopoly go, s
                    pid);
         }
 #ifdef __ANDROID__
-        if (file_exists("/sdcard/ansvif/crashed") == true) {
+        if (file_exists("/sdcard/ansvif/ansvif.crashed") == true) {
 #endif
 #ifdef __NOTANDROID__
-          if (file_exists("/tmp/a.crashed") == true) {
+          if (file_exists("/tmp/ansvif.crashed") == true) {
 #endif
 #ifdef __WIN32
             std::size_t foundW1073741819 = cmd_output.find("-1073741819");
@@ -508,7 +508,7 @@ bool match_seg(struct Options o, struct RunCommands runit, struct Monopoly go, s
 	(foundW1073740791 != std::string::npos) ||
 	(foundW1073741571 != std::string::npos) ||
 	(foundW532459699 != std::string::npos)) {
-              cmd_output = cmd_output.replace(0, 22, "");
+              cmd_output = cmd_output.replace(0, 10, "");
 #endif
 #ifdef __unix__
               std::cout << "PID: " << pid << std::endl;
