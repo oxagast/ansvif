@@ -5,7 +5,7 @@
 # define INDENT "  "
 # define NEWLINE "\n"
 
-# include <string.h>
+#include <string.h>
 #ifdef __NOTANDROID__
 #include "include/stack.h"
 #endif
@@ -15,7 +15,7 @@
 #ifdef __WIN32
 #include "../stack.h"
 #endif
-# include <iostream>
+#include <iostream>
 
 class Writer
 {

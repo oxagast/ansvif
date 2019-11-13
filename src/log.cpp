@@ -1,10 +1,4 @@
 #ifdef __NOTANDROID__
-#include "../include/xmlwriter/xml_writer.hpp"
-#endif
-#ifdef __ANDROID__
-#include "../include/xmlwriter/xml_writer.hpp"
-#endif
-#ifdef __NOTANDROID__
 #include "src/version.h"
 #endif
 #ifdef __ANDROID__
@@ -12,12 +6,17 @@
 #endif
 #ifdef _WIN32
 #include "version.h"
-#include "../include/xmlwriter/xml_writer.hpp"
 #endif
+#ifdef __linux__
+#include "version.h"
+#endif
+#include "../include/stack.h"
+#include "../include/xmlwriter/xml_writer.hpp"
 #include <cstdlib>
 #include <cstring>
 #include <fstream>
 #include <sstream>
+#include <iostream>
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
