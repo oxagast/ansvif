@@ -84,7 +84,7 @@ if test "$OS_IS_KALI" = "0"; then
    AC_DEFINE([__KALI__], [], ["build for Kali"])
    AC_MSG_NOTICE([trying to build for a Kali based system])
 fi
-AM_CONDITIONAL(OS_IS_ARCH, [ test `grep "Arch" /etc/os-release | wc -l` -gt "0" ])
+AM_CONDITIONAL(OS_IS_ARCH, [ test `grep "arch" -i /etc/os-release | wc -l` -gt "0" ])
 if test "$OS_IS_ARCH" = "0"; then
    AC_DEFINE([__ARCH__], [], ["build for Arch"])
    AC_MSG_NOTICE([trying to build for a Arch based system])
