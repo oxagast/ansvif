@@ -547,7 +547,8 @@ bool match_seg(struct Options o, struct RunCommands runit, struct Monopoly go, s
           }
         }
 
-      }
+     
+     }
       return (true);
 
     }
